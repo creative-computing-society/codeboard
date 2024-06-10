@@ -1,2 +1,6 @@
 Django
 python-dotenv
+psycopg2
+djangorestframework
+beautifulsoup4
+requests
