@@ -1,0 +1,12 @@
+Create new leetcode user acc in database(POST request)
+api endpoint: /register_user/
+Json Format:
+{
+    'leetcode_name' : 'example_username'
+}
+
+Get all users info from database(GET request)
+api endpoint: /get_leetcode/
+
+Get single user info from database(GET request)
+api endpoint: /get_user/
