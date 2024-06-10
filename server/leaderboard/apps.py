@@ -6,4 +6,4 @@ class LeaderboardConfig(AppConfig):
     name = 'leaderboard'
 
     def ready(self):
-        import leaderboard.signals
+        import communityLeaderboard.server.leaderboard.fetch_leetcode_data

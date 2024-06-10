@@ -1,8 +1,6 @@
-from django.db.models.signals import post_save
-from django.dispatch import receiver
 import requests
+from .models import leetcode_acc
 
-# Define your queries as constants at the top of your file
 MATCHED_USER_QUERY =  '''
     query userPublicProfile($username: String!) {
       matchedUser(username: $username) {
@@ -34,7 +32,6 @@ LANGUAGE_PROBLEM_COUNT_QUERY = '''
     }
 '''
 
-# Modify your send_query function to accept variables
 def send_query(query, variables):
     url = "https://leetcode.com/graphql"
     headers = {"Content-Type": "application/json"}
@@ -42,8 +39,7 @@ def send_query(query, variables):
     data = response.json()
     return data
 
-# Use the modified send_query function in your signal
-def get_user_data(username):
+def get_user_data(username, user_id):
     limit = 500
 
     response = send_query(MATCHED_USER_QUERY, {"username": username})
@@ -53,7 +49,6 @@ def get_user_data(username):
     data = response
     data2 = response2
     data3 = response3
-    print(response2)
 
     data2 = data2['data']['recentAcSubmissionList']
 
@@ -71,8 +66,15 @@ def get_user_data(username):
     for question in data3:
         number_of_questions += question['problemsSolved']
 
-    print(questions_solved)
+    instance = leetcode_acc.objects.get(user=user_id)
+    # save the details the model
+    instance.name = realname
+    instance.rank = rank
+    instance.photo_url = photo_url
+    instance.number_of_questions = number_of_questions
+    instance.last_solved = last_solved
+    instance.SolvedQuestions = questions_solved
+    instance.save()
     
     print(f"Data for {username} saved successfully")
 
-get_user_data("singlaishan69")

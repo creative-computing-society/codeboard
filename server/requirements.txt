@@ -2,5 +2,7 @@ Django
 python-dotenv
 psycopg2
 djangorestframework
-beautifulsoup4
 requests
+celery
+redis
+django-celery-beat

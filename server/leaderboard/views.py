@@ -2,8 +2,9 @@ from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-
+from celery.result import AsyncResult
 from .models import leetcode_acc
+from .fetch_leetcode_data import get_user_data
 
 class register_leetcode(APIView):
 
@@ -13,7 +14,9 @@ class register_leetcode(APIView):
             return Response({"error": "Leetcode name is required"}, status=status.HTTP_400_BAD_REQUEST)
         if leetcode_acc.objects.filter(leetcode_name=leetcode_name).exists():
             return Response({"error": "Leetcode user already exists"}, status=status.HTTP_400_BAD_REQUEST)
-        leetcode_acc.objects.create(leetcode_name=leetcode_name)
+        acc = leetcode_acc.objects.create(leetcode_name=leetcode_name)
+        get_user_data(leetcode_name,acc.user)
+
         return Response({"message": "Leetcode user registered successfully"}, status=status.HTTP_201_CREATED)
     
 class getLeetcodeInfo(APIView):
