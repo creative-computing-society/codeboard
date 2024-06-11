@@ -1,22 +1,19 @@
-from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from celery.result import AsyncResult
 from .models import leetcode_acc
-from .fetch_leetcode_data import get_user_data
-
+from .tasks import *
 class register_leetcode(APIView):
 
     def post(self, request, *args, **kwargs):
-        leetcode_name = request.data.get('leetcode_name')
+        leetcode_name = request.data.get('username')
         if leetcode_name is None or leetcode_name == "":
             return Response({"error": "Leetcode name is required"}, status=status.HTTP_400_BAD_REQUEST)
         if leetcode_acc.objects.filter(leetcode_name=leetcode_name).exists():
             return Response({"error": "Leetcode user already exists"}, status=status.HTTP_400_BAD_REQUEST)
         acc = leetcode_acc.objects.create(leetcode_name=leetcode_name)
-        get_user_data(leetcode_name,acc.user)
 
+        get_user_data.delay(leetcode_name,acc.user)
         return Response({"message": "Leetcode user registered successfully"}, status=status.HTTP_201_CREATED)
     
 class getLeetcodeInfo(APIView):
@@ -54,3 +51,12 @@ class getUserInfo(APIView):
             'last_solved': account.last_solved
         }
         return Response(result, status=status.HTTP_200_OK)
+    
+class getQuestionID(APIView):
+    def get(self, request, *args, **kwargs):
+        titleSlug = request.GET.get('titleSlug')
+        if titleSlug is None or titleSlug == "":
+            return Response({"error": "Title slug is required"}, status=status.HTTP_400_BAD_REQUEST)
+        question_id = get_ques_id(titleSlug)
+
+        return Response({"question_id": question_id}, status=status.HTTP_200_OK)

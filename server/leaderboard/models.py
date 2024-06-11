@@ -9,7 +9,6 @@ class leetcode_acc(models.Model):
     rank= models.CharField(max_length=10, null=True, blank=True, default="Scraping..")
     photo_url = models.CharField(max_length=200, null=True, blank=True, default="Scarping..")
     number_of_questions = models.IntegerField(null=True, blank=True, default=0)
-    last_solved = models.CharField(max_length=50, null=True, blank=True, default="Scraping..")
     SolvedQuestions = ArrayField(models.IntegerField(unique=True), default=list, blank=True)
     MatchedQuestions = ArrayField(models.IntegerField(unique=True), default=list, blank=True)
     def __str__(self):
