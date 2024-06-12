@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { FaCode } from 'react-icons/fa'; // Using FaCode for the Leetcode icon
+import { FaCode } from 'react-icons/fa';
 import { MdAccountCircle } from 'react-icons/md';
 import ccsLogo from '../assets/ccs_logo.png';
 
@@ -11,7 +11,7 @@ export default function Navbar() {
         <li className="divider">DASHBOARD</li>
         <li className="nav-link">
           <Link to="/">
-            <MdAccountCircle className="nav-icon" /> {/* Using FaUserCircle for the user profile icon */}
+            <MdAccountCircle className="nav-icon" />
             Profile
           </Link>
         </li>
@@ -19,7 +19,7 @@ export default function Navbar() {
         <li className="divider">LEADERBOARD</li>
         <li className="nav-link">
           <Link to="/leetcode">
-            <FaCode className="nav-icon" /> {/* Using FaCode for the Leetcode icon */}
+            <FaCode className="nav-icon" /> 
             Leetcode
           </Link>
         </li>
