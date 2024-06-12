@@ -3,84 +3,69 @@ from .models import *
 from .query_manager import *
 
 def match_questions(questions_given, questions_solved):
-    matched_ques = []
-    for question in questions_given:
-        if question in questions_solved:
-            matched_ques.append(question)
-    return matched_ques
+    return [question for question in questions_given if question in questions_solved]
 
 @shared_task(bind=True)
 def get_user_data(self, username, user_id):
     limit = 500
+    
+    # Fetch user-related data
+    user_data = send_query(MATCHED_USER_QUERY, {"username": username})['data']['matchedUser']['profile']
+    submitted_questions = send_query(QUESTIONS_SUBMITTED_QUERY, {"username": username, "limit": limit})['data']['recentAcSubmissionList']
+    language_problem_count = send_query(LANGUAGE_PROBLEM_COUNT_QUERY, {"username": username})['data']['matchedUser']['languageProblemCount']
+    all_question_list_var = {
+        "categorySlug": "all-code-essentials",
+        "skip": 0,
+        "limit": 5000,
+        "filters": {}
+    }
+    #array of all questions, each question has frontendQuestionId and titleSlug
+    all_question_list = send_query(ALL_QUESTION_LIST_QUERY,all_question_list_var)['data']['problemsetQuestionList']['questions']
+    #make a map of titleSlug to frontendQuestionId
+    titleSlug_to_id = {question['titleSlug']: question['frontendQuestionId'] for question in all_question_list}
 
-    response = send_query(MATCHED_USER_QUERY, {"username": username})
-    response2 = send_query(QUESTIONS_SUBMITTED_QUERY, {"username": username, "limit": limit})
-    response3 = send_query(LANGUAGE_PROBLEM_COUNT_QUERY, {"username": username})
 
-    data = response
-    data2 = response2
-    data3 = response3
+    # Extract solved question titleSlugs
+    ques_solved_titles = [question['titleSlug'] for question in submitted_questions]
+    ques_solved_timestamp = [question['timestamp'] for question in submitted_questions]
+    ques_solved_dict = {title: timestamp for title, timestamp in zip(ques_solved_titles, ques_solved_timestamp)}
 
-    data2 = data2['data']['recentAcSubmissionList']
-    data3 = data3['data']['matchedUser']['languageProblemCount']
+    # Calculate total number of questions solved
+    total_solved = sum(question['problemsSolved'] for question in language_problem_count)
 
-    questions_solved = []
-    for question in data2:
-        questions_solved.append(question['titleSlug'])
+    ques_solved_id = [titleSlug_to_id[title] for title in ques_solved_titles if title in titleSlug_to_id]
 
-    number_of_questions = 0
-    for question in data3:
-        number_of_questions += question['problemsSolved']
+    # Fetch given question IDs
+    questions_given_id = list(Question.objects.values_list('leetcode_id', flat=True))
 
-    questions_solved_id = []
-    for question in questions_solved:
-        response = send_query(QUESTION_ID_QUERY, {"titleSlug": question})
-        question_id = response['data']['question']['questionId']
-        # convert the question id to integer
-        question_id = int(question_id)
-        questions_solved_id.append(question_id)
-
-    profile = data['data']['matchedUser']['profile']
-    realname = profile['realName']
-    rank = profile['ranking']
-    photo_url = profile['userAvatar']
-
-    questions_given_id = fetch_given_ques()
-
-    matched_ques = match_questions(questions_given_id, questions_solved_id)
+    # Match questions
+    matched_ques = match_questions(questions_given_id, ques_solved_id)
+    
+    # Update user data in the database
     instance = leetcode_acc.objects.get(user=user_id)
-
-    # save the details in the model
-    instance.name = realname
-    instance.leetcode_rank = rank
-    instance.photo_url = photo_url
-    instance.total_solved = number_of_questions
+    instance.name = user_data['realName']
+    instance.leetcode_rank = user_data['ranking']
+    instance.photo_url = user_data['userAvatar']
+    instance.total_solved = total_solved
     instance.matched_ques = len(matched_ques)
-    instance.total_solved_list = questions_solved_id
+    instance.total_solved_list = ques_solved_id
     instance.matched_ques_list = matched_ques
     instance.save()
-    
+
     print(f"Data for {username} saved successfully")
-
-def fetch_given_ques():
-    questions_given = Question.objects.all()
-    questions_given_id = []
-    for question in questions_given:
-        questions_given_id.append(question.leetcode_id)
-    return questions_given_id
-
 
 @shared_task(bind=True)
 def refresh_user_data(self):
     users = leetcode_acc.objects.all()
-    if users is None:
+    if not users:
         return
+
     for user in users:
         get_user_data.delay(user.leetcode_name, user.user)
+
     print("Data refreshed successfully")
 
 @shared_task(bind=True)
 def get_ques_id(self, titleSlug):
     response = send_query(QUESTION_ID_QUERY, {"titleSlug": titleSlug})
-    question_id = response['data']['question']['questionId']
-    return question_id
+    return response['data']['question']['questionId']
