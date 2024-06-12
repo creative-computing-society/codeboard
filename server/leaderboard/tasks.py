@@ -2,13 +2,12 @@ from celery import shared_task
 from .models import *
 from .query_manager import *
 
-def fetch_admin_questions():
-    ques = Question.objects.all()
-    return [q.leetcode_id for q in ques]
-
-def match_ques(questions_solved_ids):
-    admin_questions_ids = fetch_admin_questions()
-    return [ques for ques in questions_solved_ids if ques in admin_questions_ids]
+def match_questions(questions_given, questions_solved):
+    matched_ques = []
+    for question in questions_given:
+        if question in questions_solved:
+            matched_ques.append(question)
+    return matched_ques
 
 @shared_task(bind=True)
 def get_user_data(self, username, user_id):
@@ -37,6 +36,8 @@ def get_user_data(self, username, user_id):
     for question in questions_solved:
         response = send_query(QUESTION_ID_QUERY, {"titleSlug": question})
         question_id = response['data']['question']['questionId']
+        # convert the question id to integer
+        question_id = int(question_id)
         questions_solved_id.append(question_id)
 
     profile = data['data']['matchedUser']['profile']
@@ -44,20 +45,29 @@ def get_user_data(self, username, user_id):
     rank = profile['ranking']
     photo_url = profile['userAvatar']
 
+    questions_given_id = fetch_given_ques()
+
+    matched_ques = match_questions(questions_given_id, questions_solved_id)
     instance = leetcode_acc.objects.get(user=user_id)
 
-    matched_ques = match_ques(questions_solved_id)
-    print('Matched Questions' +matched_ques)
     # save the details in the model
     instance.name = realname
-    instance.rank = rank
+    instance.leetcode_rank = rank
     instance.photo_url = photo_url
-    instance.number_of_questions = number_of_questions
-    instance.SolvedQuestions = questions_solved_id
-    # instance.MatchedQuestions = matched_ques
+    instance.total_solved = number_of_questions
+    instance.matched_ques = len(matched_ques)
+    instance.total_solved_list = questions_solved_id
+    instance.matched_ques_list = matched_ques
     instance.save()
     
     print(f"Data for {username} saved successfully")
+
+def fetch_given_ques():
+    questions_given = Question.objects.all()
+    questions_given_id = []
+    for question in questions_given:
+        questions_given_id.append(question.leetcode_id)
+    return questions_given_id
 
 
 @shared_task(bind=True)
@@ -67,9 +77,7 @@ def refresh_user_data(self):
         return
     for user in users:
         get_user_data.delay(user.leetcode_name, user.user)
-
-def match_ques(ques_solved_ids):
-    pass
+    print("Data refreshed successfully")
 
 @shared_task(bind=True)
 def get_ques_id(self, titleSlug):
