@@ -12,7 +12,8 @@
     --LINK-ACTIVE-COLOR: rgb(82, 81, 81);
   }
   body{
-    background-color: rgb(33, 35, 42);
+    background-color: rgba(228, 251, 251, 0.866);
+    
   }
   /* NAVBAR *************************************************************************************** */
   .NavBar {
@@ -41,7 +42,7 @@
   
   .NavBar li {
     padding-bottom: 0.3rem;
-    margin-bottom: 1.5rem;
+    margin-bottom: 1rem;
     display: flex;
     align-items: center;
   }
@@ -81,6 +82,7 @@
   
   .nav-icon {
     margin-left: 0.5rem;
+    margin-right: 1rem;
     font-size: 1.2rem;
   }
   
@@ -123,6 +125,7 @@
   .app-container {
     display: flex;
     flex-grow: 1;
+    
   }
   
   .content {
@@ -136,7 +139,7 @@
   }
   
   .content h2 {
-    color: var(--CONTENT-H2-COLOR);
+    color: rgb(33, 35, 42);;
     font-weight: 700;
     font-family: 'Roboto', sans-serif;
   }
@@ -145,5 +148,71 @@
     font-family: 'Open Sans', sans-serif;
     line-height: 1.8;
     margin-bottom: 1rem;
+  }
+  /*  Profile ************************************************/
+  .profile-container {
+    background-color: #282c34;
+    color: var(--CONTENT-COLOR);
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    max-width: 600px;
+    margin: 0 auto;
+    margin-top: 50px; /* Add margin-top for centering */
+    position: relative; /* Ensure it's centered vertically */
+  }
+  
+  .profile-container img {
+    border-radius: 50%;
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    margin-bottom: 20px;
+    border: 3px solid var(--CONTENT-H2-COLOR); /* Add border */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Add shadow */
+  }
+  
+  .profile-container h1 {
+    font-size: 2.5em; /* Increase font size */
+    color: white; /* Change name color to white */
+    margin-bottom: 10px;
+  }
+  
+  .profile-container p {
+    font-size: 1.2em;
+    color: var(--CONTENT-COLOR);
+    margin: 5px 0;
+  }
+  
+  .profile-container p span {
+    font-weight: bold;
+    color: white; /* Ensure high contrast */
+  }
+  
+  /* Loading and Error Styles */
+  .loading,
+  .error {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    font-size: 1.5em;
+    color: rgb(33, 35, 42);
+  }
+  
+  /* Adding responsive design */
+  @media (max-width: 768px) {
+    .profile-container {
+      padding: 1rem;
+    }
+  
+    .profile-container h1 {
+      font-size: 1.5em;
+    }
+  
+    .profile-container p {
+      font-size: 1em;
+    }
   }
   
