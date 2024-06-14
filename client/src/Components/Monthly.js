@@ -1,9 +1,9 @@
 import React from 'react'
 
-export default function Leetcode() {
+export default function Monthly() {
   return (
     <div>
-      <h2>Leetcode</h2>
+      <h2>Monthly</h2>
     </div>
   )
 }

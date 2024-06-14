@@ -1,8 +1,9 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-
-import Leetcode from './Components/Leetcode';
 import Navbar from './Components/Navbar';
 import Profile from './Components/Profile';
+import Daily from './Components/Daily';
+import Weekly from './Components/Weekly';
+import Monthly from './Components/Monthly';
 import './App.css'
 function App() {
   return (
@@ -13,7 +14,9 @@ function App() {
           <Routes>
             <Route path="/" element={<Profile />} />
             <Route path="/profile" element={<Profile />} />
-            <Route path="/leetcode" element={<Leetcode />} />
+            <Route path="/daily" element={<Daily />} />
+            <Route path="/weekly" element={<Weekly />} />
+            <Route path="/monthly" element={<Monthly />} />
             
           </Routes>
         </div>
