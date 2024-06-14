@@ -11,7 +11,7 @@ class register_leetcode(APIView):
     def post(self, request, *args, **kwargs):
         leetcode_name = request.data.get('username')
         if leetcode_name is None or leetcode_name == "":
-            return Response({"error": "Leetcode name is required"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"error": "Leetcode username is required"}, status=status.HTTP_400_BAD_REQUEST)
         if leetcode_acc.objects.filter(leetcode_name=leetcode_name).exists():
             return Response({"error": "Leetcode user already exists"}, status=status.HTTP_400_BAD_REQUEST)
         acc = leetcode_acc.objects.create(leetcode_name=leetcode_name)
@@ -45,6 +45,22 @@ class getQuestionID(APIView):
 
         return Response({"question_id": question_id}, status=status.HTTP_200_OK)
     
+def get_today_questions(user):
+    today = timezone.now()
+    start_of_today = today.replace(hour=0, minute=0, second=0, microsecond=0)
+    end_of_today = today.replace(hour=23, minute=59, second=59, microsecond=999999)
+    questions = Question.objects.filter(questionDate__range=(start_of_today, end_of_today))
+    context = {'username':user}
+    serializer = QuestionSerializer(questions, many=True, context=context)
+    return serializer.data
+
+class getQuestionsForTheDay(APIView):
+    def get(self, request, *args, **kwargs):
+        questions_data = get_today_questions(request.GET.get('username'))
+        return Response(questions_data, status=status.HTTP_200_OK)
+
+
+
 class debug_refresh_user_data(APIView):
     def get(self, request, *args, **kwargs):
         refresh_user_data.delay()
