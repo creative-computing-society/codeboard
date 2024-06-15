@@ -12,9 +12,9 @@ class register_leetcode(APIView):
         leetcode_name = request.data.get('username')
         if leetcode_name is None or leetcode_name == "":
             return Response({"error": "Leetcode username is required"}, status=status.HTTP_400_BAD_REQUEST)
-        if leetcode_acc.objects.filter(leetcode_name=leetcode_name).exists():
+        if leetcode_acc.objects.filter(username=leetcode_name).exists():
             return Response({"error": "Leetcode user already exists"}, status=status.HTTP_400_BAD_REQUEST)
-        acc = leetcode_acc.objects.create(leetcode_name=leetcode_name)
+        acc = leetcode_acc.objects.create(username=leetcode_name)
 
         get_user_data.delay(leetcode_name,acc.user)
         return Response({"message": "Leetcode user registered successfully"}, status=status.HTTP_201_CREATED)
@@ -30,9 +30,9 @@ class getUserInfo(APIView):
         username = request.GET.get('username')
         if username is None or username == "":
             return Response({"error": "Username is required"}, status=status.HTTP_400_BAD_REQUEST)
-        if not leetcode_acc.objects.filter(leetcode_name=username).exists():
+        if not leetcode_acc.objects.filter(username=username).exists():
             return Response({"error": "User does not exist"}, status=status.HTTP_404_NOT_FOUND)
-        account = leetcode_acc.objects.get(leetcode_name=username)
+        account = leetcode_acc.objects.get(username=username)
         serializer = leetcode_accSerializer(account)
         return Response(serializer.data, status=status.HTTP_200_OK)
     
