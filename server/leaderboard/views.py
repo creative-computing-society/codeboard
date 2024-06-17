@@ -1,7 +1,7 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-
+from django.db.models import F
 from .models import leetcode_acc
 from .tasks import *
 from .serializers import *
@@ -36,14 +36,6 @@ class getUserInfo(APIView):
         serializer = leetcode_accSerializer(account)
         return Response(serializer.data, status=status.HTTP_200_OK)
     
-class getQuestionID(APIView):
-    def get(self, request, *args, **kwargs):
-        titleSlug = request.GET.get('titleSlug')
-        if titleSlug is None or titleSlug == "":
-            return Response({"error": "Title slug is required"}, status=status.HTTP_400_BAD_REQUEST)
-        question_id = get_ques_id(titleSlug)
-
-        return Response({"question_id": question_id}, status=status.HTTP_200_OK)
     
 def get_today_questions(user):
     today = timezone.now()
@@ -59,7 +51,20 @@ class getQuestionsForTheDay(APIView):
         questions_data = get_today_questions(request.GET.get('username'))
         return Response(questions_data, status=status.HTTP_200_OK)
 
+class daily_leaderboard(APIView):
+    def get(self, request, *args, **kwargs):
+        one_day, _, _ = calculate_leaderboards()
+        return Response(one_day, status=status.HTTP_200_OK)
 
+class weekly_leaderboard(APIView):
+    def get(self, request, *args, **kwargs):
+        _, one_week, _ = calculate_leaderboards()
+        return Response(one_week, status=status.HTTP_200_OK)
+
+class monthly_leaderboard(APIView):
+    def get(self, request, *args, **kwargs):
+        _, _, one_month = calculate_leaderboards()
+        return Response(one_month, status=status.HTTP_200_OK)
 
 class debug_refresh_user_data(APIView):
     def get(self, request, *args, **kwargs):
