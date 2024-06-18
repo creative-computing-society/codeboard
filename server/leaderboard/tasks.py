@@ -111,7 +111,6 @@ def generate_leaderboards_entries():
         solved_dict = user_instance.total_solved_dict
         solved_within_one_day, solved_within_one_week, solved_within_one_month = cal_solved_intervals(ques_given, solved_dict)
         print(f"user: {username} - Solved_dict: {solved_dict}")
-        # print(f"User: {username} - Day: {len(solved_within_one_day)} - Week: {len(solved_within_one_week)} - Month: {len(solved_within_one_month)}")
         daily_entry, _ = LeaderboardEntry.objects.get_or_create(user=user_instance, interval='day')
         weekly_entry, _ = LeaderboardEntry.objects.get_or_create(user=user_instance, interval='week')
         monthly_entry, _ = LeaderboardEntry.objects.get_or_create(user=user_instance, interval='month')
@@ -141,7 +140,15 @@ def update_rank(user_list, rank_dict, rank_type):
             "last_solv": user[2]
             }
         
-        user_obj.update(**{rank_type: idx+1})
+        try:
+            user_obj = leetcode_acc.objects.get(username=user[0])
+            if hasattr(user_obj, rank_type):  # Check if the attribute exists
+                setattr(user_obj, rank_type, idx+1)
+                user_obj.save()
+            else:
+                print(f"Attribute {rank_type} does not exist on leetcode_acc objects.")
+        except leetcode_acc.DoesNotExist:
+            print(f"User {user[0]} does not exist.")
 
 @shared_task(bind=True)
 def calculate_leaderboards(self, *args, **kwargs):

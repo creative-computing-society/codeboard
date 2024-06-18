@@ -15,6 +15,7 @@ def main():
         from django.core.management import execute_from_command_line
         if 'runserver' in sys.argv:
             start_celery()
+            
     except ImportError as exc:
         raise ImportError(
             "Couldn't import Django. Are you sure it's installed and "
