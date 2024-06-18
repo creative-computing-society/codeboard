@@ -16,7 +16,7 @@ app.conf.beat_schedule = {
     'refresh_user_data':{
         'task': 'leaderboard.tasks.refresh_user_data',
         'schedule': 120,
-    }
+    },
 }
 
 # Load task modules from all registered Django app configs.

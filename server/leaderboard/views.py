@@ -1,10 +1,19 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-
+from django.db.models import F
 from .models import leetcode_acc
 from .tasks import *
 from .serializers import *
+
+def get_today_questions(user):
+    today = timezone.now()
+    start_of_today = today.replace(hour=0, minute=0, second=0, microsecond=0)
+    end_of_today = today.replace(hour=23, minute=59, second=59, microsecond=999999)
+    questions = Question.objects.filter(questionDate__range=(start_of_today, end_of_today))
+    context = {'username':user}
+    serializer = QuestionSerializer(questions, many=True, context=context)
+    return serializer.data
 
 class register_leetcode(APIView):
 
@@ -35,31 +44,26 @@ class getUserInfo(APIView):
         account = leetcode_acc.objects.get(username=username)
         serializer = leetcode_accSerializer(account)
         return Response(serializer.data, status=status.HTTP_200_OK)
-    
-class getQuestionID(APIView):
-    def get(self, request, *args, **kwargs):
-        titleSlug = request.GET.get('titleSlug')
-        if titleSlug is None or titleSlug == "":
-            return Response({"error": "Title slug is required"}, status=status.HTTP_400_BAD_REQUEST)
-        question_id = get_ques_id(titleSlug)
-
-        return Response({"question_id": question_id}, status=status.HTTP_200_OK)
-    
-def get_today_questions(user):
-    today = timezone.now()
-    start_of_today = today.replace(hour=0, minute=0, second=0, microsecond=0)
-    end_of_today = today.replace(hour=23, minute=59, second=59, microsecond=999999)
-    questions = Question.objects.filter(questionDate__range=(start_of_today, end_of_today))
-    context = {'username':user}
-    serializer = QuestionSerializer(questions, many=True, context=context)
-    return serializer.data
 
 class getQuestionsForTheDay(APIView):
     def get(self, request, *args, **kwargs):
         questions_data = get_today_questions(request.GET.get('username'))
         return Response(questions_data, status=status.HTTP_200_OK)
 
+class daily_leaderboard(APIView):
+    def get(self, request, *args, **kwargs):
+        one_day = Leaderboard.objects.get(leaderboard_type='daily').leaderboard_data
+        return Response(one_day, status=status.HTTP_200_OK)
 
+class weekly_leaderboard(APIView):
+    def get(self, request, *args, **kwargs):
+        one_week = Leaderboard.objects.get(leaderboard_type='weekly').leaderboard_data
+        return Response(one_week, status=status.HTTP_200_OK)
+
+class monthly_leaderboard(APIView):
+    def get(self, request, *args, **kwargs):
+        one_month = Leaderboard.objects.get(leaderboard_type='monthly').leaderboard_data
+        return Response(one_month, status=status.HTTP_200_OK)
 
 class debug_refresh_user_data(APIView):
     def get(self, request, *args, **kwargs):
