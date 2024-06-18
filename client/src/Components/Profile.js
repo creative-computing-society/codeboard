@@ -27,7 +27,7 @@ const Profile = () => {
     const fetchQuestions = async () => {
       console.log('Fetching questions...');
       try {
-        const response = await axios.get('http://127.0.0.1:8000/today_questions/?username=gurmankd');
+        const response = await axios.get('http://127.0.0.1:8000/today_questions/');
         console.log('Questions response received:', response);
         setQuestions(response.data);
         console.log('Questions data set:', response.data);
@@ -64,7 +64,9 @@ const Profile = () => {
         <h1>{profile.name}</h1>
         <p>LeetCode Username: <span>{profile.username}</span></p>
         <p>LeetCode Rank: <span>{profile.leetcode_rank}</span></p>
-        <p>CCS Rank: <span>{profile.ccs_rank}</span></p>
+        <p>Today's Rank: <span>{profile.daily_rank}</span></p>
+        <p>Weekly Rank: <span>{profile.weekly_rank}</span></p>
+        <p>Monthly Rank: <span>{profile.monthly_rank}</span></p>
       </div>
 
       <div className="question-container">
