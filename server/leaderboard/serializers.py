@@ -4,7 +4,8 @@ from .models import *
 class leetcode_accSerializer(serializers.ModelSerializer):
     class Meta:
         model = leetcode_acc
-        fields = ['username', 'name','leetcode_rank', 'ccs_rank', 'photo_url']
+        fields = ['username', 'name','leetcode_rank', 'daily_rank','weekly_rank','monthly_rank', 'photo_url']
+
 
 class QuestionSerializer(serializers.ModelSerializer):
     leetcode_link = serializers.SerializerMethodField()

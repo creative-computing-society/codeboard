@@ -1,7 +1,7 @@
-from celery import shared_task
+from celery import shared_task, group
 from django.utils import timezone
 from datetime import timedelta
-from .models import leetcode_acc, LeaderboardEntry, Question
+from .models import leetcode_acc, LeaderboardEntry, Question, Leaderboard
 from .query_manager import *
 import time
 from pprint import pprint
@@ -107,8 +107,7 @@ def generate_leaderboards_entries():
         username = user_instance.username
         solved_dict = user_instance.total_solved_dict
         solved_within_one_day, solved_within_one_week, solved_within_one_month = cal_solved_intervals(ques_given, solved_dict)
-        if username == 'singlaishan69':
-            print(f"user: {username} - Solved_dict: {solved_dict}")
+        print(f"user: {username} - Solved_dict: {solved_dict}")
         # print(f"User: {username} - Day: {len(solved_within_one_day)} - Week: {len(solved_within_one_week)} - Month: {len(solved_within_one_month)}")
         daily_entry, _ = LeaderboardEntry.objects.get_or_create(user=user_instance, interval='day')
         weekly_entry, _ = LeaderboardEntry.objects.get_or_create(user=user_instance, interval='week')
@@ -128,7 +127,7 @@ def generate_leaderboards_entries():
     print("Leaderboard entries generated successfully")
 
 @shared_task(bind=True)
-def calculate_leaderboards(self):
+def calculate_leaderboards(self, *args, **kwargs):
     generate_leaderboards_entries()
     one_day, one_week, one_month = {}, {}, {}
     daily, weekly, monthly = [], [], []
@@ -154,16 +153,41 @@ def calculate_leaderboards(self):
         user[2] = timezone.datetime.fromtimestamp(user[2]).strftime('%Y-%m-%d %H:%M:%S')
 
     for idx, user in enumerate(daily):
+        # Skip users with 0 questions solved
+        if user[1] == 0:
+            continue
         one_day[idx+1] =  {"Username": user[0], "Questions Solved": user[1], "Last Solved": user[2]}
+        leetcode_acc.objects.filter(username=user[0]).update(daily_rank=idx+1)
+
     for idx, user in enumerate(weekly):
+        if user[1] == 0:
+            continue
         one_week[idx+1] =  {"Username": user[0], "Questions Solved": user[1], "Last Solved": user[2]}
+        leetcode_acc.objects.filter(username=user[0]).update(weekly_rank=idx+1)
+
     for idx, user in enumerate(monthly):
+        if user[1] == 0:
+            continue
         one_month[idx+1] =  {"Username": user[0], "Questions Solved": user[1], "Last Solved": user[2]}
+        leetcode_acc.objects.filter(username=user[0]).update(monthly_rank=idx+1)
+    
+    
+    # create or update leaderboard (total 3)
+    Leaderboard.objects.update_or_create(
+        leaderboard_type='daily', defaults={'leaderboard_data': one_day}
+    )
+    Leaderboard.objects.update_or_create(
+        leaderboard_type='weekly', defaults={'leaderboard_data': one_week}
+    )
+    Leaderboard.objects.update_or_create(
+        leaderboard_type='monthly', defaults={'leaderboard_data': one_month}
+    )
+
     print("Leaderboards calculated successfully")
     return one_day, one_week, one_month
 
 @shared_task(bind=True)
-def get_user_data(self, username, user_id):
+def get_user_data(self, username, user_id, *args, **kwargs):
     user_profile = fetch_user_profile(username)    
 
     submitted_questions = fetch_submitted_questions(username)
@@ -197,7 +221,8 @@ def refresh_user_data(self):
     if not users:
         return
 
-    for user in users:
-        get_user_data.delay(user.username, user.user)
+    user_data_tasks = [get_user_data.s(user.username, user.user) for user in users]
+    task_chain = group(user_data_tasks) | calculate_leaderboards.s()
+    task_chain.apply_async()
 
-    print("Data refreshed successfully")
+    print("Data refreshed and leaderboard initiated successfully")

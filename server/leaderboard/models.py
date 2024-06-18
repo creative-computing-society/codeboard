@@ -7,13 +7,18 @@ class leetcode_acc(models.Model):
     username = models.CharField(max_length=100, null=False, blank=False, unique=True, default="")
     name = models.CharField(max_length=100, null=True, blank=True, default="Scraping..")
     leetcode_rank= models.CharField(max_length=10, null=True, blank=True, default="Scraping..")
-    ccs_rank = models.IntegerField(null=True, blank=True, default=0)
+
+    daily_rank = models.IntegerField(null=True, blank=True, default=0)
+    weekly_rank = models.IntegerField(null=True, blank=True, default=0)
+    monthly_rank = models.IntegerField(null=True, blank=True, default=0)
+
     photo_url = models.CharField(max_length=200, null=True, blank=True, default="Scarping..")
+
     total_solved = models.IntegerField(null=True, blank=True, default=0)
     matched_ques = models.IntegerField(null=True, blank=True, default=0)
+
     submission_dict = models.JSONField(null=True, blank=True, default=dict)
     total_solved_dict = models.JSONField(null=True, blank=True, default=dict)
-    # matched_ques_list = ArrayField(models.IntegerField(), null=True, blank=True, default=list)
     matched_ques_dict = models.JSONField(null=True, blank=True, default=dict)
     def __str__(self):
         return self.username
@@ -36,3 +41,11 @@ class LeaderboardEntry(models.Model):
 
     class Meta:
         unique_together = ('user', 'interval')
+
+class Leaderboard(models.Model):
+    leaderboard_key = models.AutoField(primary_key=True)
+    leaderboard_type = models.CharField(max_length=20, null=False, blank=False, choices=[('daily', 'daily'), ('weekly', 'weekly'), ('monthly', 'monthly')], default='daily')
+    leaderboard_data = models.JSONField(null=True, blank=True, default=dict)
+
+    def __str__(self):
+        return self.leaderboard_type
