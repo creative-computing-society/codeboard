@@ -63,7 +63,10 @@ def cal_solved_intervals(questions, solved_dict: dict):
     return solved_within_one_day, solved_within_one_week, solved_within_one_month
 
 def fetch_user_profile(username):
-    return send_query(MATCHED_USER_QUERY, {"username": username})['data']['matchedUser']['profile']
+    response = send_query(MATCHED_USER_QUERY, {"username": username})
+    if response:
+        return response['data']['matchedUser']['profile']
+    return None
 
 def fetch_submitted_questions(username, limit=500):
     return send_query(QUESTIONS_SUBMITTED_QUERY, {"username": username, "limit": limit})['data']['recentAcSubmissionList']
@@ -224,5 +227,4 @@ def refresh_user_data(self):
     user_data_tasks = [get_user_data.s(user.username, user.user) for user in users]
     task_chain = group(user_data_tasks) | calculate_leaderboards.s()
     task_chain.apply_async()
-
     print("Data refreshed and leaderboard initiated successfully")

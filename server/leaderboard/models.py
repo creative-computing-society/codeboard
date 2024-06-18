@@ -1,8 +1,10 @@
 from django.db import models
 from django.contrib.postgres.fields import ArrayField
 import datetime
+from login.models import User
+
 class leetcode_acc(models.Model):
-    # user=models.ForeignKey(User,on_delete=models.CASCADE,related_name='leetcode')
+    user=models.ForeignKey(User,on_delete=models.CASCADE,related_name='leetcode')
     user = models.AutoField(primary_key=True, unique=True, default=0)
     username = models.CharField(max_length=100, null=False, blank=False, unique=True, default="")
     name = models.CharField(max_length=100, null=True, blank=True, default="Scraping..")

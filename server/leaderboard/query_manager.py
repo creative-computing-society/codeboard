@@ -50,8 +50,19 @@ query problemsetQuestionList($categorySlug: String, $limit: Int, $skip: Int, $fi
 """
 
 def send_query(query, variables):
-  url = "https://leetcode.com/graphql"
-  headers = {"Content-Type": "application/json"}
-  response = requests.post(url, json={"query": query, "variables": variables}, headers=headers)
-  data = response.json()
-  return data
+    url = "https://leetcode.com/graphql"
+    headers = {"Content-Type": "application/json"}
+    try:
+        response = requests.post(url, json={"query": query, "variables": variables}, headers=headers)
+        response.raise_for_status()
+    except requests.exceptions.RequestException as e:
+        print(f"Request error: {e}")
+        return None
+
+    try:
+        data = response.json()
+    except requests.exceptions.JSONDecodeError:
+        print(f"Failed to decode JSON. Status Code: {response.status_code}, Response Text: {response.text}")
+        return None
+
+    return data
