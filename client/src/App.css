@@ -263,3 +263,49 @@
     text-decoration: underline;
     color: rgb(57, 185, 255);
   }
+  /*  LEADERBOARD */
+  .leaderboard-container {
+    background-color: var(--NAV-BGCOLOR);
+    border-radius: 15px;
+    padding: 20px;
+    margin: 20px;
+  }
+  
+  .leaderboard-title {
+    color: var(--CONTENT-H2-COLOR);
+    text-align: center;
+  }
+  
+  .leaderboard-table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: var(--NAV-BGCOLOR);
+    color: var(--CONTENT-COLOR);
+  }
+  
+  .leaderboard-table th,
+  .leaderboard-table td {
+    padding: 15px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  .leaderboard-table th {
+    background-color: var(--NAV-BGCOLOR);
+    color: white;
+  }
+  
+  .leaderboard-row {
+    margin: 5px;
+  }
+  
+  .leaderboard-row:hover {
+    background-color: var(--NAV-COLOR);
+    color: black;
+  }
+  
+  .leaderboard-row td {
+    border: 1px solid white;
+    margin: 2px;
+    background-color: var(--NAV-BGCOLOR);
+  }

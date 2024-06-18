@@ -23,13 +23,13 @@ const Monthly = () => {
       });
   }, []);
 
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error loading data: {error.message}</p>;
+  if (loading) return <p className="loading">Loading...</p>;
+  if (error) return <p className="error">Error loading data: {error.message}</p>;
 
   return (
-    <div>
-      <h1>Monthly Leaderboard</h1>
-      <table border="1">
+    <div className="leaderboard-container">
+      <h1 className="leaderboard-title">Monthly Leaderboard</h1>
+      <table className="leaderboard-table">
         <thead>
           <tr>
             <th>Rank</th>
@@ -40,7 +40,7 @@ const Monthly = () => {
         </thead>
         <tbody>
           {data.map((item, index) => (
-            <tr key={item.id}>
+            <tr key={item.id} className="leaderboard-row">
               <td>{index + 1}</td>
               <td>{item.Username}</td>
               <td>{item["Last Solved"]}</td>
