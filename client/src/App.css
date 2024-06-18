@@ -151,19 +151,26 @@
   }
   /*  Profile ************************************************/
   .profile-container {
+    display: flex;
+    justify-content: space-between; /* Space between containers */
     background-color: #282c34;
     color: var(--CONTENT-COLOR);
     padding: 2rem;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    text-align: center;
-    max-width: 600px;
+    max-width: 1000px; /* Adjusted width to fit both containers */
     margin: 0 auto;
     margin-top: 50px; /* Add margin-top for centering */
     position: relative; /* Ensure it's centered vertically */
   }
   
-  .profile-container img {
+  .detail-container {
+    flex: 1; /* Flex to adjust with the container */
+    text-align: center;
+    padding-right: 1rem; /* Padding to add space between containers */
+  }
+  
+  .detail-container img {
     border-radius: 50%;
     width: 150px;
     height: 150px;
@@ -173,19 +180,19 @@
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Add shadow */
   }
   
-  .profile-container h1 {
+  .detail-container h1 {
     font-size: 2.5em; /* Increase font size */
     color: white; /* Change name color to white */
     margin-bottom: 10px;
   }
   
-  .profile-container p {
+  .detail-container p {
     font-size: 1.2em;
     color: var(--CONTENT-COLOR);
     margin: 5px 0;
   }
   
-  .profile-container p span {
+  .detail-container p span {
     font-weight: bold;
     color: white; /* Ensure high contrast */
   }
@@ -215,4 +222,44 @@
       font-size: 1em;
     }
   }
+  .question-container {
+    flex: 2; /* Flex to adjust with the container */
+  }
   
+  .question-container h2 {
+    color: white; /* Change heading color to white */
+  }
+  
+  .questions-table {
+    width: 100%;
+    margin-top: 20px;
+    border-collapse: collapse;
+    background-color: var(--NAV-BGCOLOR); /* Add background color for contrast */
+  }
+  
+  .questions-table th,
+  .questions-table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  .questions-table th {
+    background-color: var(--NAV-BGCOLOR);
+    color: white;
+  }
+  
+  .questions-table tr:hover {
+    background-color: var(--NAV-COLOR);
+    color: black;
+  }
+  
+  .questions-table a {
+    color: rgba(62, 216, 219, 0.866);
+    text-decoration: none;
+  }
+  
+  .questions-table a:hover {
+    text-decoration: underline;
+    color: rgb(57, 185, 255);
+  }
