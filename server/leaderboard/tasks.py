@@ -129,6 +129,20 @@ def generate_leaderboards_entries():
         monthly_entry.save()
     print("Leaderboard entries generated successfully")
 
+def update_rank(user_list, rank_dict, rank_type):
+    for idx, user in enumerate(user_list):
+        user_obj = leetcode_acc.objects.get(username=user[0])
+        if user[1] == 0:
+            continue
+        rank_dict[idx+1] =  {
+            "username": user[0],
+            "photo_url": user_obj.photo_url,
+            "ques_solv": user[1],
+            "last_solv": user[2]
+            }
+        
+        user_obj.update(**{rank_type: idx+1})
+
 @shared_task(bind=True)
 def calculate_leaderboards(self, *args, **kwargs):
     generate_leaderboards_entries()
@@ -155,25 +169,9 @@ def calculate_leaderboards(self, *args, **kwargs):
     for user in monthly:
         user[2] = timezone.datetime.fromtimestamp(user[2]).strftime('%Y-%m-%d %H:%M:%S')
 
-    for idx, user in enumerate(daily):
-        # Skip users with 0 questions solved
-        if user[1] == 0:
-            continue
-        one_day[idx+1] =  {"Username": user[0], "Questions Solved": user[1], "Last Solved": user[2]}
-        leetcode_acc.objects.filter(username=user[0]).update(daily_rank=idx+1)
-
-    for idx, user in enumerate(weekly):
-        if user[1] == 0:
-            continue
-        one_week[idx+1] =  {"Username": user[0], "Questions Solved": user[1], "Last Solved": user[2]}
-        leetcode_acc.objects.filter(username=user[0]).update(weekly_rank=idx+1)
-
-    for idx, user in enumerate(monthly):
-        if user[1] == 0:
-            continue
-        one_month[idx+1] =  {"Username": user[0], "Questions Solved": user[1], "Last Solved": user[2]}
-        leetcode_acc.objects.filter(username=user[0]).update(monthly_rank=idx+1)
-    
+    update_rank(daily, one_day, 'daily_rank')
+    update_rank(weekly, one_week, 'weekly_rank')
+    update_rank(monthly, one_month, 'monthly_rank')
     
     # create or update leaderboard (total 3)
     Leaderboard.objects.update_or_create(
