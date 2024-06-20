@@ -12,7 +12,7 @@ export default function Navbar() {
         <li className="nav-link">
           <Link to="/">
             <MdAccountCircle className="nav-icon" />
-            Profile
+            <span class="nav-Text">Profile</span>
           </Link>
         </li>
         
@@ -20,22 +20,22 @@ export default function Navbar() {
         <li className="nav-link">
           <Link to="/daily">
             <FaCalendarDay className="nav-icon" /> 
-            Daily
+            <span class="nav-Text">Daily</span>
           </Link>
         </li>
         <li className="nav-link">
           <Link to="/weekly">
             <FaCalendarWeek className="nav-icon" /> 
-            Weekly
+            <span class="nav-Text">Weekly</span>
           </Link>
         </li>
         <li className="nav-link">
           <Link to="/monthly">
             <FaCalendarAlt className="nav-icon" /> 
-            Monthly
+            <span class="nav-Text">Monthly</span>
           </Link>
         </li>
-      </ul>
+      </ul>-
     </div>
   );
 }

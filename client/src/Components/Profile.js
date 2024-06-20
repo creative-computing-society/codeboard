@@ -11,7 +11,7 @@ const Profile = () => {
     const fetchProfile = async () => {
       console.log('Fetching profile...');
       try {
-        const response = await axios.get('http://127.0.0.1:8000/get_user/?username=gurmankd');
+        const response = await axios.get('http://127.0.0.1:8000/get_user/?username=hushraj');
         console.log('Response received:', response);
         setProfile(response.data);
         console.log('Profile data set:', response.data);
@@ -27,7 +27,7 @@ const Profile = () => {
     const fetchQuestions = async () => {
       console.log('Fetching questions...');
       try {
-        const response = await axios.get('http://127.0.0.1:8000/today_questions/');
+        const response = await axios.get('http://127.0.0.1:8000/today_questions/?username=hushraj');
         console.log('Questions response received:', response);
         setQuestions(response.data);
         console.log('Questions data set:', response.data);
