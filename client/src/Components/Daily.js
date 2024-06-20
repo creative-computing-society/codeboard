@@ -26,29 +26,29 @@ const Daily = () => {
   if (error) return <p>Error loading data: {error.message}</p>;
 
   return (
-    <div>
-      <h1>Daily Leaderboard</h1>
-      <table border="1">
-        <thead>
-          <tr>
-            <th>Rank</th>
-            <th>Username</th>
-            <th>Last Solved</th>
-            <th>Questions Solved</th>
+    <div className="leaderboard-container">
+    <h1 className="leaderboard-title">Daily Leaderboard</h1>
+    <table className="leaderboard-table">
+      <thead>
+        <tr>
+          <th>Rank</th>
+          <th>Username</th>
+          <th></th>
+          <th>Questions Solved</th>
+        </tr>
+      </thead>
+      <tbody>
+        {data.map((item, index) => (
+          <tr key={item.id} className="leaderboard-row">
+            <td>{index + 1}</td>
+            <td><img src={item.photo_url} alt="Profile" /></td>
+            <td>{item.username}</td>
+            <td>{item.ques_solv}</td>
           </tr>
-        </thead>
-        <tbody>
-          {data.map((item, index) => (
-            <tr key={index}>
-              <td>{index + 1}</td>
-              <td>{item.Username}</td>
-              <td>{item["Last Solved"]}</td>
-              <td>{item["Questions Solved"]}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+        ))}
+      </tbody>
+    </table>
+  </div>
   );
 };
 
