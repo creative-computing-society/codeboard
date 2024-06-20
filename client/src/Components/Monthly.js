@@ -34,7 +34,7 @@ const Monthly = () => {
           <tr>
             <th>Rank</th>
             <th>Username</th>
-            <th>Last Solved</th>
+            <th></th>
             <th>Questions Solved</th>
           </tr>
         </thead>
@@ -42,9 +42,9 @@ const Monthly = () => {
           {data.map((item, index) => (
             <tr key={item.id} className="leaderboard-row">
               <td>{index + 1}</td>
-              <td>{item.Username}</td>
-              <td>{item["Last Solved"]}</td>
-              <td>{item["Questions Solved"]}</td>
+              <td><img src={item.photo_url} alt="Profile" /></td>
+              <td>{item.username}</td>
+              <td>{item.ques_solv}</td>
             </tr>
           ))}
         </tbody>
