@@ -17,7 +17,7 @@ Content-Type: application/json
 
 GET http://127.0.0.1:8000/auth/test_token/
 Content-Type: application/json
-Authorization: Token 270863cdf8365446bc2bac8a483a9befec4e741a
+Authorization: Token 6edc046885ca1e1dc4c1bc20f1743b70f3e5a5bd
 
 {}
 
@@ -25,4 +25,19 @@ Authorization: Token 270863cdf8365446bc2bac8a483a9befec4e741a
 POST http://127.0.0.1:8000/auth/signup_token/
 Content-Type: application/json
 
-{ "name": "ccs", "email":"ccs@admin.com", "password": "admin", "is_superuser": true}
+{ "name": "test", "email":"test@ccs.com", "password": "1234", "is_superuser": false}
+
+###
+
+POST http://127.0.0.1:8000/auth/login_token/
+Content-Type: application/json
+
+{"token": "xx", "name": "test", "email":"test@ccs.com", "password": "1234"}
+
+###
+
+GET http://127.0.0.1:8000/auth/logout/
+Content-Type: application/json
+Authorization: Token 7acb1878fae9e7485fc67794feb86ff41df0d6b9
+
+{}
