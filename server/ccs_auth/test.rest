@@ -1,0 +1,28 @@
+POST http://127.0.0.1:8000/auth/signup/
+Content-Type: application/json
+
+{ "username": "ishan2", "password": "admin" }
+
+###
+
+POST http://127.0.0.1:8000/auth/login/
+Content-Type: application/json
+
+{
+  "username": "ishan2",
+  "password": "admin"
+}
+
+###
+
+GET http://127.0.0.1:8000/auth/test_token/
+Content-Type: application/json
+Authorization: Token 270863cdf8365446bc2bac8a483a9befec4e741a
+
+{}
+
+###
+POST http://127.0.0.1:8000/auth/signup_token/
+Content-Type: application/json
+
+{ "name": "ccs", "email":"ccs@admin.com", "password": "admin", "is_superuser": true}

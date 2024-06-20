@@ -45,8 +45,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'corsheaders',
+    'ccs_auth',
     'leaderboard',
-    'login',
     'django_celery_results',
     'django_celery_beat',
 ]
@@ -143,7 +143,6 @@ USE_I18N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
@@ -174,3 +173,5 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.TokenAuthentication',
     )
 }
+
+AUTH_USER_MODEL = 'ccs_auth.CUser'
