@@ -10,7 +10,10 @@
   --LINK-FOCUS-BGCOLOR: rgb(57, 185, 188);
   --LINK-ACTIVE-COLOR: rgb(82, 81, 81);
 }
-
+*{
+  margin:0;
+  padding: 0;
+}
 body {
   background-color: rgba(228, 251, 251, 0.866);
 }
@@ -126,6 +129,7 @@ body::-webkit-scrollbar-thumb:hover {
 .app-container {
   display: flex;
   flex-grow: 1;
+  max-width: 160rem;
 }
 
 .content {
@@ -133,7 +137,8 @@ body::-webkit-scrollbar-thumb:hover {
   text-align: left;
   padding: 2rem 12rem;
   margin-top: 2rem;
-  margin-left: 22rem;
+  margin-left: 13rem;
+  margin-right: 0;
   color: var(--CONTENT-COLOR);
   overflow-y: auto;
 }
@@ -159,7 +164,7 @@ body::-webkit-scrollbar-thumb:hover {
   padding: 2rem;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  max-width: 1000px; /* Adjusted width to fit both containers */
+  /* Adjusted width to fit both containers */
   margin: 0 auto;
   margin-top: 50px; /* Add margin-top for centering */
   position: relative; /* Ensure it's centered vertically */
@@ -230,6 +235,7 @@ body::-webkit-scrollbar-thumb:hover {
 
 .question-container h2 {
   color: white; /* Change heading color to white */
+  text-align: center;
 }
 
 .questions-table {
