@@ -174,4 +174,10 @@ REST_FRAMEWORK = {
     )
 }
 
+AUTHENTICATION_BACKENDS = [
+    'ccs_auth.auth_backends.SSOAuthenticationBackend',
+    'django.contrib.auth.backends.ModelBackend',  # Default backend
+]
+
 AUTH_USER_MODEL = 'ccs_auth.CUser'
+

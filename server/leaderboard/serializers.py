@@ -1,10 +1,19 @@
 from rest_framework import serializers
+from django.utils import timezone
 from .models import *
 
 class leetcode_accSerializer(serializers.ModelSerializer):
+    submissions = serializers.SerializerMethodField()
     class Meta:
         model = leetcode_acc
-        fields = ['username', 'name','leetcode_rank', 'daily_rank','weekly_rank','monthly_rank', 'photo_url']
+        fields = ['username', 'name','leetcode_rank', 'daily_rank','weekly_rank','monthly_rank', 'photo_url', 'submissions']
+
+    def get_submissions(self, obj):
+        submission_dict = obj.submission_dict
+        # Change the values, which are time stamps to readable format
+        for key, value in submission_dict.items():
+            submission_dict[key] = timezone.datetime.fromtimestamp(value).strftime('%Y-%m-%d %H:%M:%S')
+        return submission_dict
 
 
 class QuestionSerializer(serializers.ModelSerializer):

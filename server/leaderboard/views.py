@@ -1,9 +1,10 @@
+from django.shortcuts import get_object_or_404
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from django.utils import timezone
-from django.db.models import F
 from .models import leetcode_acc, Question, Leaderboard
+from ccs_auth.models import CUser
 from .tasks import get_user_data, refresh_user_data
 from .serializers import leetcode_accSerializer, QuestionSerializer
 
@@ -19,14 +20,20 @@ def get_today_questions(user):
 class RegisterLeetcode(APIView):
     def post(self, request, *args, **kwargs):
         leetcode_name = request.data.get('username')
+        ccs_user_id = request.data.get('ccs_user')
+
+        if not ccs_user_id:
+            return Response({"error": "CCS user ID is required"}, status=status.HTTP_400_BAD_REQUEST)
+        ccs_user = get_object_or_404(CUser, pk=ccs_user_id)
+
         if not leetcode_name or leetcode_name == '':
             return Response({"error": "Leetcode username is required"}, status=status.HTTP_400_BAD_REQUEST)
         
         if leetcode_acc.objects.filter(username=leetcode_name).exists():
-            return Response({"error": "Leetcode user already exists"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"error": "Leetcode user already exists"}, status=status.HTTP_200_OK)
         
-        acc = leetcode_acc.objects.create(username=leetcode_name)
-        get_user_data.delay(leetcode_name, acc.user)
+        acc = leetcode_acc.objects.create(username=leetcode_name, user=ccs_user)
+        get_user_data.delay(leetcode_name, acc.pk)
         
         return Response({"message": "Leetcode user registered successfully"}, status=status.HTTP_201_CREATED)
 

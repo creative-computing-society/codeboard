@@ -23,6 +23,7 @@ class CUserManager(BaseUserManager):
             raise ValueError(_('Superuser must have is_superuser=True.'))
         if extra_fields.get('is_admin') is not True:
             raise ValueError(_('Superuser must have is_admin=True.'))
+        
         print("is_admin", extra_fields.get('is_admin'))
         print("is_staff", extra_fields.get('is_staff'))
         print("is_superuser", extra_fields.get('is_superuser'))

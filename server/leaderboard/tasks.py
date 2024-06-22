@@ -92,11 +92,11 @@ def fetch_all_questions():
         print(f"Error fetching all questions: {e}")
     return []
 
-def get_or_create_user_instance(user_id):
+def get_or_create_user_instance(ccs_user):
     try:
-        return leetcode_acc.objects.get_or_create(user=user_id)
+        return leetcode_acc.objects.get_or_create(user=ccs_user)
     except Exception as e:
-        print(f"Error getting or creating user instance for user_id {user_id}: {e}")
+        print(f"Error getting or creating user instance for ccs_user {ccs_user}: {e}")
     return None, False
 
 def update_user_instance(instance: leetcode_acc, user_data, matched_questions, latest_solved, total_solved, language_problem_count):
@@ -231,7 +231,7 @@ def calculate_leaderboards(self, *args, **kwargs):
         return {}
 
 @shared_task(bind=True)
-def get_user_data(self, username, user_id, *args, **kwargs):
+def get_user_data(self, username, ccs_user, *args, **kwargs):
     try:
         user_profile = fetch_user_profile(username)
         if not user_profile:
@@ -245,7 +245,7 @@ def get_user_data(self, username, user_id, *args, **kwargs):
         submissions = process_submissions(submitted_questions, all_question_list)
         latest_solved = get_latest_submissions(submissions)
 
-        user_instance, created = get_or_create_user_instance(user_id)
+        user_instance, created = get_or_create_user_instance(ccs_user)
         if not user_instance:
             print(f"Failed to get or create user instance for user {username}")
             return
@@ -276,7 +276,7 @@ def refresh_user_data(self):
         if not users:
             return
 
-        user_data_tasks = [get_user_data.s(user.username, user.user) for user in users]
+        user_data_tasks = [get_user_data.s(user.username, user.pk) for user in users]
         task_chain = group(user_data_tasks) | calculate_leaderboards.s()
         task_chain.apply_async()
         print("Data refreshed and leaderboard initiated successfully")

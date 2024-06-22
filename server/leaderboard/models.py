@@ -1,9 +1,10 @@
 from django.db import models
 from django.contrib.postgres.fields import ArrayField
+from ccs_auth.models import CUser
 import datetime
 
 class leetcode_acc(models.Model):
-    user = models.AutoField(primary_key=True, unique=True)
+    user = models.OneToOneField(CUser, on_delete=models.CASCADE, primary_key=True)
     username = models.CharField(max_length=100, null=False, blank=False, unique=True, default="")
     name = models.CharField(max_length=100, null=True, blank=True, default="Scraping..")
     leetcode_rank= models.CharField(max_length=10, null=True, blank=True, default="Scraping..")

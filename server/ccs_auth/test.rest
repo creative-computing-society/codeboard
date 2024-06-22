@@ -1,43 +1,15 @@
-POST http://127.0.0.1:8000/auth/signup/
-Content-Type: application/json
-
-{ "username": "ishan2", "password": "admin" }
-
-###
-
 POST http://127.0.0.1:8000/auth/login/
 Content-Type: application/json
 
-{
-  "username": "ishan2",
-  "password": "admin"
-}
+{ 
+    "leetcode_username": "singlaishan69",
 
-###
-
-GET http://127.0.0.1:8000/auth/test_token/
-Content-Type: application/json
-Authorization: Token 6edc046885ca1e1dc4c1bc20f1743b70f3e5a5bd
-
-{}
-
-###
-POST http://127.0.0.1:8000/auth/signup_token/
-Content-Type: application/json
-
-{ "name": "test", "email":"test@ccs.com", "password": "1234", "is_superuser": false}
-
-###
-
-POST http://127.0.0.1:8000/auth/login_token/
-Content-Type: application/json
-
-{"token": "xx", "name": "test", "email":"test@ccs.com", "password": "1234"}
+    "token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2Njc3MDZhNTI3OTMzYjM4ZGNjZjQ0OTUiLCJ0aW1lc3RhbXAiOiIyMDI0LTA2LTIyVDE1OjQxOjM0Ljk4NloiLCJuYW1lIjoiSVNIQU4gU0lOR0xBIiwiZ29vZ2xlSWQiOiIxMTA2MjgzNTY4OTMyNjk3MTc1OTQiLCJwcm9maWxlUGljIjoiaHR0cHM6Ly9saDMuZ29vZ2xldXNlcmNvbnRlbnQuY29tL2EvQUNnOG9jTEthaWZKMDEzaFp5TERPTDJaOU5ic3Y2RXB4ZmYzVWRSbEZVT0RMOEp1ZmVVZFZ3PXM5Ni1jIiwiZW1haWwiOiJpc2luZ2xhX2JlMjNAdGhhcGFyLmVkdSIsInJvbGVzIjpbeyJjbGllbnRJZCI6IjY2NzQ2NWY0OWMxM2ZhOTA0NzcxNTMxMSIsInJvbGUiOiJ1c2VyIiwiX2lkIjoiNjY3NzA2YTYyNzkzM2IzOGRjY2Y0NDk4In1dLCJfX3YiOjEsInBlcnNvbmFsRW1haWwiOiJpc2hhbnNpbmdsYTU3NkBnbWFpbC5jb20iLCJyb2xsTm8iOiIxMDIzMjMwNDYiLCJicmFuY2giOiJSQUkiLCJ5ZWFyIjoyMDI3LCJwaG9uZSI6Ijg1NTg4NjEwOTAiLCJpYXQiOjE3MTkwNzY1NTIsImV4cCI6MTcxOTA5ODE1Mn0.-rjmzhlaAnjIdzRWo5GiOoVMYA-qWChSA4IGgLDTcGY" }
 
 ###
 
 GET http://127.0.0.1:8000/auth/logout/
 Content-Type: application/json
-Authorization: Token 7acb1878fae9e7485fc67794feb86ff41df0d6b9
+Authorization: Token 03ef763407ce245cafeaae85728a64db2b35477c
 
 {}

@@ -12,12 +12,12 @@ app.conf.update(timezone='Asia/Kolkata')
 app.config_from_object(settings, namespace='CELERY')
 
 # Celery-Beat settings
-# app.conf.beat_schedule = {
-#     'refresh_user_data':{
-#         'task': 'leaderboard.tasks.refresh_user_data',
-#         'schedule': 300,
-#     },
-# }
+app.conf.beat_schedule = {
+    'refresh_user_data':{
+        'task': 'leaderboard.tasks.refresh_user_data',
+        'schedule': 300,
+    },
+}
 
 # Load task modules from all registered Django app configs.
 app.autodiscover_tasks()

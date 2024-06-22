@@ -6,7 +6,7 @@ from subprocess import Popen
 
 def start_celery():
     Popen(['celery', '-A', 'app.celery', 'worker','--pool=solo', '-l', 'info'])
-    # Popen(['celery', '-A', 'app.celery', 'beat', '-l', 'info'])
+    Popen(['celery', '-A', 'app.celery', 'beat', '-l', 'info'])
 
 def main():
     """Run administrative tasks."""
