@@ -7,7 +7,7 @@ const Monthly = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    axios.get('http://127.0.0.1:8000/monthly_leaderboard/?username=gurmankd')
+    axios.get('http://127.0.0.1:8000/monthly_leaderboard/?username=hushraj')
       .then(response => {
         // Convert object to array of objects
         const dataArray = Object.keys(response.data).map(key => ({
