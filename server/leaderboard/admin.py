@@ -1,5 +1,6 @@
 from django.contrib import admin
 from django.db.models import Case, When, Value, IntegerField
+from django.http import HttpRequest
 from leaderboard.models import *
 
 class RankFilter(admin.SimpleListFilter):
@@ -29,12 +30,22 @@ class RankFilter(admin.SimpleListFilter):
 class LeetcodeAdmin(admin.ModelAdmin):
     list_display = ('username', 'monthly_rank', 'matched_ques')
     list_filter = (RankFilter,)
+    def has_add_permission(self, request, obj=None):
+        return False
 
 class QuestionAdmin(admin.ModelAdmin):
     list_display = ('leetcode_id', 'title', 'questionDate','difficulty')
     list_filter = ('questionDate', 'difficulty')
 
+class LeaderboardEntryAdmin(admin.ModelAdmin):
+    def has_add_permission(self, request, obj=None):
+        return False
+
+class LeaderboardAdmin(admin.ModelAdmin):
+    def has_add_permission(self, request, obj=None):
+        return False
+
 admin.site.register(leetcode_acc, LeetcodeAdmin)
 admin.site.register(Question, QuestionAdmin)
-admin.site.register(LeaderboardEntry)
-admin.site.register(Leaderboard)
+admin.site.register(LeaderboardEntry, LeaderboardEntryAdmin)
+admin.site.register(Leaderboard, LeaderboardAdmin)

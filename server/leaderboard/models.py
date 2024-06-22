@@ -3,7 +3,7 @@ from django.contrib.postgres.fields import ArrayField
 import datetime
 
 class leetcode_acc(models.Model):
-    user = models.AutoField(primary_key=True, unique=True, default=0)
+    user = models.AutoField(primary_key=True, unique=True)
     username = models.CharField(max_length=100, null=False, blank=False, unique=True, default="")
     name = models.CharField(max_length=100, null=True, blank=True, default="Scraping..")
     leetcode_rank= models.CharField(max_length=10, null=True, blank=True, default="Scraping..")

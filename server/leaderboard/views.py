@@ -19,7 +19,7 @@ def get_today_questions(user):
 class RegisterLeetcode(APIView):
     def post(self, request, *args, **kwargs):
         leetcode_name = request.data.get('username')
-        if not leetcode_name:
+        if not leetcode_name or leetcode_name == '':
             return Response({"error": "Leetcode username is required"}, status=status.HTTP_400_BAD_REQUEST)
         
         if leetcode_acc.objects.filter(username=leetcode_name).exists():
