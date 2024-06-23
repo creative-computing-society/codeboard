@@ -3,8 +3,9 @@ from django.contrib.postgres.fields import ArrayField
 from ccs_auth.models import CUser
 import datetime
 
-class leetcode_acc(models.Model):
-    user = models.OneToOneField(CUser, on_delete=models.CASCADE, primary_key=True)
+class Leetcode(models.Model):
+    user = models.OneToOneField(CUser, on_delete=models.CASCADE, null=True, blank=True,default=None )
+    id = models.AutoField(primary_key=True)
     username = models.CharField(max_length=100, null=False, blank=False, unique=True, default="")
     name = models.CharField(max_length=100, null=True, blank=True, default="Scraping..")
     leetcode_rank= models.CharField(max_length=10, null=True, blank=True, default="Scraping..")
@@ -37,7 +38,7 @@ class Question(models.Model):
         return self.title
     
 class LeaderboardEntry(models.Model):
-    user = models.ForeignKey(leetcode_acc, on_delete=models.CASCADE)
+    user = models.ForeignKey(Leetcode, on_delete=models.CASCADE)
     interval = models.CharField(max_length=10)  # 'day', 'week', 'month'
     questions_solved = models.IntegerField(null=False, default=0)
     earliest_solved_timestamp = models.BigIntegerField(null=False, default=0)

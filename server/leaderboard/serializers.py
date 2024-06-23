@@ -2,10 +2,10 @@ from rest_framework import serializers
 from django.utils import timezone
 from .models import *
 
-class leetcode_accSerializer(serializers.ModelSerializer):
+class LeetCodeSerializer(serializers.ModelSerializer):
     submissions = serializers.SerializerMethodField()
     class Meta:
-        model = leetcode_acc
+        model = Leetcode
         fields = ['username', 'name','leetcode_rank', 'daily_rank','weekly_rank','monthly_rank', 'photo_url', 'submissions']
 
     def get_submissions(self, obj):
@@ -38,10 +38,10 @@ class QuestionSerializer(serializers.ModelSerializer):
             return "Account ID not provided"
         
         try:
-            leetcode_acc_instance = leetcode_acc.objects.get(username=leetcode_acc_user)
+            leetcode_acc_instance = Leetcode.objects.get(username=leetcode_acc_user)
             if obj.leetcode_id in leetcode_acc_instance.matched_ques_list:
                 return "Solved"
             else:
                 return "Not Solved"
-        except leetcode_acc.DoesNotExist:
+        except Leetcode.DoesNotExist:
             return "Account does not exist"

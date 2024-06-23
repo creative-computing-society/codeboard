@@ -1,5 +1,5 @@
 import requests
-from .models import leetcode_acc
+from .models import Leetcode
 
 MATCHED_USER_QUERY =  '''
   query userPublicProfile($username: String!) {

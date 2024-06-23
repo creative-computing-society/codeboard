@@ -1,7 +1,7 @@
 from celery import shared_task, group
 from django.utils import timezone
 from datetime import timedelta
-from .models import leetcode_acc, LeaderboardEntry, Question, Leaderboard
+from .models import Leetcode, LeaderboardEntry, Question, Leaderboard
 from .query_manager import *
 import time
 from pprint import pprint
@@ -92,14 +92,14 @@ def fetch_all_questions():
         print(f"Error fetching all questions: {e}")
     return []
 
-def get_or_create_user_instance(ccs_user):
+def get_user_instance(id):
     try:
-        return leetcode_acc.objects.get_or_create(user=ccs_user)
+        return Leetcode.objects.get(pk=id)
     except Exception as e:
-        print(f"Error getting or creating user instance for ccs_user {ccs_user}: {e}")
-    return None, False
+        print(f"Error getting user instance for id {id}: {e}")
+    return None
 
-def update_user_instance(instance: leetcode_acc, user_data, matched_questions, latest_solved, total_solved, language_problem_count):
+def update_user_instance(instance: Leetcode, user_data, matched_questions, latest_solved, total_solved, language_problem_count):
     try:
         if instance and user_data:
             instance.name = user_data.get('realName', '')
@@ -132,7 +132,7 @@ def generate_leaderboards_entries():
             [question.leetcode_id, question.titleSlug, time.mktime(question.questionDate.timetuple())]
             for question in questions
         ]
-        user_instances = leetcode_acc.objects.all()
+        user_instances = Leetcode.objects.all()
         for user_instance in user_instances:
             username = user_instance.username
             solved_dict = user_instance.total_solved_dict
@@ -160,9 +160,10 @@ def generate_leaderboards_entries():
 def update_rank(user_list, rank_dict, rank_type):
     try:
         for idx, user in enumerate(user_list):
-            user_obj = leetcode_acc.objects.get(username=user[0])
-            if user[1] == 0:
-                continue
+            user_obj = Leetcode.objects.get(username=user[0])
+            '''This code is commented out because it is not necessary to skip users with 0 questions solved.'''
+            # if user[1] == 0:
+            #     continue
             rank_dict[idx+1] =  {
                 "username": user[0],
                 "photo_url": user_obj.photo_url,
@@ -171,13 +172,13 @@ def update_rank(user_list, rank_dict, rank_type):
             }
 
             try:
-                user_obj = leetcode_acc.objects.get(username=user[0])
+                user_obj = Leetcode.objects.get(username=user[0])
                 if hasattr(user_obj, rank_type):  # Check if the attribute exists
                     setattr(user_obj, rank_type, idx+1)
                     user_obj.save()
                 else:
                     print(f"Attribute {rank_type} does not exist on leetcode_acc objects.")
-            except leetcode_acc.DoesNotExist:
+            except Leetcode.DoesNotExist:
                 print(f"User {user[0]} does not exist.")
     except Exception as e:
         print(f"Error updating rank: {e}")
@@ -189,7 +190,7 @@ def calculate_leaderboards(self, *args, **kwargs):
         one_day, one_week, one_month = {}, {}, {}
         daily, weekly, monthly = [], [], []
 
-        users = leetcode_acc.objects.all()
+        users = Leetcode.objects.all()
         for user in users:
             daily_entry = LeaderboardEntry.objects.get(user=user, interval='day')
             weekly_entry = LeaderboardEntry.objects.get(user=user, interval='week')
@@ -231,7 +232,7 @@ def calculate_leaderboards(self, *args, **kwargs):
         return {}
 
 @shared_task(bind=True)
-def get_user_data(self, username, ccs_user, *args, **kwargs):
+def get_user_data(self, username, id, *args, **kwargs):
     try:
         user_profile = fetch_user_profile(username)
         if not user_profile:
@@ -245,12 +246,12 @@ def get_user_data(self, username, ccs_user, *args, **kwargs):
         submissions = process_submissions(submitted_questions, all_question_list)
         latest_solved = get_latest_submissions(submissions)
 
-        user_instance, created = get_or_create_user_instance(ccs_user)
+        user_instance = get_user_instance(id)
         if not user_instance:
             print(f"Failed to get or create user instance for user {username}")
             return
 
-        total_solved = user_instance.total_solved_dict if not created else {}
+        total_solved = user_instance.total_solved_dict
 
         for ques in latest_solved.keys():
             if ques not in total_solved:
@@ -272,11 +273,11 @@ def get_user_data(self, username, ccs_user, *args, **kwargs):
 @shared_task(bind=True)
 def refresh_user_data(self):
     try:
-        users = leetcode_acc.objects.all()
+        users = Leetcode.objects.all()
         if not users:
             return
 
-        user_data_tasks = [get_user_data.s(user.username, user.pk) for user in users]
+        user_data_tasks = [get_user_data.s(user.username, user.id) for user in users]
         task_chain = group(user_data_tasks) | calculate_leaderboards.s()
         task_chain.apply_async()
         print("Data refreshed and leaderboard initiated successfully")

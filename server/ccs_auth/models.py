@@ -3,8 +3,8 @@ from django.contrib.auth.models import AbstractBaseUser
 from .managers import CUserManager
 
 class CUser(AbstractBaseUser):
-    id = models.CharField(max_length=100, unique=True, primary_key=True)
-    email = models.EmailField(unique=True)
+    id = models.CharField(max_length=100, unique=True, blank=True)
+    email = models.EmailField(unique=True, blank=False, null=False, primary_key=True)
     roll_no = models.CharField(max_length=10, unique=False, blank=True, null=True)
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)

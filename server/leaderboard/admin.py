@@ -45,7 +45,7 @@ class LeaderboardAdmin(admin.ModelAdmin):
     def has_add_permission(self, request, obj=None):
         return False
 
-admin.site.register(leetcode_acc, LeetcodeAdmin)
+admin.site.register(Leetcode, LeetcodeAdmin)
 admin.site.register(Question, QuestionAdmin)
 admin.site.register(LeaderboardEntry, LeaderboardEntryAdmin)
 admin.site.register(Leaderboard, LeaderboardAdmin)
