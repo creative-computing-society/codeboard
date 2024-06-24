@@ -49,7 +49,7 @@ class LoginView(APIView):
                     'message': 'Please provide a Leetcode username to link to your account',
                     'leetcode': False
                 }
-                return Response({error}, status=status.HTTP_400_BAD_REQUEST)
+                return Response(error, status=status.HTTP_400_BAD_REQUEST)
 
         try:
             # Check if the provided Leetcode username already exists
