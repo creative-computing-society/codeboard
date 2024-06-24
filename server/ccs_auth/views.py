@@ -44,7 +44,12 @@ class LoginView(APIView):
         except Leetcode.DoesNotExist:
             print(f"Leetcode account does not exist for {user}")
             if not leetcode_username:
-                return Response({'error': 'Leetcode username is required'}, status=status.HTTP_400_BAD_REQUEST)
+                error = {
+                    'error': 'Leetcode username is required',
+                    'message': 'Please provide a Leetcode username to link to your account',
+                    'leetcode': False
+                }
+                return Response({error}, status=status.HTTP_400_BAD_REQUEST)
 
         try:
             # Check if the provided Leetcode username already exists
