@@ -35,7 +35,7 @@ const AuthVerify = ({ onVerify, setIsNewUser }) => {
           if (status === 400) {
             if (data.leetcode === false) {
               setIsNewUser(true);
-              navigate('/username');
+              navigate('/username', { state: { jwtToken } }); // Pass the JWT token as state
             } else {
               throw new Error('Unexpected error format');
             }

@@ -1,26 +1,53 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const UsernameEntry = () => {
-  const [username, setUsername] = useState('');
+  const [leetcode_username, setLeetcodeUsername] = useState('');
   const navigate = useNavigate();
+  const location = useLocation();
+  const { jwtToken } = location.state || {}; // Retrieve the JWT token from the location state
 
   const handleUsernameChange = (e) => {
-    setUsername(e.target.value);
+    setLeetcodeUsername(e.target.value);
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Add logic to handle username submission, e.g., call an API to update the username
-    // After successful submission, navigate to the desired page
-    // Placeholder for API call
-    // fetch('http://localhost:8000/api/auth/login/', { method: 'POST', body: JSON.stringify({ username }) })
-    //   .then(response => response.json())
-    //   .then(data => { leetcode_username
-    //     // handle response
-    //   });
 
-    navigate('/profile');
+    if (!jwtToken) {
+      console.error('JWT token is missing');
+      navigate('/login'); // Navigate to login page if JWT token is missing
+      return;
+    }
+
+    // Define the request payload
+    const payload = {
+      leetcode_username,
+      token: jwtToken
+    };
+
+    // Define the request options
+    const requestOptions = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${jwtToken}`
+      },
+      body: JSON.stringify(payload)
+    };
+
+    // Make the API call
+    fetch('http://localhost:8000/api/auth/login/', requestOptions)
+      .then(response => response.json())
+      .then(data => {
+        // Handle response
+        console.log('Success:', data);
+        // Navigate to the desired page
+        navigate('/profile');
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      });
   };
 
   return (
@@ -29,7 +56,7 @@ const UsernameEntry = () => {
       <form onSubmit={handleSubmit}>
         <label>
           Username:
-          <input type="text" value={username} onChange={handleUsernameChange} />
+          <input type="text" value={leetcode_username} onChange={handleUsernameChange} />
         </label>
         <button type="submit">Submit</button>
       </form>
