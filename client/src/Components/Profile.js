@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+
+const BASE_URL = 'http://127.0.0.1:8000/api/leaderboard';
 
 const Profile = () => {
   const [profile, setProfile] = useState(null);
@@ -10,11 +11,30 @@ const Profile = () => {
   useEffect(() => {
     const fetchProfile = async () => {
       console.log('Fetching profile...');
+      const token = localStorage.getItem('token');
+      if (!token) {
+        setError('Token is missing');
+        setLoading(false);
+        return;
+      }
+
       try {
-        const response = await axios.get('http://127.0.0.1:8000/get_user/?username=hushraj');
-        console.log('Response received:', response);
-        setProfile(response.data);
-        console.log('Profile data set:', response.data);
+        const response = await fetch(`${BASE_URL}/user/profile/`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Token ${token}`
+          }
+        });
+
+        if (!response.ok) {
+          throw new Error(`Error: ${response.status}`);
+        }
+
+        const data = await response.json();
+        console.log('Response received:', data);
+        setProfile(data);
+        console.log('Profile data set:', data);
       } catch (err) {
         console.error('Error occurred:', err);
         setError(err);
@@ -26,11 +46,29 @@ const Profile = () => {
 
     const fetchQuestions = async () => {
       console.log('Fetching questions...');
+      const token = localStorage.getItem('token');
+      if (!token) {
+        setError('Token is missing');
+        return;
+      }
+
       try {
-        const response = await axios.get('http://127.0.0.1:8000/today_questions/?username=hushraj');
-        console.log('Questions response received:', response);
-        setQuestions(response.data);
-        console.log('Questions data set:', response.data);
+        const response = await fetch(`${BASE_URL}/questions/today/`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Token ${token}`
+          }
+        });
+
+        if (!response.ok) {
+          throw new Error(`Error: ${response.status}`);
+        }
+
+        const data = await response.json();
+        console.log('Questions response received:', data);
+        setQuestions(data);
+        console.log('Questions data set:', data);
       } catch (err) {
         console.error('Error occurred:', err);
         setError(err);
