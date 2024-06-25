@@ -60,8 +60,9 @@ class GetQuestionsForTheDay(APIView):
                 return Response({"error": "Username is required"}, status=status.HTTP_400_BAD_REQUEST)
             questions_data = get_today_questions(username)
             return Response(questions_data, status=status.HTTP_200_OK)
-        except:
+        except Question.DoesNotExist:
             return Response({"error": "Questions not found"}, status=status.HTTP_404_NOT_FOUND)
+        
 
 class GetAllQuestions(APIView):
     def get(self, request, *args, **kwargs):
