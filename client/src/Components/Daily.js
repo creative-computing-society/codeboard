@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 
-const BASE_URL = 'http://127.0.0.1:8000/api/leaderboard';
+import SERVER_URL from "../config.js";
+const BASE_URL = SERVER_URL+'/api/leaderboard';
 const Daily = () => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);

@@ -15,18 +15,15 @@ function App() {
   const [isNewUser, setIsNewUser] = useState(false);
 
   const handleLogin = () => {
+    if(localStorage.getItem('token'))
     setIsAuthenticated(true);
   };
 
   useEffect(() => {
+    handleLogin();
     console.log("isAuthenticated:", isAuthenticated);
-    if (isAuthenticated) {
-      document.body.classList.remove('login-body');
-    } else {
-      document.body.classList.add('login-body');
-    }
-  }, [isAuthenticated]);
-
+  }, []
+)
   return (
     <Router>
       <div className="app-container">

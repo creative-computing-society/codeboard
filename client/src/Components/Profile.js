@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-
-const BASE_URL = 'http://127.0.0.1:8000/api/leaderboard';
+import SERVER_URL from "../config.js";
+const BASE_URL = SERVER_URL+'/api/leaderboard';
 
 const Profile = () => {
   const [profile, setProfile] = useState(null);
@@ -12,9 +12,11 @@ const Profile = () => {
     const fetchProfile = async () => {
       console.log('Fetching profile...');
       const token = localStorage.getItem('token');
+      console.log(token);
       if (!token) {
         setError('Token is missing');
         setLoading(false);
+       window.location.href="/login";
         return;
       }
 
