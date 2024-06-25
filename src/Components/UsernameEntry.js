@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import SERVER_URL from "../config.js";
+const API_URL = SERVER_URL+'/api/auth';
 
 const UsernameEntry = () => {
   const [leetcode_username, setLeetcodeUsername] = useState('');
@@ -49,7 +51,7 @@ const UsernameEntry = () => {
     };
 
     // Make the API call
-    fetch('http://localhost:8000/api/auth/login/', requestOptions)
+    fetch(`${API_URL}/login/`, requestOptions)
       .then(response => response.json())
       .then(data => {
         // Handle response
