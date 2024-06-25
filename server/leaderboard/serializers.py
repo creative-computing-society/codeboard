@@ -39,7 +39,7 @@ class QuestionSerializer(serializers.ModelSerializer):
         
         try:
             leetcode_acc_instance = Leetcode.objects.get(username=leetcode_acc_user)
-            if obj.leetcode_id in leetcode_acc_instance.matched_ques_list:
+            if obj.leetcode_id in leetcode_acc_instance.matched_ques_dict:
                 return "Solved"
             else:
                 return "Not Solved"
