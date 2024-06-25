@@ -2,3 +2,7 @@
 	path = client
 	url = https://github.com/creative-computing-society/codeboard.git
 	branch = deployment-frontend
+[submodule "server"]
+	path = server
+	url = https://github.com/creative-computing-society/codeboard.git
+	branch = deployment-backend
