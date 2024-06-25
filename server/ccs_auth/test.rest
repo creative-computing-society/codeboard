@@ -1,0 +1,23 @@
+POST http://127.0.0.1:8000/auth/login/
+Content-Type: application/json
+
+{ 
+    "leetcode_username": "singlaishan69",
+
+    "token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.xxxxxx.LB7uk1Ur5DdVkXM1A97qma0Vk6tGWq5TKbT9A9TWuNU" }
+
+###
+
+GET http://127.0.0.1:8000/auth/logout/
+Content-Type: application/json
+Authorization: Token a9fb84246782d5957b4bc33fa703251849ed8d32
+
+{}
+
+###
+
+POST http://127.0.0.1:8000/register/
+Content-Type: application/json
+Authorization: Token 189ab7301586944de91d059049903eaa50ebbb30
+
+{}

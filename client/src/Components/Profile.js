@@ -11,7 +11,7 @@ const Profile = () => {
     const fetchProfile = async () => {
       console.log('Fetching profile...');
       try {
-        const response = await axios.get('http://127.0.0.1:8000/get_user/?username=hushraj');
+        const response = await axios.get('http://127.0.0.1:8000/user/profile/');
         console.log('Response received:', response);
         setProfile(response.data);
         console.log('Profile data set:', response.data);
