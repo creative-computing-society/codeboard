@@ -1,0 +1,10 @@
+Django
+python-dotenv
+psycopg2
+djangorestframework
+requests
+celery
+redis
+django-celery-beat
+django-celery-results
+django-cors-headers
