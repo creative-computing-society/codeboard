@@ -15,14 +15,19 @@ function App() {
   const [isNewUser, setIsNewUser] = useState(false);
 
   const handleLogin = () => {
-    if(localStorage.getItem('token'))
-    setIsAuthenticated(true);
-  //test commit
+    const token=localStorage.getItem('token');
+    console.log(token);
+    if (token) {
+      setIsAuthenticated(true);
+    }
+    else{
+      setIsAuthenticated(false);
+    }
   };
 
-useEffect(() => {
-  handleLogin();
-}, []);
+  useEffect(() => {
+    handleLogin();
+  }, []);
 
   return (
     <Router>
