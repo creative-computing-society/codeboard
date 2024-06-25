@@ -11,7 +11,7 @@ urlpatterns = [
     path('user/profile/', views.Profile.as_view(), name='profile'),
     path('questions/today/', views.GetQuestionsForTheDay.as_view(), name='today_questions'),
     path('questions/all/', views.GetAllQuestions.as_view(), name='all_questions'),
-    path('leaderboard/daily/', views.DailyLeaderboard.as_view(), name='daily_leaderboard'),
-    path('leaderboard/weekly/', views.WeeklyLeaderboard.as_view(), name='weekly_leaderboard'),
-    path('leaderboard/monthly/', views.MonthlyLeaderboard.as_view(), name='monthly_leaderboard'),
+    path('daily/', views.DailyLeaderboard.as_view(), name='daily_leaderboard'),
+    path('weekly/', views.WeeklyLeaderboard.as_view(), name='weekly_leaderboard'),
+    path('monthly/', views.MonthlyLeaderboard.as_view(), name='monthly_leaderboard'),
 ]
