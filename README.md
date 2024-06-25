@@ -70,7 +70,7 @@ Visit the live application at [https://codeboard.ccstiet.com/](http://codeboard.
 
 ## Contributing
 
-We welcome contributions from the community. Please read the [CONTRIBUTION.md](CONTRIBUTING.md) file for details on the code of conduct, and the process for submitting pull requests.
+We welcome contributions from the community. Please read the [CONTRIBUTION.md](CONTRIBUTION.md) file for details on the code of conduct, and the process for submitting pull requests.
 
 ## Maintainers
 
