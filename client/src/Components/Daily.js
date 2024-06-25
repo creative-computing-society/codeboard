@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 
+const BASE_URL = 'http://127.0.0.1:8000/api/leaderboard';
 const Daily = () => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    axios.get('http://127.0.0.1:8000/daily_leaderboard/?username=gurnamkd')
+    axios.get(`${BASE_URL}/daily/`)
       .then(response => {
         const dataArray = Object.keys(response.data).map(key => ({
           id: key,

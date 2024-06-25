@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 
+const BASE_URL = 'http://127.0.0.1:8000/api/leaderboard';
 const Weekly = () => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    axios.get('http://127.0.0.1:8000/weekly_leaderboard/?username=gurmankd')
+    axios.get(`${BASE_URL}/weekly/`)
       .then(response => {
         // Convert object to array of objects
         const dataArray = Object.keys(response.data).map(key => ({
@@ -28,7 +29,7 @@ const Weekly = () => {
 
   return (
     <div className="leaderboard-container">
-    <h1 className="leaderboard-title">Monthly Leaderboard</h1>
+    <h1 className="leaderboard-title">Weekly Leaderboard</h1>
     <table className="leaderboard-table">
       <thead>
         <tr>
