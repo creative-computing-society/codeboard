@@ -12,6 +12,7 @@ const UsernameEntry = () => {
 
   useEffect(() => {
     const storedToken = localStorage.getItem('token');
+    console.log(stateJwtToken)
     console.log('Retrieved token from localStorage:', storedToken); // Log the retrieved token
 
     if (!storedToken) {

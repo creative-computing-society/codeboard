@@ -32,7 +32,6 @@ const AuthVerify = ({ onVerify, setIsNewUser }) => {
         })
         .then(({ status, data }) => {
           console.log('Response Data:', data);
-
           if (status === 400) {
             if (data.leetcode === false) {
               setIsNewUser(true);
