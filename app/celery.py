@@ -15,7 +15,7 @@ app.config_from_object(settings, namespace='CELERY')
 app.conf.beat_schedule = {
     'refresh_user_data':{
         'task': 'leaderboard.tasks.refresh_user_data',
-        'schedule': 300,
+        'schedule': 120,
     },
 }
 
