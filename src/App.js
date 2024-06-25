@@ -20,11 +20,10 @@ function App() {
   //test commit
   };
 
-  useEffect(() => {
-    handleLogin();
-    console.log("isAuthenticated:", isAuthenticated);
-  }, []
-)
+useEffect(() => {
+  handleLogin();
+}, []);
+
   return (
     <Router>
       <div className="app-container">
