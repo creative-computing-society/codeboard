@@ -1,26 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import SERVER_URL from "../config.js";
-const API_URL = SERVER_URL+'/api/auth';
+const API_URL = SERVER_URL + '/api/auth';
 
 const UsernameEntry = () => {
-  const [leetcode_username, setLeetcodeUsername] = useState('');
+  const [leetcodeUsername, setLeetcodeUsername] = useState('');
   const navigate = useNavigate();
   const location = useLocation();
   const { jwtToken: stateJwtToken } = location.state || {}; // Retrieve the JWT token from the location state
-  const [jwtToken, setJwtToken] = useState(stateJwtToken || localStorage.getItem('token'));
+  const [jwtToken, setJwtToken] = useState(stateJwtToken);
 
   useEffect(() => {
-    const storedToken = localStorage.getItem('token');
-    console.log(stateJwtToken)
-    console.log('Retrieved token from localStorage:', storedToken); // Log the retrieved token
-
-    if (!storedToken) {
-      navigate('/login'); // Navigate to login page if JWT token is missing
+    if (!stateJwtToken) {
+      console.error('JWT token is missing from state');
+      navigate('/login'); // Navigate to login page if JWT token is missing from state
     } else {
-      setJwtToken(storedToken);
+      setJwtToken(stateJwtToken);
     }
-  }, [navigate]);
+  }, [navigate, stateJwtToken]);
 
   const handleUsernameChange = (e) => {
     setLeetcodeUsername(e.target.value);
@@ -37,7 +34,7 @@ const UsernameEntry = () => {
 
     // Define the request payload
     const payload = {
-      leetcode_username,
+      leetcode_username: leetcodeUsername,
       token: jwtToken
     };
 
@@ -71,7 +68,7 @@ const UsernameEntry = () => {
       <form onSubmit={handleSubmit}>
         <label>
           Username:
-          <input type="text" value={leetcode_username} onChange={handleUsernameChange} />
+          <input type="text" value={leetcodeUsername} onChange={handleUsernameChange} />
         </label>
         <button type="submit">Submit</button>
       </form>
