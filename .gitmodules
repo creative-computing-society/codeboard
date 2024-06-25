@@ -1,0 +1,4 @@
+[submodule "client"]
+	path = client
+	url = https://github.com/creative-computing-society/codeboard.git
+	branch = deployment-frontend
