@@ -66,11 +66,11 @@ These instructions will get you a copy of the project up and running on your loc
 
 ## Usage
 
-Visit the live application at [http://codeboard.ccstiet.com/](http://codeboard.ccstiet.com/) to see the list of coders and their ranks.
+Visit the live application at [https://codeboard.ccstiet.com/](http://codeboard.ccstiet.com/) to see the list of coders and their ranks.
 
 ## Contributing
 
-We welcome contributions from the community. Please read the [CONTRIBUTING.md](CONTRIBUTING.md) file for details on the code of conduct, and the process for submitting pull requests.
+We welcome contributions from the community. Please read the [CONTRIBUTION.md](CONTRIBUTING.md) file for details on the code of conduct, and the process for submitting pull requests.
 
 ## Maintainers
 
