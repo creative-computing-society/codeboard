@@ -42,6 +42,7 @@ const AuthVerify = ({ onVerify, setIsNewUser }) => {
           } else if (status === 200) {
             if (data && data.token) {
               localStorage.setItem('token', data.token); // Save token locally
+              console.log('Token stored in localStorage:', localStorage.getItem('token')); // Log the stored token
               onVerify();
               navigate('/profile');
             } else {

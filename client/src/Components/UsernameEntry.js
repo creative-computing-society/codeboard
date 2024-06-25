@@ -1,11 +1,23 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 
 const UsernameEntry = () => {
   const [leetcode_username, setLeetcodeUsername] = useState('');
   const navigate = useNavigate();
   const location = useLocation();
-  const { jwtToken } = location.state || {}; // Retrieve the JWT token from the location state
+  const { jwtToken: stateJwtToken } = location.state || {}; // Retrieve the JWT token from the location state
+  const [jwtToken, setJwtToken] = useState(stateJwtToken || localStorage.getItem('token'));
+
+  useEffect(() => {
+    const storedToken = localStorage.getItem('token');
+    console.log('Retrieved token from localStorage:', storedToken); // Log the retrieved token
+
+    if (!storedToken) {
+      navigate('/login'); // Navigate to login page if JWT token is missing
+    } else {
+      setJwtToken(storedToken);
+    }
+  }, [navigate]);
 
   const handleUsernameChange = (e) => {
     setLeetcodeUsername(e.target.value);
