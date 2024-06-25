@@ -1,25 +1,57 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Navbar from './Components/Navbar';
 import Profile from './Components/Profile';
 import Daily from './Components/Daily';
 import Weekly from './Components/Weekly';
 import Monthly from './Components/Monthly';
-import './App.css'
+import Login from './Components/Login';
+import AuthVerify from './Components/AuthVerify';
+import UsernameEntry from './Components/UsernameEntry';
+import './App.css';
+
 function App() {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isNewUser, setIsNewUser] = useState(false);
+
+  const handleLogin = () => {
+    setIsAuthenticated(true);
+  };
+
+  useEffect(() => {
+    console.log("isAuthenticated:", isAuthenticated);
+    if (isAuthenticated) {
+      document.body.classList.remove('login-body');
+    } else {
+      document.body.classList.add('login-body');
+    }
+  }, [isAuthenticated]);
+
   return (
     <Router>
       <div className="app-container">
-        <Navbar />
-        <div className="content">
+        {isAuthenticated ? (
+          <>
+            <Navbar />
+            <div className="content">
+              <Routes>
+                <Route path="/" element={<Profile />} />
+                <Route path="/profile" element={<Profile />} />
+                <Route path="/daily" element={<Daily />} />
+                <Route path="/weekly" element={<Weekly />} />
+                <Route path="/monthly" element={<Monthly />} />
+                <Route path="*" element={<Navigate to="/profile" />} />
+              </Routes>
+            </div>
+          </>
+        ) : (
           <Routes>
-            <Route path="/" element={<Profile />} />
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/daily" element={<Daily />} />
-            <Route path="/weekly" element={<Weekly />} />
-            <Route path="/monthly" element={<Monthly />} />
-            
+            <Route path="/login" element={<Login onLogin={handleLogin} />} />
+            <Route path="/authverify" element={<AuthVerify onVerify={handleLogin} setIsNewUser={setIsNewUser} />} />
+            {isNewUser && <Route path="/username" element={<UsernameEntry />} />}
+            <Route path="*" element={<Navigate to="/login" />} />
           </Routes>
-        </div>
+        )}
       </div>
     </Router>
   );
