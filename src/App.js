@@ -6,7 +6,6 @@ import Daily from './Components/Daily';
 import Weekly from './Components/Weekly';
 import Monthly from './Components/Monthly';
 import Login from './Components/Login';
-import AuthVerify from './Components/AuthVerify';
 import UsernameEntry from './Components/UsernameEntry';
 import './App.css';
 
