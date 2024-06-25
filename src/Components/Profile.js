@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import SERVER_URL from "../config.js";
-const BASE_URL = SERVER_URL+'/api/leaderboard';
+const API_URL = SERVER_URL+'/api/leaderboard';
 
 const Profile = () => {
   const [profile, setProfile] = useState(null);
@@ -21,7 +21,7 @@ const Profile = () => {
       }
 
       try {
-        const response = await fetch(`${BASE_URL}/user/profile/`, {
+        const response = await fetch(`${API_URL}/user/profile/`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -55,7 +55,7 @@ const Profile = () => {
       }
 
       try {
-        const response = await fetch(`${BASE_URL}/questions/today/`, {
+        const response = await fetch(`${API_URL}/questions/today/`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',

@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-
+import SERVER_URL from "../config.js";
+const API_URL = SERVER_URL+'/api/auth';
 const AuthVerify = ({ onVerify, setIsNewUser }) => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -18,7 +19,7 @@ const AuthVerify = ({ onVerify, setIsNewUser }) => {
 
       console.log('Request Body:', requestBody);
 
-      fetch('http://localhost:8000/api/auth/login/', {
+      fetch(`${API_URL}/login/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

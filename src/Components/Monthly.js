@@ -2,14 +2,14 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 
 import SERVER_URL from "../config.js";
-const BASE_URL = SERVER_URL+'/api/leaderboard';
+const API_URL = SERVER_URL+'/api/leaderboard';
 const Monthly = () => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    axios.get(`${BASE_URL}/monthly/`)
+    axios.get(`${API_URL}/monthly/`)
       .then(response => {
         // Convert object to array of objects
         const dataArray = Object.keys(response.data).map(key => ({

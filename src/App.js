@@ -8,6 +8,7 @@ import Monthly from './Components/Monthly';
 import Login from './Components/Login';
 import UsernameEntry from './Components/UsernameEntry';
 import './App.css';
+import AuthVerify from './Components/AuthVerify';
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
