@@ -16,6 +16,7 @@ function App() {
   const handleLogin = () => {
     if(localStorage.getItem('token'))
     setIsAuthenticated(true);
+  //test commit
   };
 
   useEffect(() => {
