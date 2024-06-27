@@ -17,7 +17,7 @@ load_dotenv()
 API_URL = 'http://127.0.0.1:8000/api/leaderboard'
 
 class LoginView(APIView):
-    def post(self, request):
+    def post(self, request, *args, **kwargs):
         sso_token = request.data.get('token')
         leetcode_username = request.data.get('leetcode_username')
 
@@ -79,7 +79,7 @@ class LoginView(APIView):
     
 class LogoutView(APIView):
     permission_classes = [IsAuthenticated]
-    def get(self, request):
+    def get(self, request, *args, **kwargs):
         token =Token.objects.get(user=request.user)
         token.delete()
         return Response({'message': 'Logged out successfully'}, status=status.HTTP_200_OK)

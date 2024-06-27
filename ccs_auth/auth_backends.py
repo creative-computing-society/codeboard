@@ -16,12 +16,16 @@ class SSOAuthenticationBackend(BaseBackend):
             except CustomUser.DoesNotExist:
                 first_name, last_name = user_info['name'].split(' ')
                 print("authentication backend: ", user_info)
+                try:
+                    roll_no=user_info['rollNo']
+                except:
+                    roll_no = ''
                 user = CustomUser.objects.create(
                     id=user_info['_id'],
                     email=user_info['email'],
                     first_name=first_name,
                     last_name=last_name,
-                    roll_no=user_info['rollNo']
+                    roll_no=roll_no
                 )
                 print("authentication backend: ", user)
             return user
