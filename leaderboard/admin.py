@@ -28,7 +28,7 @@ class RankFilter(admin.SimpleListFilter):
         ).order_by('custom_order', 'monthly_rank')
 
 class LeetcodeAdmin(admin.ModelAdmin):
-    list_display = ('username', 'monthly_rank', 'matched_ques')
+    list_display = ('username','name', 'monthly_rank', 'matched_ques')
     list_filter = (RankFilter,)
     def has_add_permission(self, request, obj=None):
         return False

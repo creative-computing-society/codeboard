@@ -1,5 +1,5 @@
-# python manage.py makemigrations
-# python manage.py migrate
+python manage.py makemigrations
+python manage.py migrate
 # python manage.py collectstatic --noinput
 # service cron start
 # touch /var/log/cron.log
