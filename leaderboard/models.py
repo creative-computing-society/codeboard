@@ -53,3 +53,12 @@ class Leaderboard(models.Model):
 
     def __str__(self):
         return self.leaderboard_type
+    
+class UsernameChangeRequest(models.Model):
+    user = models.ForeignKey(CUser, on_delete=models.CASCADE)
+    new_username = models.CharField(max_length=100, null=False, blank=False, unique=True)
+    old_username = models.CharField(max_length=100, null=False, blank=False)
+    status = models.CharField(max_length=20, null=False, blank=False, choices=[('pending', 'pending'), ('approved', 'approved'), ('rejected', 'rejected')], default='pending')
+
+    def __str__(self):
+        return self.new_username
