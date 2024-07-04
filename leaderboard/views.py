@@ -7,7 +7,7 @@ from rest_framework import status
 from django.utils import timezone
 from .models import Leetcode, Question, Leaderboard
 from ccs_auth.models import CUser
-from .tasks import get_user_data, refresh_user_data
+from .tasks import get_user_data, refresh_user_data, fetch_user_profile
 from .serializers import LeetCodeSerializer, QuestionSerializer
 
 def get_today_questions(username):
@@ -18,21 +18,6 @@ def get_today_questions(username):
     context = {'username': username}
     serializer = QuestionSerializer(questions, many=True, context=context)
     return serializer.data
-
-
-class Register(APIView):
-    permission_classes = [IsAuthenticated]
-    def post(self, request,*args, **kwargs):
-        user = request.user
-        username = request.data.get('username')
-        if not username:
-            return Response({"error": "Username is required"}, status=status.HTTP_400_BAD_REQUEST)
-        acc = Leetcode.objects.create(username=username, user=user)
-        print(f"User {user} registered with Leetcode username {username}")
-        if not acc:
-            return Response({"error": "User registration failed"}, status=status.HTTP_400_BAD_REQUEST)
-        get_user_data.delay(username, acc.pk)
-        return Response({"message": "User registered successfully"}, status=status.HTTP_201_CREATED)
 
 class Profile(APIView):
     permission_classes = [IsAuthenticated]

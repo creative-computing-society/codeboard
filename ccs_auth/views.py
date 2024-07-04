@@ -8,6 +8,7 @@ from django.contrib.auth import authenticate, login, logout
 from dotenv import load_dotenv
 
 from leaderboard.models import Leetcode
+from leaderboard.tasks import get_user_data, fetch_user_profile
 from .serializers import *
 from .models import *
 
@@ -19,63 +20,53 @@ API_URL = 'http://127.0.0.1:8000/api/leaderboard'
 class LoginView(APIView):
     def post(self, request, *args, **kwargs):
         sso_token = request.data.get('token')
-        leetcode_username = request.data.get('leetcode_username')
-
-        # Authenticate user with SSO token
         user = authenticate(request, sso_token=sso_token)
         if not user:
             return Response({'error': 'Invalid Credentials'}, status=status.HTTP_400_BAD_REQUEST)
 
-        # Login user
         login(request, user)
         print(f"User {user} logged in successfully with ID: {user.pk}")
 
-        # Generate or retrieve token for the user
         token, _ = Token.objects.get_or_create(user=user)
-
-        # Serialize user data
         serializer = CUserSerializer(instance=user)
 
+        # If the user has a leetcode account, return leetcode true with response
+        if user.leetcode:
+            return Response({'token': token.key, 'user': serializer.data, 'leetcode': True}, status=status.HTTP_200_OK)
+
+        return Response({'token': token.key, 'user': serializer.data, 'leetcode': False}, status=status.HTTP_200_OK)
+
+class RegisterLeetcode(APIView):
+    permission_classes = [IsAuthenticated]
+    def post(self, request, *args, **kwargs):
+        leetcode_username = request.data.get('leetcode_username')
+        user = request.user
+        if not leetcode_username:
+            return Response({'error': 'Leetcode username is required'}, status=status.HTTP_400_BAD_REQUEST)
+        acc = Leetcode.objects.create(username=leetcode_username, user=user)
+        if not acc:
+            return Response({'error': 'User registration failed'}, status=status.HTTP_400_BAD_REQUEST)
+        get_user_data.delay(leetcode_username, acc.pk)
+        return Response({'message': 'User registered successfully'}, status=status.HTTP_201_CREATED)
+
+class VerifyLeetcode(APIView):
+    permission_classes = [IsAuthenticated]
+    def get(self, request, *args, **kwargs):
+        user = request.user
+        username = request.data.get('leetcode_username')
+        if not username:
+            return Response({'error': 'Leetcode username is required'}, status=status.HTTP_400_BAD_REQUEST)
         try:
-            # Check if the user already has a linked Leetcode account
-            leetcode = user.leetcode
-            print(f"Leetcode account already exists for {user} as {leetcode.username}")
-            return Response({'token': token.key, 'user': serializer.data}, status=status.HTTP_200_OK)
+            a = Leetcode.objects.get(username=username)
+            return Response({'error': 'User registered on codeboard'}, status=status.HTTP_400_BAD_REQUEST)
         except Leetcode.DoesNotExist:
-            print(f"Leetcode account does not exist for {user}")
-            if not leetcode_username:
-                error = {
-                    'error': 'Leetcode username is required',
-                    'message': 'Please provide a Leetcode username to link to your account',
-                    'leetcode': False
-                }
-                return Response(error, status=status.HTTP_400_BAD_REQUEST)
+            pass
 
-        try:
-            # Check if the provided Leetcode username already exists
-            if Leetcode.objects.filter(username=leetcode_username).exists():
-                return Response({'error': 'Leetcode account already exists'}, status=status.HTTP_400_BAD_REQUEST)
-            
-            # Attempt to register the Leetcode account via API
-            res = requests.post(
-                f"{API_URL}/register/",
-                data={'username': leetcode_username},
-                headers={"Authorization": f"Token {token.key}"}
-            )
-            
-            if res.status_code == 200 or res.status_code == 201:
-                print("Registration request successful")
-                user.leetcode = Leetcode.objects.filter(username=leetcode_username).first()
-            else:
-                print(f"Registration request failed: {res.status_code} - {res.text}")
-
-        except Exception as e:
-            print(f"Error making request to /register/: {e}")
-
-        # Save user with updated Leetcode account reference if created
-        user.save()
-
-        return Response({'token': token.key, 'user': serializer.data}, status=status.HTTP_200_OK)
+        user_data = fetch_user_profile(username)
+        if user_data:
+            return Response(user_data, status=status.HTTP_200_OK)
+        return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
+        
     
 class LogoutView(APIView):
     permission_classes = [IsAuthenticated]
