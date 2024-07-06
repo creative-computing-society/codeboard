@@ -181,3 +181,5 @@ AUTHENTICATION_BACKENDS = [
 
 AUTH_USER_MODEL = 'ccs_auth.CUser'
 
+STATIC_ROOT = os.path.join(BASE_DIR, '')
+STATIC_URL = '/static/'
