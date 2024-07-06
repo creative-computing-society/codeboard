@@ -1,6 +1,6 @@
 python manage.py makemigrations
 python manage.py migrate
-python manage.py collectstatic --noinput
+# python manage.py collectstatic --noinput
 # service cron start
 # touch /var/log/cron.log
 # mv /workspace/conf/root /var/spool/cron/crontabs/root
