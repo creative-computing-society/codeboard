@@ -5,7 +5,7 @@ services:
     image: redis
     ports:
       - "6379:6379"
-
+  
   community:
     image: ccs/community-leaderboard
     build:
@@ -13,25 +13,11 @@ services:
       dockerfile: ./Dockerfile
     ports:
       - "4881:8000"
-    depends_on:
+    depends_on: 
       - redis
     volumes:
       - ./logs/:/app/logs/
-      - static_volume:/app/static
     restart: always
     environment:
       - CELERY_BROKER_URL=redis://redis:6379/0
       - CELERY_RESULT_BACKEND=redis://redis:6379/0
-
-  nginx:
-    image: nginx:latest
-    ports:
-      - "80:80"
-    volumes:
-      - ./nginx:/etc/nginx/conf.d
-      - static_volume:/app/static
-    depends_on:
-      - community
-
-volumes:
-  static_volume:

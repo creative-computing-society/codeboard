@@ -31,7 +31,7 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 DEBUG = False
 
 ALLOWED_HOSTS = ['*']
-CSRF_TRUSTED_ORIGINS = ['https://api.codeboard.ccstiet.com']
+CSRF_TRUSTED_ORIGINS = ['https://api.codeboard.ccstiet.com', 'https://api.knowishan.fun']
 
 # Application definition
 
@@ -180,6 +180,3 @@ AUTHENTICATION_BACKENDS = [
 ]
 
 AUTH_USER_MODEL = 'ccs_auth.CUser'
-
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
-STATIC_URL = '/static/'

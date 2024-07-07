@@ -15,8 +15,6 @@ from .models import *
 import os, requests
 load_dotenv()
 
-API_URL = 'http://127.0.0.1:8000/api/leaderboard'
-
 class LoginView(APIView):
     def post(self, request, *args, **kwargs):
         sso_token = request.data.get('token')
