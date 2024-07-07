@@ -1,0 +1,13 @@
+Django
+python-dotenv
+psycopg2-binary
+whitenoise
+djangorestframework
+requests
+celery
+redis
+django-celery-beat
+django-celery-results
+django-cors-headers
+djangorestframework-simplejwt
+gunicorn

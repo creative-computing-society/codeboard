@@ -1,0 +1,23 @@
+version: '3.4'
+
+services:
+  redis:
+    image: redis
+    ports:
+      - "6379:6379"
+  
+  community:
+    image: ccs/community-leaderboard
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    ports:
+      - "4881:8000"
+    depends_on: 
+      - redis
+    volumes:
+      - ./logs/:/app/logs/
+    restart: always
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
