@@ -1,6 +1,7 @@
 Django
 python-dotenv
 psycopg2-binary
+whitenoise
 djangorestframework
 requests
 celery
