@@ -1,6 +1,7 @@
+python manage.py collectstatic --noinput
 python manage.py makemigrations
 python manage.py migrate
-python manage.py collectstatic --noinput
+# python manage.py collectstatic --noinput
 # service cron start
 # touch /var/log/cron.log
 # mv /workspace/conf/root /var/spool/cron/crontabs/root
@@ -9,5 +10,5 @@ python manage.py collectstatic --noinput
 # echo ">>> Done!"
 
 # tail -f /var/log/cron.log
-# gunicorn -b 0.0.0.0:8000 core.wsgi:application --timeout=300
+# gunicorn -b 0.0.0.0:8000 core.wsgi:application
 python manage.py runserver 0.0.0.0:8000
