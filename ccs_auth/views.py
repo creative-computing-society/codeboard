@@ -27,12 +27,13 @@ class LoginView(APIView):
 
         token, _ = Token.objects.get_or_create(user=user)
         serializer = CUserSerializer(instance=user)
-
-        # If the user has a leetcode account, return leetcode true with response
-        if user.leetcode:
+    # If the user has a leetcode account, return leetcode true with response
+        try:
+            leetcode = Leetcode.objects.get(user=user)
             return Response({'token': token.key, 'user': serializer.data, 'leetcode': True}, status=status.HTTP_200_OK)
-
-        return Response({'token': token.key, 'user': serializer.data, 'leetcode': False}, status=status.HTTP_200_OK)
+        except Leetcode.DoesNotExist:
+            return Response({'token': token.key, 'user': serializer.data, 'leetcode': False}, status=status.HTTP_200_OK)
+        
 
 class RegisterLeetcode(APIView):
     permission_classes = [IsAuthenticated]
