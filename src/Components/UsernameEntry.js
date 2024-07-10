@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import SERVER_URL from "../config.js";
-const API_URL = SERVER_URL + '/api/auth';
+const API_URL = SERVER_URL + 'api/auth';
 
 const UsernameEntry = () => {
   const [leetcodeUsername, setLeetcodeUsername] = useState('');
@@ -49,7 +49,7 @@ const UsernameEntry = () => {
     };
 
     // Make the API call
-    fetch(`${API_URL}/login/`, requestOptions)
+    fetch(`${API_URL}/login/`, requestOptions)   //CHANGE THIS ABCK TO fetch(`${API_URL}/login/`, requestOptions) 
       .then(response => response.json())
       .then(data => {
         // Handle response
@@ -77,3 +77,5 @@ const UsernameEntry = () => {
 };
 
 export default UsernameEntry;
+// on click submit, if error, toast error ...if ok, pop up
+//logout -> get request with token then show msg log out success -> delete token

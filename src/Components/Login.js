@@ -19,7 +19,7 @@ const Login = ({ onLogin }) => {
           <img src={ccsLogo} alt="CCS Logo" className="ccs-logo" />
         </div>
         <div className="form-section">
-          <h2>CCS Coding Community</h2>
+          <h2>CCS Codeboard</h2>
           <button type="button" className="form-button ccs-login" onClick={handleLogin}>
             Login with CCS
           </button>

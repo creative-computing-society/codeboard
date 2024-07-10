@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import SERVER_URL from "../config.js";
-const API_URL = SERVER_URL+'/api/leaderboard';
+const BASE_URL = SERVER_URL+'api/leaderboard';
 
 const Profile = () => {
   const [profile, setProfile] = useState(null);
   const [questions, setQuestions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [rankPeriod, setRankPeriod] = useState('today');
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -16,12 +17,12 @@ const Profile = () => {
       if (!token) {
         setError('Token is missing');
         setLoading(false);
-       window.location.href="/login";
+        window.location.href="/login";
         return;
       }
 
       try {
-        const response = await fetch(`${API_URL}/user/profile/`, {
+        const response = await fetch(`${BASE_URL}/user/profile/`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -55,7 +56,7 @@ const Profile = () => {
       }
 
       try {
-        const response = await fetch(`${API_URL}/questions/today/`, {
+        const response = await fetch(`${BASE_URL}/questions/today/`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -81,6 +82,10 @@ const Profile = () => {
     fetchQuestions();
   }, []);
 
+  const showRank = (period) => {
+    setRankPeriod(period);
+  };
+
   if (loading) {
     console.log('Loading...');
     return <div className="loading">Loading...</div>;
@@ -103,10 +108,16 @@ const Profile = () => {
         <img src={profile.photo_url} alt="Profile" />
         <h1>{profile.name}</h1>
         <p>LeetCode Username: <span>{profile.username}</span></p>
-        <p>LeetCode Rank: <span>{profile.leetcode_rank}</span></p>
-        <p>Today's Rank: <span>{profile.daily_rank}</span></p>
-        <p>Weekly Rank: <span>{profile.weekly_rank}</span></p>
-        <p>Monthly Rank: <span>{profile.monthly_rank}</span></p>
+        
+        <div className="rank-slider">
+          <button className={`tab ${rankPeriod === 'today' ? 'active' : ''}`} onClick={() => showRank('today')}>Today's</button>
+          <button className={`tab ${rankPeriod === 'weekly' ? 'active' : ''}`} onClick={() => showRank('weekly')}>Weekly</button>
+          <button className={`tab ${rankPeriod === 'monthly' ? 'active' : ''}`} onClick={() => showRank('monthly')}>Monthly</button>
+        </div>
+
+        {rankPeriod === 'today' && <p>Today's Rank: <span>{profile.daily_rank}</span></p>}
+        {rankPeriod === 'weekly' && <p>Weekly Rank: <span>{profile.weekly_rank}</span></p>}
+        {rankPeriod === 'monthly' && <p>Monthly Rank: <span>{profile.monthly_rank}</span></p>}
       </div>
 
       <div className="question-container">

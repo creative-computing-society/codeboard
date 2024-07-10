@@ -6,28 +6,24 @@ import Daily from './Components/Daily';
 import Weekly from './Components/Weekly';
 import Monthly from './Components/Monthly';
 import Login from './Components/Login';
+import AuthVerify from './Components/AuthVerify';
 import UsernameEntry from './Components/UsernameEntry';
 import './App.css';
-import AuthVerify from './Components/AuthVerify';
 
 function App() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isNewUser, setIsNewUser] = useState(false);
 
   const handleLogin = () => {
-    const token=localStorage.getItem('token');
-    console.log(token);
-    if (token) {
-      setIsAuthenticated(true);
-    }
-    else{
-      setIsAuthenticated(false);
+    if (localStorage.getItem('token')) {
+      
     }
   };
 
   useEffect(() => {
     handleLogin();
   }, []);
+
+  const isAuthenticated = localStorage.getItem('token');
 
   return (
     <Router>

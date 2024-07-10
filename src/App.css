@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
 :root {
   --NAV-COLOR: rgb(212, 212, 212);
   --NAV-BORDER-COLOR: #525151;
@@ -7,18 +9,21 @@
   --CONTENT-COLOR: rgb(188, 197, 206);
   --LINK-COLOR: white;
   --LINK-HOVER-BGCOLOR: rgba(62, 216, 219, 0.866);
-  --LINK-FOCUS-BGCOLOR: rgb(57, 185, 188);
+  --LINK-FOCUS-BGCOLOR: rgba(62, 216, 219, 0.866);
   --LINK-ACTIVE-COLOR: rgb(82, 81, 81);
 }
 *{
   margin:0;
   padding: 0;
+  font-family: "Poppins", sans-serif;
+  font-weight: 400;
+  font-style: normal;
 }
 body {
-  background-color: rgba(228, 251, 251, 0.866);
+  background-color: black;
 }
 
-/* NAVBAR *************************************************************************************** */
+/* NAVBAR ***************************** */
 .NavBar {
   border-right: var(--NAV-BORDER);
   padding: 1rem;
@@ -58,6 +63,7 @@ body {
   padding: 0.8rem;
   border-bottom: 2px solid transparent;
   flex-grow: 1;
+  font-size: 1.4rem;
 }
 
 .NavBar li a:hover,
@@ -125,20 +131,21 @@ body::-webkit-scrollbar-thumb:hover {
   color: var(--CONTENT-H2-COLOR);
 }
 
-/* APP-CONTAINER ********************************************************************************/
+/* APP-CONTAINER ****************************/
 .app-container {
   display: flex;
   flex-grow: 1;
-  max-width: 160rem;
+  max-width: 190rem;
+  
 }
 
 .content {
   flex-grow: 1;
-  text-align: left;
-  padding: 2rem 12rem;
-  margin-top: 2rem;
+  text-align: center;
+  padding: 2rem 9rem;
+  /* margin-top: 2rem; */
   margin-left: 13rem;
-  margin-right: 0;
+  
   color: var(--CONTENT-COLOR);
   overflow-y: auto;
 }
@@ -155,7 +162,7 @@ body::-webkit-scrollbar-thumb:hover {
   margin-bottom: 1rem;
 }
 
-/* Profile ************************************************/
+/* Profile ****************/
 .profile-container {
   display: flex;
   justify-content: space-between; /* Space between containers */
@@ -213,7 +220,42 @@ body::-webkit-scrollbar-thumb:hover {
   font-size: 1.5em;
   color: rgb(33, 35, 42);
 }
+/* Rank Slider ****************/
+.rank-slider {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
 
+.rank-slider .tab {
+  background-color: var(--NAV-BGCOLOR);
+  color: var(--CONTENT-COLOR);
+  padding: 10px 20px;
+  margin: 0 5px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.rank-slider .tab:hover {
+  background-color: var(--LINK-HOVER-BGCOLOR);
+  color: #fff;
+}
+
+.rank-slider .tab.active {
+  background-color: rgba(62, 216, 219, 0.866);
+  color: #fff;
+}
+
+/* Responsive Design for Rank Slider */
+@media (max-width: 768px) {
+  .rank-slider .tab {
+    padding: 5px 10px;
+    font-size: 0.875rem;
+  }
+}
 /* Adding responsive design */
 @media (max-width: 768px) {
   .profile-container {
@@ -272,17 +314,25 @@ body::-webkit-scrollbar-thumb:hover {
   color: rgb(57, 185, 255);
 }
 
-/* LEADERBOARD ********************************************/
+/* LEADERBOARD ****************/
 .leaderboard-container {
   background-color: var(--NAV-BGCOLOR);
-  border-radius: 0.9375rem; /* 15px in rem */
-  padding: 1.25rem; /* 20px in rem */
-  margin: 1.25rem; /* 20px in rem */
+  border-radius: 1rem; /* 15px in rem */
+  padding: 2rem 4rem 4rem; /* 20px in rem */
+  margin: 0 1rem; /* 20px in rem */
 }
-
+.leaderboard-container .leaderboard-title-heading {
+  color: white;
+  text-align: left;
+  margin-bottom: 0.5rem;
+  font-family: "Poppins", sans-serif; /* Ensure the font is applied */
+  font-weight: 400;
+  font-style: normal;
+}
 .leaderboard-title {
-  color: var(--CONTENT-H2-COLOR);
-  text-align: center;
+  color: white;
+  text-align: left;
+  margin-bottom: 1rem;
 }
 
 .leaderboard-table {
@@ -290,18 +340,23 @@ body::-webkit-scrollbar-thumb:hover {
   border-collapse: collapse;
   background-color: var(--NAV-BGCOLOR);
   color: var(--CONTENT-COLOR);
+  border: 2px solid rgba(62, 216, 219, 0.866);
+  border-radius: 1rem;
+  overflow: hidden; /* Ensure the border-radius applies to the entire table */
+  
 }
 
 .leaderboard-table th,
 .leaderboard-table td {
   padding: 0.9375rem; /* 15px in rem */
   text-align: left;
-  border-bottom: 0.0625rem solid #ddd; /* 1px in rem */
+  border-top: 0.0625rem solid rgba(62, 216, 219, 0.866); /* 1px in rem */
 }
 
 .leaderboard-table th {
   background-color: var(--NAV-BGCOLOR);
   color: white;
+  text-align: center;
 }
 
 .leaderboard-row {
@@ -311,6 +366,7 @@ body::-webkit-scrollbar-thumb:hover {
 .leaderboard-row td {
   margin: 0.125rem; /* 2px in rem */
   background-color: var(--NAV-BGCOLOR);
+   text-align: center;
 }
 
 .leaderboard-row img {
@@ -319,9 +375,79 @@ body::-webkit-scrollbar-thumb:hover {
   height: 3.125rem; /* 50px in rem */
   object-fit: cover;
 }
+.leaderboard-table th:first-child,
+.leaderboard-table td:first-child {
+  border-radius: 1rem;
+}
 
-.leaderboard-row td:last-child {
-  text-align: right;
+.leaderboard-table th:last-child,
+.leaderboard-table td:last-child {
+  border-radius: 1rem;
+}
+
+.leaderboard-table tr:last-child td:first-child {
+  border-radius: 1rem;
+}
+
+.leaderboard-table tr:last-child td:last-child {
+  border-radius: 1rem;
+}
+/* .leaderboard img .badge{
+  width: auto; 
+  height: auto; 
+  border-radius: 0;
+  background-color: red;
+}
+*/
+/* .leaderboard-row td:last-child,
+.leaderboard-row th:last-child {
+  text-align: center;
+} */
+/* Responsive Design for Leaderboard */
+@media (max-width: 768px) {
+  .profile-container {
+    padding: 1rem; /* Equal padding on all sides */
+    margin:0;
+  }
+
+  .content {
+    padding: 0.5rem; /* Equal padding on all sides */
+    margin: 0; /* Remove any extra margin */
+  }
+  .leaderboard-container {
+    padding: 1rem; /* Adjust padding for smaller screens */
+    margin: 0.5rem; /* Adjust margin for smaller screens */
+   
+  }
+
+  .leaderboard-title-heading,
+  .leaderboard-title {
+    font-size: 0.875rem; /* Adjust font size for smaller screens */
+    text-align: center !important; /* Center-align text for smaller screens */
+  }
+
+  .leaderboard-table th,
+  .leaderboard-table td {
+    padding: 0.5rem; /* Reduce padding for smaller screens */
+    font-size: 0.75rem; /* Reduce font size for smaller screens */
+    text-align: center; 
+  }
+
+  .leaderboard-row img {
+    width: 2rem; /* Reduce image size for smaller screens */
+    height: 2rem; /* Reduce image size for smaller screens */
+  }
+
+  .leaderboard-table {
+    width: 100%; /* Ensure the table width fits within the container */
+    table-layout: fixed; /* Ensure consistent table cell widths */
+  }
+
+  .leaderboard-table th,
+  .leaderboard-table td {
+    white-space: normal; /* Allow text to wrap within cells */
+    word-wrap: break-word; /* Ensure long words are wrapped */
+  }
 }
 
 /* Responsive Navbar for Smaller Screens */
@@ -333,7 +459,8 @@ body::-webkit-scrollbar-thumb:hover {
     top: 0;
     left: 0;
     background-color: var(--NAV-BGCOLOR);
-    padding: 0.5rem;
+    padding: 0;
+    overflow: hidden;
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -358,7 +485,8 @@ body::-webkit-scrollbar-thumb:hover {
 
   .NavBar li a,
   .NavBar li span {
-    padding: 0.5rem;
+    padding: 0.2rem;
+    padding-bottom: 0;
   }
 
   .nav-icon {
@@ -366,8 +494,8 @@ body::-webkit-scrollbar-thumb:hover {
     margin: 0;
   }
   .ccsLogo{
-    margin-top: 2rem;
-    height: 5rem;
+    margin-top: 1rem;
+    height: 4.5rem;
     margin-left: 0.5rem;
   }
   .NavBar > h2,
@@ -379,12 +507,12 @@ body::-webkit-scrollbar-thumb:hover {
     display: none;
   }
   .app-container {
-    margin-top: 3rem; /* Add top margin to avoid overlap with the navbar */
+    margin-top: 7rem; /* Add top margin to avoid overlap with the navbar */
     margin-left: 0; /* Reset left margin */
   }
 
   .content {
-    margin-top: 1rem;
+    margin-top: 0rem;
     margin-left: 1rem;
     margin-right: 1rem;
     padding: 1rem;
@@ -404,5 +532,10 @@ body::-webkit-scrollbar-thumb:hover {
 
   .question-container {
     width: 100%; /* Ensure the question container takes full width */
+  }
+
+  .leaderboard-table th:last-child,
+  .leaderboard-table td:last-child {
+    display: none; /* Hide the "Questions Solved" column */
   }
 }

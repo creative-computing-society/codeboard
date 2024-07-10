@@ -1,82 +1,150 @@
 body.login-body {
-    background-color: rgb(57, 185, 188);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    margin: 0;
-    position: relative;
-    overflow: hidden;
-  }
-  
-  .login-outer-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100%;
-    width: 100%;
-  }
-  
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+  background-color: black;
+  color: white;
+}
+
+.login-outer-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  margin: 0 auto;
+}
+
+.login-container {
+  display: flex;
+  flex-direction: row;
+  background-color: rgb(18, 17, 17);
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 900px;
+  height: 60%;
+  z-index: 1;
+}
+
+.logo-section {
+  flex: 1;
+  padding-left: 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.ccs-logo {
+  max-width: 90%;
+  height: auto;
+}
+
+.form-section {
+  flex: 1;
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.form-section h2 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: white;
+}
+
+.form-button {
+  width: 70%;
+  padding: 10px;
+  margin-top: 10px;
+  background-color: #4285f4;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.form-button:hover {
+  background-color: #357ae8;
+}
+
+.ccs-login {
+  background-color: #34a853;
+}
+
+.ccs-login:hover {
+  background-color: #2b8e42;
+}
+
+/* Media Queries for responsiveness */
+@media (max-width: 768px) {
   .login-container {
-    display: flex;
     flex-direction: column;
-    background-color: white;
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    width: 100%;
-    max-width: 900px;
-    height: 60%;
-    z-index: 1;
-  }
-  
-  .logo-section {
-    flex: 1;
-    background-color: #f0f0f0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-  
-  .ccs-logo {
-    max-width: 90%;
     height: auto;
+    margin-top: 20px; /* Adjust margin from the top */
+    margin: 20px; /* Add margin around the container */
+    width: 90%; /* Reduce container width */
   }
-  
+
+  .logo-section {
+    padding: 20px;
+  }
+
+  .ccs-logo {
+    max-width: 60%;
+  }
+
   .form-section {
-    flex: 1;
-    padding: 40px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+    padding: 20px;
   }
-  
-  .form-section h2 {
-    text-align: center;
-    margin-bottom: 20px;
-  }
-  
+
   .form-button {
-    width: 70%;
+    width: 90%;
+    padding: 8px;
+    margin-top: 8px;
+    font-size: 14px;
+  }
+
+  .form-section h2 {
+    font-size: 18px;
+  }
+}
+
+@media (max-width: 480px) {
+  .login-container {
+    flex-direction: column;
+    height: auto;
+    margin-top: 0; /* Further adjust margin from the top */
+    margin: 10px; /* Add margin around the container */
+    width: 100%; /* Further reduce container width */
     padding: 10px;
-    margin-top: 10px;
-    background-color: #4285f4;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
   }
-  
-  .form-button:hover {
-    background-color: #357ae8;
+
+  .logo-section {
+    padding-left: 0;
+    padding: 10px;
   }
-  
-  .ccs-login {
-    background-color: #34a853;
+
+  .ccs-logo {
+    max-width: 50%;
   }
-  
-  .ccs-login:hover {
-    background-color: #2b8e42;
+
+  .form-section {
+    padding: 10px;
   }
-  
+
+  .form-button {
+    width: 100%;
+    padding: 6px;
+    margin-top: 6px;
+    font-size: 12px;
+  }
+
+  .form-section h2 {
+    font-size: 16px;
+  }
+}
