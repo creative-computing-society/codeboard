@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import Navbar from './Components/Navbar';
 import Profile from './Components/Profile';
 import Daily from './Components/Daily';
@@ -12,10 +12,13 @@ import './App.css';
 
 function App() {
   const [isNewUser, setIsNewUser] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   const handleLogin = () => {
     if (localStorage.getItem('token')) {
-      
+      setIsAuthenticated(true);
+    } else {
+      setIsAuthenticated(false);
     }
   };
 
@@ -23,7 +26,7 @@ function App() {
     handleLogin();
   }, []);
 
-  const isAuthenticated = localStorage.getItem('token');
+  console.log('Is Authenticated:', isAuthenticated);
 
   return (
     <Router>

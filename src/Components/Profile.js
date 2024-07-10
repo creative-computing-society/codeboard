@@ -8,7 +8,7 @@ const Profile = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [rankPeriod, setRankPeriod] = useState('today');
-
+  console.log('Profile:', profile);
   useEffect(() => {
     const fetchProfile = async () => {
       console.log('Fetching profile...');

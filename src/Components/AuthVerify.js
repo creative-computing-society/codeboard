@@ -1,7 +1,9 @@
 import React, { useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import SERVER_URL from "../config.js";
-const API_URL = SERVER_URL+'api/auth';
+
+const API_URL = `${SERVER_URL}api/auth`;
+
 const AuthVerify = ({ onVerify, setIsNewUser }) => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -13,53 +15,45 @@ const AuthVerify = ({ onVerify, setIsNewUser }) => {
     if (jwtToken) {
       console.log('JWT Token:', jwtToken);
 
-      const requestBody = {
-        token: jwtToken,
-      };
-
-      console.log('Request Body:', requestBody);
+      const requestBody = { token: jwtToken };
 
       fetch(`${API_URL}/login/`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(requestBody),
       })
-        .then(response => {
-          console.log('Response Status:', response.status);
-          return response.json().then(data => ({ status: response.status, data }));
-        })
+        .then(response => response.json().then(data => ({ status: response.status, data })))
         .then(({ status, data }) => {
+          console.log('Response Status:', status);
           console.log('Response Data:', data);
-          if (status === 400) {
-            if (data.leetcode === false) {
-              setIsNewUser(true);
-              navigate('/username', { state: { jwtToken } }); // Pass the JWT token as state
-            } else {
-              throw new Error('Unexpected error format');
-            }
-          } else if (status === 200) {
-            if (data && data.token) {
-              localStorage.setItem('token', data.token); // Save token locally
-              console.log('Token stored in localStorage:', localStorage.getItem('token'));
-               // Log the stored token
-              onVerify();
-              navigate('/profile');
-            } else {
-              throw new Error('Token not found in response');
-            }
+
+          if (data.leetcode === false) {
+            setIsNewUser(true);
+            // localStorage.setItem('token', data.token);
+            onVerify();
+            navigate('/username', { state: { jwtToken } });
+            console.log('Navigated to /username');
+          } else if (status === 200 && data.token) {
+            localStorage.setItem('token', data.token);
+            console.log('Token stored in localStorage:', localStorage.getItem('token'));
+            onVerify();
+            navigate('/profile');
+            console.log('Navigated to /profile');
+            
           } else {
-            throw new Error(`Unexpected response status: ${status}`);
+            console.error(`Unexpected response: ${JSON.stringify(data)}`);
+            navigate('/login');
+            console.log('Navigated to /login1');
           }
         })
         .catch(error => {
           console.error('Error checking user:', error);
-          // Handle error (e.g., show a notification)
-          navigate('/login'); // Navigate to login page on error
+          navigate('/login');
+          console.log('Navigated to /login2');
         });
     } else {
-      navigate('/login'); // Navigate to login page if no token found
+      navigate('/login');
+      console.log('Navigated to /login3');
     }
   }, [navigate, location, onVerify, setIsNewUser]);
 
