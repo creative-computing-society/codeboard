@@ -36,6 +36,10 @@ body {
   top: 0;
   bottom: 0;
   transition: width 0.3s ease, height 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100vh;
 }
 
 .NavBar > h2 {
@@ -47,8 +51,34 @@ body {
   list-style-type: none;
   padding: 0;
   margin-top: 1rem;
+  flex-grow: 1;
+  display:flex;
+  flex-direction: column;
+}
+.NavBar .logout-button-container {
+  
+  display: flex;
+  justify-content:flex-end;
+}
+.NavBar .logout-button-container .logout-button {
+  background-color: rgba(62, 216, 219, 0.866);
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 0.25rem;
+  margin-right: 1rem; /* Adjust the right margin as needed */
+  cursor: pointer;
+  font-size: 1rem;
 }
 
+.NavBar .logout-button-container .logout-button:hover {
+  background-color: rgba(62, 216, 219, 1); /* Slightly darker on hover */
+}
+
+.NavBar .logout-button-container .logout-button:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(62, 216, 219, 0.5);
+}
 .NavBar li {
   padding-bottom: 0.3rem;
   margin-bottom: 1rem;
@@ -102,7 +132,19 @@ body {
   margin-left: auto; /* Center horizontally */
   margin-right: auto; /* Center horizontally */
 }
+@media (max-width: 1024px) {
+  .NavBar .logout-button-container .logout-button {
+    font-size: 0.875rem; /* Reduce font size for smaller screens */
+    padding: 0.2rem 0.5rem; /* Adjust padding for smaller screens */
+  }
+}
 
+@media (max-width: 768px) {
+  .NavBar .logout-button-container .logout-button {
+    font-size: 0.75rem; /* Further reduce font size for even smaller screens */
+    padding: 0.15rem 0.4rem; /* Further adjust padding */
+  }
+}
 /* Scrollbar styles */
 .NavBar::-webkit-scrollbar,
 body::-webkit-scrollbar {
@@ -208,6 +250,9 @@ body::-webkit-scrollbar-thumb:hover {
 .detail-container p span {
   font-weight: bold;
   color: white; /* Ensure high contrast */
+  font-family: "Poppins", sans-serif;
+  font-weight: 400;
+  font-style: normal;
 }
 
 /* Loading and Error Styles */
@@ -221,6 +266,14 @@ body::-webkit-scrollbar-thumb:hover {
   color: rgb(33, 35, 42);
 }
 /* Rank Slider ****************/
+.rank-slider button {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  font: inherit;
+  outline: inherit;
+}
 .rank-slider {
   display: flex;
   justify-content: center;
@@ -228,7 +281,7 @@ body::-webkit-scrollbar-thumb:hover {
 }
 
 .rank-slider .tab {
-  background-color: var(--NAV-BGCOLOR);
+  text-decoration: none; /* Remove default underline */
   color: var(--CONTENT-COLOR);
   padding: 10px 20px;
   margin: 0 5px;
@@ -236,19 +289,18 @@ body::-webkit-scrollbar-thumb:hover {
   border-radius: 5px;
   cursor: pointer;
   font-size: 1rem;
-  transition: background-color 0.3s, color 0.3s;
+  transition: text-decoration-color 0.3s; /* Add transition for underline color */
 }
 
 .rank-slider .tab:hover {
-  background-color: var(--LINK-HOVER-BGCOLOR);
-  color: #fff;
+  text-decoration-color: rgba(62, 216, 219, 0.866); /* Underline color on hover */
 }
 
 .rank-slider .tab.active {
-  background-color: rgba(62, 216, 219, 0.866);
-  color: #fff;
+  text-decoration: underline; /* Underline when active */
+  text-decoration-color: rgba(62, 216, 219, 0.866); /* Active underline color */
+  text-underline-offset: 2px; /* Optional: adjust underline position */
 }
-
 /* Responsive Design for Rank Slider */
 @media (max-width: 768px) {
   .rank-slider .tab {
@@ -278,13 +330,17 @@ body::-webkit-scrollbar-thumb:hover {
 .question-container h2 {
   color: white; /* Change heading color to white */
   text-align: center;
+  margin-bottom: 0.5rem;
+  font-family: "Poppins", sans-serif;
+  font-weight: 400;
+  font-style: normal;
 }
-
+/* 
 .questions-table {
   width: 100%;
   margin-top: 20px;
   border-collapse: collapse;
-  background-color: var(--NAV-BGCOLOR); /* Add background color for contrast */
+  background-color: var(--NAV-BGCOLOR); 
 }
 
 .questions-table th,
@@ -313,7 +369,7 @@ body::-webkit-scrollbar-thumb:hover {
   text-decoration: underline;
   color: rgb(57, 185, 255);
 }
-
+ */
 /* LEADERBOARD ****************/
 .leaderboard-container {
   background-color: var(--NAV-BGCOLOR);
@@ -334,7 +390,7 @@ body::-webkit-scrollbar-thumb:hover {
   text-align: left;
   margin-bottom: 1rem;
 }
-
+.questions-table,
 .leaderboard-table {
   width: 100%;
   border-collapse: collapse;
@@ -345,14 +401,15 @@ body::-webkit-scrollbar-thumb:hover {
   overflow: hidden; /* Ensure the border-radius applies to the entire table */
   
 }
-
+.questions-table th,
+.questions-table td,
 .leaderboard-table th,
 .leaderboard-table td {
   padding: 0.9375rem; /* 15px in rem */
   text-align: left;
   border-top: 0.0625rem solid rgba(62, 216, 219, 0.866); /* 1px in rem */
 }
-
+.questions-table th,
 .leaderboard-table th {
   background-color: var(--NAV-BGCOLOR);
   color: white;
@@ -414,18 +471,20 @@ body::-webkit-scrollbar-thumb:hover {
     padding: 0.5rem; /* Equal padding on all sides */
     margin: 0; /* Remove any extra margin */
   }
+  .question-container,
   .leaderboard-container {
     padding: 1rem; /* Adjust padding for smaller screens */
     margin: 0.5rem; /* Adjust margin for smaller screens */
    
   }
-
+  .question-container h2,
   .leaderboard-title-heading,
   .leaderboard-title {
     font-size: 0.875rem; /* Adjust font size for smaller screens */
     text-align: center !important; /* Center-align text for smaller screens */
   }
-
+  .questions-table th,
+  .questions-table td,
   .leaderboard-table th,
   .leaderboard-table td {
     padding: 0.5rem; /* Reduce padding for smaller screens */
@@ -437,12 +496,13 @@ body::-webkit-scrollbar-thumb:hover {
     width: 2rem; /* Reduce image size for smaller screens */
     height: 2rem; /* Reduce image size for smaller screens */
   }
-
+  .questions-table,
   .leaderboard-table {
     width: 100%; /* Ensure the table width fits within the container */
     table-layout: fixed; /* Ensure consistent table cell widths */
   }
-
+  .questions-table th,
+  .questions-table td,
   .leaderboard-table th,
   .leaderboard-table td {
     white-space: normal; /* Allow text to wrap within cells */

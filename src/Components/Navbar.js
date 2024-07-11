@@ -75,12 +75,13 @@ export default function Navbar() {
             <span className="nav-Text">Monthly</span>
           </Link>
         </li>
-        <li className="nav-link">
-          <button onClick={handleLogout} className="logout-button">
-            Logout
-          </button>
-        </li>
       </ul>
+      <div className="logout-button-container">
+        
+        <button onClick={handleLogout} className="logout-button">
+          Logout
+        </button>
+      </div>
     </div>
   );
 }

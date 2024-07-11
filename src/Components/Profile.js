@@ -107,17 +107,17 @@ const Profile = () => {
       <div className="detail-container">
         <img src={profile.photo_url} alt="Profile" />
         <h1>{profile.name}</h1>
-        <p>LeetCode Username: <span>{profile.username}</span></p>
+        <p>Username: <span>{profile.username}</span></p>
         
+        {rankPeriod === 'today' && <p>Today's Rank: <span>{profile.daily_rank}</span></p>}
+        {rankPeriod === 'weekly' && <p>Weekly Rank: <span>{profile.weekly_rank}</span></p>}
+        {rankPeriod === 'monthly' && <p>Monthly Rank: <span>{profile.monthly_rank}</span></p>}
         <div className="rank-slider">
           <button className={`tab ${rankPeriod === 'today' ? 'active' : ''}`} onClick={() => showRank('today')}>Today's</button>
           <button className={`tab ${rankPeriod === 'weekly' ? 'active' : ''}`} onClick={() => showRank('weekly')}>Weekly</button>
           <button className={`tab ${rankPeriod === 'monthly' ? 'active' : ''}`} onClick={() => showRank('monthly')}>Monthly</button>
         </div>
 
-        {rankPeriod === 'today' && <p>Today's Rank: <span>{profile.daily_rank}</span></p>}
-        {rankPeriod === 'weekly' && <p>Weekly Rank: <span>{profile.weekly_rank}</span></p>}
-        {rankPeriod === 'monthly' && <p>Monthly Rank: <span>{profile.monthly_rank}</span></p>}
       </div>
 
       <div className="question-container">
@@ -128,16 +128,16 @@ const Profile = () => {
               <th>Question</th>
               <th>Difficulty</th>
               <th>Status</th>
-              <th>Link</th>
+              
             </tr>
           </thead>
           <tbody>
             {questions.map((question, index) => (
               <tr key={index}>
-                <td>{question.title}</td>
+                <td><a href={question.leetcode_link} target="_blank" rel="noopener noreferrer">{question.title}</a></td>
                 <td>{question.difficulty}</td>
                 <td>{question.status}</td>
-                <td><a href={question.leetcode_link} target="_blank" rel="noopener noreferrer">View</a></td>
+                
               </tr>
             ))}
           </tbody>
