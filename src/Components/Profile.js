@@ -31,6 +31,10 @@ const Profile = () => {
         });
 
         if (!response.ok) {
+          if(response.status===401){
+            window.location.href="/login";
+            localStorage.removeItem('token');
+          }
           throw new Error(`Error: ${response.status}`);
         }
 
