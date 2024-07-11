@@ -13,19 +13,38 @@ class SSOAuthenticationBackend(BaseBackend):
         if user_info:
             try:
                 user = CustomUser.objects.get(pk=user_info['email'])
+                # Check and update user information if different
+                has_changes = False
+                if user.first_name != user_info.get('name', '').split(' ')[0]:
+                    user.first_name = user_info.get('name', '').split(' ')[0]
+                    has_changes = True
+                if user.last_name != user_info.get('name', '').split(' ')[1]:
+                    user.last_name = user_info.get('name', '').split(' ')[1]
+                    has_changes = True
+                if 'rollNo' in user_info and user.roll_no != user_info['rollNo']:
+                    user.roll_no = user_info['rollNo']
+                    has_changes = True
+                if 'branch' in user_info and user.branch != user_info['branch']:
+                    user.branch = user_info['branch']
+                    has_changes = True
+                if has_changes:
+                    user.save()
             except CustomUser.DoesNotExist:
                 first_name, last_name = user_info['name'].split(' ')
                 print("authentication backend: ", user_info)
                 try:
                     roll_no=user_info['rollNo']
+                    branch=user_info['branch']
                 except:
                     roll_no = ''
+                    branch = ''
                 user = CustomUser.objects.create(
                     id=user_info['_id'],
                     email=user_info['email'],
                     first_name=first_name,
                     last_name=last_name,
-                    roll_no=roll_no
+                    roll_no=roll_no,
+                    branch=branch
                 )
                 print("authentication backend: ", user)
             return user

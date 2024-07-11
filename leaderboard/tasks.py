@@ -4,7 +4,6 @@ from datetime import timedelta
 from .models import Leetcode, LeaderboardEntry, Question, Leaderboard
 from .query_manager import *
 import time
-from pprint import pprint
 
 def get_latest_submissions(submissions):
     latest_submissions = {}
@@ -42,22 +41,23 @@ def cal_solved_intervals(questions, solved_dict: dict):
         if str(question_id) in solved_dict:
             ques_solved_timestamp = solved_dict[str(question_id)]
             if ques_solved_timestamp < question_timestamp:
-                print(f"Question: {question_id} - Solved before creation")
+                # print(f"Question: {question_id} - Solved before creation")
                 continue  # Skip if question was solved before it was created
 
             if ques_solved_timestamp >= one_day_interval.timestamp():
                 solved_within_one_day[question_id] = ques_solved_timestamp
-                print(f"Question: {question_id} - Solved within one day")
+                # print(f"Question: {question_id} - Solved within one day")
             
             if ques_solved_timestamp >= one_week_interval.timestamp():
                 solved_within_one_week[question_id] = ques_solved_timestamp
-                print(f"Question: {question_id} - Solved within one week")
+                # print(f"Question: {question_id} - Solved within one week")
 
             if ques_solved_timestamp >= one_month_interval.timestamp():
                 solved_within_one_month[question_id] = ques_solved_timestamp
-                print(f"Question: {question_id} - Solved within one month")
+                # print(f"Question: {question_id} - Solved within one month")
         else:
-            print(f"Question: {question_id} - Not solved")
+            # print(f"Question: {question_id} - Not solved")
+            pass
 
     return solved_within_one_day, solved_within_one_week, solved_within_one_month
 
@@ -137,7 +137,7 @@ def generate_leaderboards_entries():
             username = user_instance.username
             solved_dict = user_instance.total_solved_dict
             solved_within_one_day, solved_within_one_week, solved_within_one_month = cal_solved_intervals(ques_given, solved_dict)
-            print(f"user: {username} - Solved_dict: {solved_dict}")
+            # print(f"user: {username} - Solved_dict: {solved_dict}")
             daily_entry, _ = LeaderboardEntry.objects.get_or_create(user=user_instance, interval='day')
             weekly_entry, _ = LeaderboardEntry.objects.get_or_create(user=user_instance, interval='week')
             monthly_entry, _ = LeaderboardEntry.objects.get_or_create(user=user_instance, interval='month')
@@ -153,7 +153,7 @@ def generate_leaderboards_entries():
             daily_entry.save()
             weekly_entry.save()
             monthly_entry.save()
-        print("Leaderboard entries generated successfully")
+        # print("Leaderboard entries generated successfully")
     except Exception as e:
         print(f"Error generating leaderboard entries: {e}")
 
@@ -225,7 +225,7 @@ def calculate_leaderboards(self, *args, **kwargs):
             leaderboard_type='monthly', defaults={'leaderboard_data': one_month}
         )
 
-        print("Leaderboards calculated successfully")
+        # print("Leaderboards calculated successfully")
         return one_day, one_week, one_month
     except Exception as e:
         print(f"Error calculating leaderboards: {e}")
@@ -266,7 +266,7 @@ def get_user_data(self, username, id, *args, **kwargs):
         matched_ques = match_questions_to_solved(ques_given, total_solved)
         update_user_instance(user_instance, user_profile, matched_ques, latest_solved, total_solved, language_problem_count)
         
-        print(f"Data for {username} saved successfully")
+        # print(f"Data for {username} saved successfully")
     except Exception as e:
         print(f"Error fetching or updating data for user {username}: {e}")
 

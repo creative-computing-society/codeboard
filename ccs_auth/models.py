@@ -8,6 +8,7 @@ class CUser(AbstractBaseUser):
     roll_no = models.CharField(max_length=10, unique=False, blank=True, null=True)
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
+    branch = models.CharField(max_length=50, blank=True, null=True, unique=False)
 
     is_active = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False)
