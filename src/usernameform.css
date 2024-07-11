@@ -101,7 +101,10 @@
     margin: 8px 0;
     font-weight: 600;
   }
-  
+  .logo img{
+    width: 4rem;
+    
+  } 
   .content {
     display: flex;
     align-items: center;
