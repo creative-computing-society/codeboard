@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import SERVER_URL from "../config.js";
 import '../usernameform.css';
 import ccsLogoBulb from '../assets/ccs-bulb.png';
@@ -7,11 +7,10 @@ import ccsLogoBulb from '../assets/ccs-bulb.png';
 const API_URL = SERVER_URL + 'api/auth';
 
 const UsernameEntry = () => {
+  const location = useLocation();
+  const { userData } = location.state || {};
   const [leetcodeUsername, setLeetcodeUsername] = useState('');
   const navigate = useNavigate();
-
-  // Function to get the token from localStorage
-  const getToken = () => localStorage.getItem('token');
 
   const handleUsernameChange = (e) => {
     setLeetcodeUsername(e.target.value);
@@ -20,7 +19,7 @@ const UsernameEntry = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    const token = getToken(); // Retrieve token from localStorage
+    const token = localStorage.getItem('token'); // Retrieve token from localStorage
 
     if (!token) {
       console.error('Token is missing');
@@ -92,9 +91,8 @@ const UsernameEntry = () => {
 
           <div className="left-bottom">
             <div className="content">
-              <img className="profile" src="/default-profile-img.png" alt="Profile" />
               <div className="content-left">
-                <h4>Welcome, John Doe!</h4>
+                <h4>Welcome, {userData ? userData.fullName : 'User'}!</h4>
                 <p>Please accept the OAuth policy and provide additional information.</p>
               </div>
             </div>
@@ -104,46 +102,34 @@ const UsernameEntry = () => {
         {/* Right side form */}
         <div className="right">
           <form onSubmit={handleSubmit} className="user-form">
-            <div className="input-group-row">
+
+          
               <div className="input-group">
                 <input
                   type="text"
                   id="roll-number"
                   name="rollNumber"
-                  value="2783742"
+                  value={userData ? userData.rollNo : ''}
                   placeholder=" "
                   disabled
                 />
                 <label htmlFor="roll-number">Roll Number</label>
               </div>
-
               <div className="input-group">
-                <input
-                  type="tel"
-                  id="phone"
-                  name="phone"
-                  value="123456789"
-                  placeholder=" "
-                  disabled
-                />
-                <label htmlFor="phone">Phone Number</label>
-              </div>
-            </div>
-
-            <div className="input-group">
               <input
                 type="email"
                 id="email"
                 name="email"
-                value="hello@gmail.com"
+                value={userData ? userData.email : ''}
                 placeholder=" "
                 disabled
               />
               <label htmlFor="email">Personal Email</label>
             </div>
+            
 
             <div className="input-group">
-              <select id="branch" name="branch" value="RAI" disabled>
+              <select id="branch" name="branch" value="COE" disabled>
                 <option value="" disabled>Select your branch</option>
                 <option value="BT">BioTechnology</option>
                 <option value="BM">Biomedical</option>
@@ -163,18 +149,8 @@ const UsernameEntry = () => {
               <label htmlFor="branch" className="active">Branch</label>
             </div>
 
-            <div className="input-group">
-              <input
-                type="number"
-                id="passing-year"
-                name="passingYear"
-                value="2027"
-                placeholder=" "
-                disabled
-              />
-              <label htmlFor="passing-year">Passing Year</label>
-            </div>
 
+            
             <div className="input-group">
               <input
                 type="text"
@@ -187,7 +163,6 @@ const UsernameEntry = () => {
               />
               <label htmlFor="leetcode-username">Leetcode-username</label>
             </div>
-
             <div className="policy">
               <label htmlFor="policy">
                 <input
