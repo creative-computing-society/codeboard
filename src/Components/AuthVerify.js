@@ -29,9 +29,14 @@ const AuthVerify = ({ onVerify, setIsNewUser }) => {
 
           if (data.leetcode === false) {
             setIsNewUser(true);
-            // localStorage.setItem('token', data.token);
+            //localStorage.setItem('token', data.token);
             onVerify();
-            navigate('/username', { state: { jwtToken } });
+            const userData = {
+              rollNo: data.user.roll_no,
+              email: data.user.email,
+              fullName: `${data.user.first_name} ${data.user.last_name}`
+            };
+            navigate('/username', { state: { jwtToken, userData } });
             console.log('Navigated to /username');
           } else if (status === 200 && data.token) {
             localStorage.setItem('token', data.token);
