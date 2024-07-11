@@ -6,7 +6,7 @@ import ccsLogoBulb from '../assets/ccs-bulb.png';
 
 const API_URL = SERVER_URL + 'api/auth';
 
-const UsernameEntry = () => {
+const UsernameEntry = ({setIsNewUser}) => {
   const [leetcodeUsername, setLeetcodeUsername] = useState('');
   const navigate = useNavigate();
 
@@ -31,7 +31,6 @@ const UsernameEntry = () => {
     // Define the request payload
     const payload = {
       leetcode_username: leetcodeUsername,
-      token: token // Use the stored token here
     };
 
     // Define the request options
@@ -39,7 +38,7 @@ const UsernameEntry = () => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
+        'Authorization': `Token ${token}`
       },
       body: JSON.stringify(payload)
     };
@@ -48,7 +47,9 @@ const UsernameEntry = () => {
     fetch(`${API_URL}/verify-leetcode/`, requestOptions)
       .then(response => {
         if (!response.ok) {
-          throw new Error('Verification failed');
+          return response.json().then(body => {
+            throw new Error(body.error || 'Verification failed');
+          });
         }
         return response.json();
       })
@@ -59,19 +60,26 @@ const UsernameEntry = () => {
           fetch(`${API_URL}/register-leetcode/`, requestOptions)
             .then(response => {
               if (!response.ok) {
-                throw new Error('Registration failed');
+                return response.json().then(body => {
+                  throw new Error(body.error || 'Registration failed');
+                });
               }
+              if (response.status === 201) {
+              }
+              // setIsNewUser(false);
+              localStorage.setItem('isNewUser', false);
               navigate('/profile'); // Redirect to profile page on success
             })
             .catch(error => {
               console.error('Error registering:', error);
-              alert('An error occurred while registering. Please try again.');
+              alert(`An error occurred while registering. Please try again. ${error.message}`);
             });
         }
       })
       .catch(error => {
+        // Directly handle the error object
         console.error('Error verifying:', error);
-        alert('Verification failed. Please check your username and try again.');
+        alert(`Verification failed. ${error.message}`);
       });
   };
 

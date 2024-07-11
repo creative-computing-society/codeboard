@@ -33,6 +33,7 @@ export default function Navbar() {
 
       if (data.message.toLowerCase() === 'logged out successfully') {
         localStorage.removeItem('token');
+        localStorage.removeItem('isNewUser')
         navigate('/login');
       } else {
         throw new Error('Logout failed');

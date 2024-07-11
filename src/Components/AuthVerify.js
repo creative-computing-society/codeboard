@@ -27,20 +27,36 @@ const AuthVerify = ({ onVerify, setIsNewUser }) => {
           console.log('Response Status:', status);
           console.log('Response Data:', data);
 
-          if (data.leetcode === false) {
-            setIsNewUser(true);
-            // localStorage.setItem('token', data.token);
-            onVerify();
-            navigate('/username', { state: { jwtToken } });
-            console.log('Navigated to /username');
-          } else if (status === 200 && data.token) {
-            localStorage.setItem('token', data.token);
-            console.log('Token stored in localStorage:', localStorage.getItem('token'));
-            onVerify();
-            navigate('/profile');
-            console.log('Navigated to /profile');
+          // if (data.leetcode === false) {
+          //   setIsNewUser(true);
+          //   localStorage.setItem('token', data.token);
+          //   // onVerify();
+          //   navigate('/username', { state: { jwtToken } });
+          //   console.log('Navigated to /username');
+          // } else if (status === 200 && data.token) {
+          //   localStorage.setItem('token', data.token);
+          //   console.log('Token stored in localStorage:', localStorage.getItem('token'));
+          //   onVerify();
+          //   navigate('/profile');
+          //   console.log('Navigated to /profile');
             
-          } else {
+          // } else {
+          //   console.error(`Unexpected response: ${JSON.stringify(data)}`);
+          //   navigate('/login');
+          //   console.log('Navigated to /login1');
+          // }
+          if((status == 200 || status == 201) && data.token){
+            localStorage.setItem('token', data.token);
+            onVerify();
+          }
+          if(data.leetcode === false){
+            setIsNewUser(true);
+            navigate('/username', { state: { jwtToken } });
+          }
+          else if(data.leetcode == true){
+            navigate('/profile');
+          }
+          else{
             console.error(`Unexpected response: ${JSON.stringify(data)}`);
             navigate('/login');
             console.log('Navigated to /login1');
