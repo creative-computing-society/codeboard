@@ -23,16 +23,8 @@ function App() {
   };
 
   useEffect(() => {
-    const savedIsNewUser = localStorage.getItem('isNewUser');
-    if (savedIsNewUser) {
-      setIsNewUser(JSON.parse(savedIsNewUser));
-    }
     handleLogin();
   }, []);
-
-  useEffect(() => {
-    localStorage.setItem('isNewUser', JSON.stringify(isNewUser));
-  }, [isNewUser]);
 
   console.log('Is Authenticated:', isAuthenticated);
 
@@ -44,18 +36,12 @@ function App() {
             <Navbar />
             <div className="content">
               <Routes>
-                {isNewUser ? (
-                  <Route path="/username" element={<UsernameEntry />} />
-                ) : (
-                  <>
-                    <Route path="/" element={<Profile />} />
-                    <Route path="/profile" element={<Profile />} />
-                    <Route path="/daily" element={<Daily />} />
-                    <Route path="/weekly" element={<Weekly />} />
-                    <Route path="/monthly" element={<Monthly />} />
-                  </>
-                )}
-                <Route path="*" element={<Navigate to={isNewUser ? "/username" : "/profile"} />} />
+                <Route path="/" element={<Profile />} />
+                <Route path="/profile" element={<Profile />} />
+                <Route path="/daily" element={<Daily />} />
+                <Route path="/weekly" element={<Weekly />} />
+                <Route path="/monthly" element={<Monthly />} />
+                <Route path="*" element={<Navigate to="/profile" />} />
               </Routes>
             </div>
           </>
@@ -63,6 +49,7 @@ function App() {
           <Routes>
             <Route path="/login" element={<Login onLogin={handleLogin} />} />
             <Route path="/authverify" element={<AuthVerify onVerify={handleLogin} setIsNewUser={setIsNewUser} />} />
+            {isNewUser && <Route path="/username" element={<UsernameEntry />} />}
             <Route path="*" element={<Navigate to="/login" />} />
           </Routes>
         )}
