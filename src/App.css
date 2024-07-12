@@ -594,6 +594,8 @@ body::-webkit-scrollbar-thumb:hover {
     width: 100%; /* Ensure the question container takes full width */
   }
 
+}
+@media (max-width: 425px){
   .leaderboard-table th:last-child,
   .leaderboard-table td:last-child {
     display: none; /* Hide the "Questions Solved" column */
