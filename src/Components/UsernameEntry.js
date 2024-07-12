@@ -8,7 +8,7 @@ const API_URL = SERVER_URL + 'api/auth';
 
 const UsernameEntry = () => {
   const location = useLocation();
-  const { userData } = location.state || {};
+  const { userData, token } = location.state || {}; // Retrieve token from location state
   const [leetcodeUsername, setLeetcodeUsername] = useState('');
   const navigate = useNavigate();
 
@@ -19,8 +19,6 @@ const UsernameEntry = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    const token = localStorage.getItem('token'); // Retrieve token from localStorage
-
     if (!token) {
       console.error('Token is missing');
       navigate('/login'); // Navigate to login page if token is missing
@@ -30,7 +28,7 @@ const UsernameEntry = () => {
     // Define the request payload
     const payload = {
       leetcode_username: leetcodeUsername,
-      token: token // Use the stored token here
+      token: token // Use the token passed from AuthVerify
     };
 
     // Define the request options
@@ -38,7 +36,7 @@ const UsernameEntry = () => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
+        'Authorization': `Token ${token}`
       },
       body: JSON.stringify(payload)
     };
@@ -52,9 +50,7 @@ const UsernameEntry = () => {
         return response.json();
       })
       .then(data => {
-        // Handle success
         if (window.confirm('Verification successful. Proceed to register?')) {
-          // Send request to register leetcode username
           fetch(`${API_URL}/register-leetcode/`, requestOptions)
             .then(response => {
               if (!response.ok) {
@@ -102,20 +98,7 @@ const UsernameEntry = () => {
         {/* Right side form */}
         <div className="right">
           <form onSubmit={handleSubmit} className="user-form">
-
-          
-              <div className="input-group">
-                <input
-                  type="text"
-                  id="roll-number"
-                  name="rollNumber"
-                  value={userData ? userData.rollNo : ''}
-                  placeholder=" "
-                  disabled
-                />
-                <label htmlFor="roll-number">Roll Number</label>
-              </div>
-              <div className="input-group">
+            <div className="input-group">
               <input
                 type="email"
                 id="email"
@@ -124,12 +107,21 @@ const UsernameEntry = () => {
                 placeholder=" "
                 disabled
               />
-              <label htmlFor="email">Personal Email</label>
+              <label htmlFor="email">Email</label>
             </div>
-            
-
             <div className="input-group">
-              <select id="branch" name="branch" value="COE" disabled>
+              <input
+                type="text"
+                id="roll-number"
+                name="rollNumber"
+                value={userData ? userData.rollNo : ''}
+                placeholder=" "
+                disabled
+              />
+              <label htmlFor="roll-number">Roll Number</label>
+            </div>
+            <div className="input-group">
+              <select id="branch" name="branch" value={userData ? userData.branch : ''} disabled>
                 <option value="" disabled>Select your branch</option>
                 <option value="BT">BioTechnology</option>
                 <option value="BM">Biomedical</option>
@@ -148,9 +140,6 @@ const UsernameEntry = () => {
               </select>
               <label htmlFor="branch" className="active">Branch</label>
             </div>
-
-
-            
             <div className="input-group">
               <input
                 type="text"
@@ -160,8 +149,9 @@ const UsernameEntry = () => {
                 onChange={handleUsernameChange}
                 required
                 placeholder=" "
+                autoComplete="off"
               />
-              <label htmlFor="leetcode-username">Leetcode-username</label>
+              <label htmlFor="leetcode-username">Leetcode Username</label>
             </div>
             <div className="policy">
               <label htmlFor="policy">

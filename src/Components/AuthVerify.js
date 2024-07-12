@@ -29,14 +29,15 @@ const AuthVerify = ({ onVerify, setIsNewUser }) => {
 
           if (data.leetcode === false) {
             setIsNewUser(true);
-            //localStorage.setItem('token', data.token);
             onVerify();
             const userData = {
               rollNo: data.user.roll_no,
               email: data.user.email,
+              branch: data.user.branch,
               fullName: `${data.user.first_name} ${data.user.last_name}`
             };
-            navigate('/username', { state: { jwtToken, userData } });
+            
+            navigate('/username', { state: { jwtToken, userData , token: data.token } });
             console.log('Navigated to /username');
           } else if (status === 200 && data.token) {
             localStorage.setItem('token', data.token);
@@ -44,7 +45,6 @@ const AuthVerify = ({ onVerify, setIsNewUser }) => {
             onVerify();
             navigate('/profile');
             console.log('Navigated to /profile');
-            
           } else {
             console.error(`Unexpected response: ${JSON.stringify(data)}`);
             navigate('/login');
