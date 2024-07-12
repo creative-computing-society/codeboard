@@ -3,6 +3,7 @@
   --cont-color: rgb(18, 17, 17); /* Dark background for containers */
   --ac-color: rgba(62, 216, 219, 0.866); /* Accent color for labels and headings */
   --text-color: #ffffff; /* White text color */
+  --input-focus-color: rgb(77, 77, 77);
 }
 
 /* Global Reset */
@@ -209,7 +210,17 @@ body {
   background-position: right 10px center;
   padding-right: 40px;
 }
+.input-group input:focus {
+  background-color: var(--cont-color); /* Dark background */
+  color: var(--text-color); /* White text */
+  border-color: var(--ac-color); /* Accent color border */
+}
 
+/* Optional: Style for when the input is not empty */
+.input-group input:not(:placeholder-shown) {
+  background-color: var(--cont-color); /* Dark background */
+  color: var(--text-color); /* White text */
+}
 .input-group select option[disabled] {
   display: none;
 }
