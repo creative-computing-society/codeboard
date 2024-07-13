@@ -1,9 +1,7 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import SERVER_URL from "../config.js";
-import '../usernameform.css';
 import ccsLogoBulb from '../assets/ccs-bulb.png';
-
 const API_URL = SERVER_URL + 'api/auth';
 
 const UsernameEntry = () => {
@@ -11,6 +9,16 @@ const UsernameEntry = () => {
   const { userData, token } = location.state || {}; // Retrieve token from location state
   const [leetcodeUsername, setLeetcodeUsername] = useState('');
   const navigate = useNavigate();
+
+  useEffect(() => {
+    // Add the class to the body element when the component mounts
+    document.body.classList.add('username-entry-body');
+    
+    // Remove the class from the body element when the component unmounts
+    return () => {
+      document.body.classList.remove('username-entry-body');
+    };
+  }, []);
 
   const handleUsernameChange = (e) => {
     setLeetcodeUsername(e.target.value);
@@ -71,7 +79,7 @@ const UsernameEntry = () => {
   };
 
   return (
-    <div>
+    <div className="outer-container">
       <div className="container">
         {/* Left side content */}
         <div className="left">

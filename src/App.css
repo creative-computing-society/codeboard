@@ -11,6 +11,10 @@
   --LINK-HOVER-BGCOLOR: rgba(62, 216, 219, 0.866);
   --LINK-FOCUS-BGCOLOR: rgba(62, 216, 219, 0.866);
   --LINK-ACTIVE-COLOR: rgb(82, 81, 81);
+  --cont-color: rgb(18, 17, 17); /* Dark background for containers */
+  --ac-color: rgba(62, 216, 219, 0.866); /* Accent color for labels and headings */
+  --text-color: #ffffff; /* White text color */
+  --input-focus-color: rgb(77, 77, 77);
 }
 *{
   margin:0;
@@ -40,6 +44,7 @@ body {
   flex-direction: column;
   justify-content: space-between;
   height: 100vh;
+  
 }
 
 .NavBar > h2 {
@@ -599,5 +604,355 @@ body::-webkit-scrollbar-thumb:hover {
   .leaderboard-table th:last-child,
   .leaderboard-table td:last-child {
     display: none; /* Hide the "Questions Solved" column */
+  }
+}
+
+/*  UsernameEntry styles *****************************************/
+body.username-entry-body {
+  background-color: #000000; /* Black background for the body */
+  color: var(--text-color); /* White text color */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  padding: 0;
+  margin: 0;
+}
+.container {
+  background-color: var(--cont-color);
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 30px;
+  max-width: 1000px;
+  width: 100%;
+  text-align: center;
+  display: flex;
+  justify-content: space-evenly;
+  align-items: stretch;
+  flex-wrap: wrap;
+}
+
+/* Left Column Styles */
+.left {
+  display: flex;
+  flex-direction: column;
+  width: 45%;
+  
+  border-radius: 8px 0 0 8px;
+  align-items: center;
+  gap: 30px;
+  background: var(--cont-color);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  padding: 12px;
+}
+
+.left-top {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  margin-top: 30px;
+  gap: 15px;
+  text-align: center;
+}
+
+.left-top h1 {
+  font-size: 32px;
+  color: var(--ac-color);
+  margin: 0;
+  font-weight: 700;
+}
+
+.left-top h2 {
+  font-size: 16px;
+  color: white;
+  font-weight: 500;
+}
+
+.left-bottom {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  
+  width: 100%;
+}
+
+.left-bottom h4 {
+  font-size: 20px;
+  color: var(--ac-color);
+  
+  font-weight: 600;
+}
+
+.logo img {
+  width: 5rem;
+  border-radius: 50%;
+}
+
+.left-bottom .content {
+  display: flex;
+  align-items: center;
+  margin: 0.5rem;
+  padding: 0.4rem;
+}
+
+.profile {
+  width: 60px;
+  height: 60px;
+  margin-right: 10px; /* Adjust margin as needed */
+}
+
+.content-left {
+  flex: 1; /* Take up remaining space */
+
+}
+
+/* Adjustments for smaller screens */
+@media (max-width: 768px) {
+  .left {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .content {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .profile {
+    margin-bottom: 10px; /* Adjust margin for spacing */
+  }
+}
+/* Right Column Styles */
+.right {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  margin-left: 8px;
+  width: 50%;
+  margin-bottom: 8px;
+}
+
+/* Form Styles */
+.user-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+  height: 100%;
+  justify-content: space-between;
+}
+
+.input-group-row {
+  display: flex;
+  gap: 15px;
+}
+
+.input-group {
+  position: relative;
+  margin-top: 10px;
+  height: 56px;
+}
+
+.input-group input,
+.input-group select {
+  width: 100%;
+  height: 100%;
+  padding: 0 10px;
+  border: 1px solid var(--ac-color);
+  border-radius: 4px;
+  font-size: 14px;
+  line-height: 56px;
+  background-color: var(--cont-color);
+  color: var(--text-color); /* White text color */
+}
+.input-group #roll-number,
+.input-group #email{
+  color: rgb(179, 179, 179);
+}
+
+.input-group label {
+  position: absolute;
+  top: 0;
+  left: 0;
+  font-size: 12px;
+  color: var(--ac-color);
+  transform: translateY(-50%) scale(0.75) translateX(-5%);
+  background: var(--cont-color);
+  pointer-events: none;
+  transition: none;
+}
+
+.input-group input:focus ~ label,
+.input-group input:not(:placeholder-shown) ~ label,
+.input-group select:focus ~ label,
+.input-group select:not([value=""]) ~ label {
+  top: 0;
+}
+
+.input-group select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%235f6368' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  padding-right: 40px;
+}
+.input-group input:focus {
+  background-color: var(--cont-color); /* Dark background */
+  color: var(--text-color); /* White text */
+  border-color: var(--ac-color); /* Accent color border */
+}
+
+/* Optional: Style for when the input is not empty */
+.input-group input:not(:placeholder-shown) {
+  background-color: var(--cont-color); /* Dark background */
+  color: var(--text-color); /* White text */
+}
+.input-group select option[disabled] {
+  display: none;
+}
+
+.input-group select:invalid {
+  color: #5f6368;
+}
+
+/* Policy Styles */
+.policy {
+  display: flex;
+  align-items: center;
+}
+
+.policy label {
+  font-size: 14px;
+  color: #5f6368;
+  display: flex;
+  align-items: center;
+}
+
+.policy input[type="checkbox"] {
+  width: auto;
+  margin-right: 10px;
+}
+
+/* Button Styles */
+button {
+  background-color: var(--ac-color);
+  color: #ffffff;
+  padding: 10px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+button:hover {
+  background-color: #139ad6;
+}
+
+/* Media Queries */
+@media (max-width: 768px) {
+
+  .container {
+    margin-top: 6rem;
+    flex-direction: column;
+  }
+
+  .left,
+  .right {
+    width: 100%;
+    margin: 0;
+  }
+}
+
+@media (max-width: 576px) {
+  .container {
+    box-shadow: none;
+  }
+
+  .left {
+   
+    box-shadow: none;
+  }
+
+  .left-top h1 {
+    font-size: 24px;
+  }
+
+  .left-top h2 {
+    font-size: 14px;
+  }
+
+  .left-bottom h4 {
+    font-size: 18px;
+  }
+
+  .content p {
+    font-size: 14px;
+  }
+
+  .input-group label {
+    top: 0;
+  }
+
+  .input-group {
+    height: 45px;
+  }
+
+  .input-group input,
+  .input-group select {
+    width: 100%;
+    height: 40px;
+    padding: 0 10px;
+    border: 1px solid #39b9bc;
+    border-radius: 4px;
+    font-size: 14px;
+    line-height: 1.5;
+    background-color: var(--cont-color);
+  }
+
+  .policy label {
+    font-size: 12px;
+  }
+
+  button {
+    padding: 12px;
+    font-size: 16px;
+  }
+
+  .input-group label {
+    font-size: 12px;
+  }
+
+  .input-group input:focus ~ label,
+  .input-group input:not(:placeholder-shown) ~ label,
+  .input-group select:focus ~ label,
+  .input-group select:not([value=""]):not([value="Select your branch"]) ~ label {
+    font-size: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .input-group-row {
+    flex-direction: column;
+  }
+
+  .input-group-row .input-group {
+    width: 100%;
+  }
+}
+@media (max-width: 600px) {
+  body{
+    background-color: rgb(18, 17, 17);
+  }
+}
+@media (max-width: 445px) {
+
+  .container {
+    margin-top: 0;
+    flex-direction: column;
   }
 }
