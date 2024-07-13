@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import SERVER_URL from "../config.js";
 import ccsLogoBulb from '../assets/ccs-bulb.png';
+
 const API_URL = SERVER_URL + 'api/auth';
 
 const UsernameEntry = () => {
@@ -64,7 +65,12 @@ const UsernameEntry = () => {
               if (!response.ok) {
                 throw new Error('Registration failed');
               }
+              return response.json();
+            })
+            .then(data => {
+              console.log('Registration successful. Redirecting to profile...');
               navigate('/profile'); // Redirect to profile page on success
+              console.log('Navigated to /profile'); // Log navigation
             })
             .catch(error => {
               console.error('Error registering:', error);
