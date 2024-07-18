@@ -45,6 +45,9 @@ class LeaderboardEntry(models.Model):
 
     class Meta:
         unique_together = ('user', 'interval')
+    
+    def __str__(self):
+        return f'{self.user.username} - {self.interval}'
 
 class Leaderboard(models.Model):
     leaderboard_key = models.AutoField(primary_key=True)

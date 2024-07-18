@@ -3,7 +3,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
 from rest_framework.permissions import IsAuthenticated
-
+from .authentication import ExpiringTokenAuthentication
 from django.contrib.auth import authenticate, login, logout
 from dotenv import load_dotenv
 
@@ -11,7 +11,8 @@ from leaderboard.models import Leetcode
 from leaderboard.tasks import get_user_data, fetch_user_profile
 from .serializers import *
 from .models import *
-
+import pytz
+import datetime
 import os, requests
 load_dotenv()
 
@@ -22,17 +23,22 @@ class LoginView(APIView):
         if not user:
             return Response({'error': 'Invalid Credentials'}, status=status.HTTP_400_BAD_REQUEST)
 
+
         login(request, user)
         print(f"User {user} logged in successfully with ID: {user.pk}")
 
+        utc_now = datetime.datetime.now()
+        utc_now = utc_now.replace(tzinfo=pytz.utc)
+        results = Token.objects.filter(user=user, created__lt=utc_now - datetime.timedelta(seconds=30)).delete()
         token, _ = Token.objects.get_or_create(user=user)
         serializer = CUserSerializer(instance=user)
-
-        # If the user has a leetcode account, return leetcode true with response
-        if user.leetcode:
+    # If the user has a leetcode account, return leetcode true with response
+        try:
+            leetcode = Leetcode.objects.get(user=user)
             return Response({'token': token.key, 'user': serializer.data, 'leetcode': True}, status=status.HTTP_200_OK)
-
-        return Response({'token': token.key, 'user': serializer.data, 'leetcode': False}, status=status.HTTP_200_OK)
+        except Leetcode.DoesNotExist:
+            return Response({'token': token.key, 'user': serializer.data, 'leetcode': False}, status=status.HTTP_200_OK)
+        
 
 class RegisterLeetcode(APIView):
     permission_classes = [IsAuthenticated]
@@ -49,14 +55,14 @@ class RegisterLeetcode(APIView):
 
 class VerifyLeetcode(APIView):
     permission_classes = [IsAuthenticated]
-    def get(self, request, *args, **kwargs):
+    def post(self, request, *args, **kwargs):
         user = request.user
         username = request.data.get('leetcode_username')
         if not username:
             return Response({'error': 'Leetcode username is required'}, status=status.HTTP_400_BAD_REQUEST)
         try:
             a = Leetcode.objects.get(username=username)
-            return Response({'error': 'User registered on codeboard'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'error': 'User already registered on codeboard'}, status=status.HTTP_400_BAD_REQUEST)
         except Leetcode.DoesNotExist:
             pass
 

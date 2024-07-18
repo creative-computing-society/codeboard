@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 from pathlib import Path
 from dotenv import load_dotenv
+import datetime
 
 import os
 
@@ -183,3 +184,5 @@ AUTHENTICATION_BACKENDS = [
 ]
 
 AUTH_USER_MODEL = 'ccs_auth.CUser'
+
+TOKEN_EXPIRY = 30
