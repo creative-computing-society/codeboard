@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Navbar from './Components/Navbar';
 import Profile from './Components/Profile';
 import Daily from './Components/Daily';
@@ -42,14 +42,17 @@ function App() {
                 <Route path="/weekly" element={<Weekly />} />
                 <Route path="/monthly" element={<Monthly />} />
                 <Route path="*" element={<Navigate to="/profile" />} />
+                
+                <Route path="/authverify" element={<AuthVerify onVerify={handleLogin} setIsNewUser={setIsNewUser} setIsAuthenticated={setIsAuthenticated} />} />
+                {isNewUser && <Route path="/username" element={<UsernameEntry setIsAuthenticated={setIsAuthenticated} />} />}
               </Routes>
             </div>
           </>
         ) : (
           <Routes>
             <Route path="/login" element={<Login onLogin={handleLogin} />} />
-            <Route path="/authverify" element={<AuthVerify onVerify={handleLogin} setIsNewUser={setIsNewUser} />} />
-            {isNewUser && <Route path="/username" element={<UsernameEntry />} />}
+            <Route path="/authverify" element={<AuthVerify onVerify={handleLogin} setIsNewUser={setIsNewUser} setIsAuthenticated={setIsAuthenticated} />} />
+            {isNewUser && <Route path="/username" element={<UsernameEntry setIsAuthenticated={setIsAuthenticated} />} />}
             <Route path="*" element={<Navigate to="/login" />} />
           </Routes>
         )}

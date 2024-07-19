@@ -4,7 +4,7 @@ import SERVER_URL from "../config.js";
 
 const API_URL = `${SERVER_URL}api/auth`;
 
-const AuthVerify = ({ onVerify, setIsNewUser }) => {
+const AuthVerify = ({ onVerify, setIsNewUser, setIsAuthenticated }) => {
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -36,13 +36,14 @@ const AuthVerify = ({ onVerify, setIsNewUser }) => {
               branch: data.user.branch,
               fullName: `${data.user.first_name} ${data.user.last_name}`
             };
-            
-            navigate('/username', { state: { jwtToken, userData , token: data.token } });
+            setIsAuthenticated(true); // Set isAuthenticated to true
+            navigate('/username', { state: { jwtToken, userData, token: data.token } });
             console.log('Navigated to /username');
           } else if (status === 200 && data.token) {
             localStorage.setItem('token', data.token);
             console.log('Token stored in localStorage:', localStorage.getItem('token'));
             onVerify();
+            setIsAuthenticated(true); // Set isAuthenticated to true
             navigate('/profile');
             console.log('Navigated to /profile');
           } else {
@@ -60,7 +61,7 @@ const AuthVerify = ({ onVerify, setIsNewUser }) => {
       navigate('/login');
       console.log('Navigated to /login3');
     }
-  }, [navigate, location, onVerify, setIsNewUser]);
+  }, [navigate, location, onVerify, setIsNewUser, setIsAuthenticated]);
 
   return <div>Loading...</div>;
 };

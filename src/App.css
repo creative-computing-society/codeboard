@@ -297,10 +297,6 @@ body::-webkit-scrollbar-thumb:hover {
   transition: text-decoration-color 0.3s; /* Add transition for underline color */
 }
 
-.rank-slider .tab:hover {
-  text-decoration-color: rgba(62, 216, 219, 0.866); /* Underline color on hover */
-}
-
 .rank-slider .tab.active {
   text-decoration: underline; /* Underline when active */
   text-decoration-color: rgba(62, 216, 219, 0.866); /* Active underline color */

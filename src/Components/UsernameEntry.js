@@ -5,9 +5,9 @@ import ccsLogoBulb from '../assets/ccs-bulb.png';
 
 const API_URL = SERVER_URL + 'api/auth';
 
-const UsernameEntry = () => {
+const UsernameEntry = ({ setIsAuthenticated }) => {
   const location = useLocation();
-  const { userData, token } = location.state || {}; // Retrieve token from location state
+  const { userData, token: locationToken } = location.state || {}; // Retrieve token from location state
   const [leetcodeUsername, setLeetcodeUsername] = useState('');
   const navigate = useNavigate();
 
@@ -25,9 +25,10 @@ const UsernameEntry = () => {
     setLeetcodeUsername(e.target.value);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
+    const token = locationToken || localStorage.getItem('token');
     if (!token) {
       console.error('Token is missing');
       navigate('/login'); // Navigate to login page if token is missing
@@ -50,38 +51,38 @@ const UsernameEntry = () => {
       body: JSON.stringify(payload)
     };
 
-    // Make the API call to verify leetcode username
-    fetch(`${API_URL}/verify-leetcode/`, requestOptions)
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('Verification failed');
+    try {
+      // Make the API call to verify leetcode username
+      const verifyResponse = await fetch(`${API_URL}/verify-leetcode/`, requestOptions);
+      if (!verifyResponse.ok) {
+        throw new Error('Verification failed');
+      }
+
+      const verifyData = await verifyResponse.json();
+
+      if (window.confirm('Verification successful. Proceed to register?')) {
+        const registerResponse = await fetch(`${API_URL}/register-leetcode/`, requestOptions);
+        if (!registerResponse.ok) {
+          throw new Error('Registration failed');
         }
-        return response.json();
-      })
-      .then(data => {
-        if (window.confirm('Verification successful. Proceed to register?')) {
-          fetch(`${API_URL}/register-leetcode/`, requestOptions)
-            .then(response => {
-              if (!response.ok) {
-                throw new Error('Registration failed');
-              }
-              return response.json();
-            })
-            .then(data => {
-              console.log('Registration successful. Redirecting to profile...');
-              navigate('/profile'); // Redirect to profile page on success
-              console.log('Navigated to /profile'); // Log navigation
-            })
-            .catch(error => {
-              console.error('Error registering:', error);
-              alert('An error occurred while registering. Please try again.');
-            });
-        }
-      })
-      .catch(error => {
-        console.error('Error verifying:', error);
-        alert('Verification failed. Please check your username and try again.');
-      });
+
+        const registerData = await registerResponse.json();
+        console.log('Registration successful. Redirecting to profile...');
+
+        // Store token here in local storage
+        await localStorage.setItem('token', token);
+        // Log the stored token
+        const storedToken = localStorage.getItem('token');
+        console.log('Stored token:', storedToken);
+
+        // Refresh state
+        setIsAuthenticated(true);
+        navigate('/profile'); // Redirect to profile page on success
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      alert('An error occurred. Please try again.');
+    }
   };
 
   return (
