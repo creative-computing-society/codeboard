@@ -2,20 +2,20 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import SERVER_URL from "../config.js";
 import ccsLogoBulb from '../assets/ccs-bulb.png';
+import Confirmation from './Confirmation';
 
 const API_URL = SERVER_URL + 'api/auth';
 
 const UsernameEntry = ({ setIsAuthenticated }) => {
   const location = useLocation();
-  const { userData, token: locationToken } = location.state || {}; // Retrieve token from location state
+  const { userData, token: locationToken } = location.state || {};
   const [leetcodeUsername, setLeetcodeUsername] = useState('');
+  const [showConfirmation, setShowConfirmation] = useState(false);
+  const [verificationResponse, setVerificationResponse] = useState({});
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Add the class to the body element when the component mounts
     document.body.classList.add('username-entry-body');
-    
-    // Remove the class from the body element when the component unmounts
     return () => {
       document.body.classList.remove('username-entry-body');
     };
@@ -31,17 +31,15 @@ const UsernameEntry = ({ setIsAuthenticated }) => {
     const token = locationToken || localStorage.getItem('token');
     if (!token) {
       console.error('Token is missing');
-      navigate('/login'); // Navigate to login page if token is missing
+      navigate('/login');
       return;
     }
 
-    // Define the request payload
     const payload = {
       leetcode_username: leetcodeUsername,
-      token: token // Use the token passed from AuthVerify
+      token: token
     };
 
-    // Define the request options
     const requestOptions = {
       method: 'POST',
       headers: {
@@ -52,37 +50,59 @@ const UsernameEntry = ({ setIsAuthenticated }) => {
     };
 
     try {
-      // Make the API call to verify leetcode username
       const verifyResponse = await fetch(`${API_URL}/verify-leetcode/`, requestOptions);
       if (!verifyResponse.ok) {
         throw new Error('Verification failed');
       }
 
       const verifyData = await verifyResponse.json();
-
-      if (window.confirm('Verification successful. Proceed to register?')) {
-        const registerResponse = await fetch(`${API_URL}/register-leetcode/`, requestOptions);
-        if (!registerResponse.ok) {
-          throw new Error('Registration failed');
-        }
-
-        const registerData = await registerResponse.json();
-        console.log('Registration successful. Redirecting to profile...');
-
-        // Store token here in local storage
-        await localStorage.setItem('token', token);
-        // Log the stored token
-        const storedToken = localStorage.getItem('token');
-        console.log('Stored token:', storedToken);
-
-        // Refresh state
-        setIsAuthenticated(true);
-        navigate('/profile'); // Redirect to profile page on success
-      }
+      setVerificationResponse(verifyData);
+      setShowConfirmation(true);
     } catch (error) {
       console.error('Error:', error);
       alert('An error occurred. Please try again.');
     }
+  };
+
+  const handleConfirm = async () => {
+    const token = locationToken || localStorage.getItem('token');
+    const payload = {
+      leetcode_username: leetcodeUsername,
+      token: token
+    };
+
+    const requestOptions = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Token ${token}`
+      },
+      body: JSON.stringify(payload)
+    };
+
+    try {
+      const registerResponse = await fetch(`${API_URL}/register-leetcode/`, requestOptions);
+      if (!registerResponse.ok) {
+        throw new Error('Registration failed');
+      }
+
+      const registerData = await registerResponse.json();
+      console.log('Registration successful. Redirecting to profile...');
+
+      await localStorage.setItem('token', token);
+      const storedToken = localStorage.getItem('token');
+      console.log('Stored token:', storedToken);
+
+      setIsAuthenticated(true);
+      navigate('/profile');
+    } catch (error) {
+      console.error('Error:', error);
+      alert('An error occurred. Please try again.');
+    }
+  };
+
+  const handleCancel = () => {
+    setShowConfirmation(false);
   };
 
   return (
@@ -186,6 +206,15 @@ const UsernameEntry = ({ setIsAuthenticated }) => {
           </form>
         </div>
       </div>
+      
+      {showConfirmation && (
+        <Confirmation
+          response={verificationResponse}
+          username={leetcodeUsername}
+          onConfirm={handleConfirm}
+          onCancel={handleCancel}
+        />
+      )}
     </div>
   );
 };

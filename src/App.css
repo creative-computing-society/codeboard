@@ -3,7 +3,8 @@
 :root {
   --NAV-COLOR: rgb(212, 212, 212);
   --NAV-BORDER-COLOR: #525151;
-  --NAV-BGCOLOR: rgb(51, 55, 62);
+  /* --NAV-BGCOLOR: rgb(51, 55, 62); */
+  --NAV-BGCOLOR: rgb(34, 36, 41);
   --NAV-BORDER: 2px solid var(--NAV-BORDER-COLOR);
   --CONTENT-H2-COLOR: rgb(212, 212, 212);
   --CONTENT-COLOR: rgb(188, 197, 206);
