@@ -1,21 +1,22 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import * as AlertDialog from '@radix-ui/react-alert-dialog';
-import './Confirmation.css';
 
 const Confirmation = ({ response, username, onConfirm, onCancel }) => {
-  let message = '';
-  let avatar = null;
+  let message1 = '';
 
+  let avatar = null;
+  let realName = '';
   if (response.ranking !== undefined) {
-    message = "Is this really your account?";
+    message1 = "Is this your LeetCode account?";
+    realName = response.realName;
     avatar = response.userAvatar ? (
       <img src={response.userAvatar} alt={response.realName} className="avatar" />
     ) : null;
   } else if (response.message) {
-    message = response.message;
+    message1 = response.message;
   } else if (response.error) {
-    message = `Verification failed: ${response.error}`;
+    message1 = `Verification failed: ${response.error}`;
   }
 
   return (
@@ -24,19 +25,21 @@ const Confirmation = ({ response, username, onConfirm, onCancel }) => {
         <AlertDialog.Overlay className="AlertDialogOverlay" />
         <AlertDialog.Content className="AlertDialogContent">
           {avatar && <div className="avatar-container">{avatar}</div>}
-          <AlertDialog.Title className="AlertDialogTitle">{message}</AlertDialog.Title>
+          <AlertDialog.Title className="AlertDialogTitle">{realName}</AlertDialog.Title>
           {response.ranking !== undefined && (
             <AlertDialog.Description className="AlertDialogDescription">
-              <p>LeetCodeRank: {response.ranking}</p>
-              <p>Username Entered: {username}</p>
+              <p>LeetCode Rank: {response.ranking}</p>
+              <p>Username: {username}</p>
             </AlertDialog.Description>
           )}
+          {/* <AlertDialog.Title className="AlertDialogTitle">{message1}</AlertDialog.Title> */}
+          <AlertDialog.Title className="AlertDialogTitle">Confirm registration ?</AlertDialog.Title>
           <div className="button-container">
             <AlertDialog.Cancel asChild>
               <button className="Button mauve" onClick={onCancel}>Cancel</button>
             </AlertDialog.Cancel>
             <AlertDialog.Action asChild>
-              <button className="Button violet" onClick={onConfirm} autoFocus>OK</button>
+              <button className="Button violet" onClick={onConfirm} autoFocus>Confirm</button>
             </AlertDialog.Action>
           </div>
         </AlertDialog.Content>

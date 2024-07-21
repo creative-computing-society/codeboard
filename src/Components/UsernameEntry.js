@@ -59,7 +59,7 @@ const UsernameEntry = ({ setIsAuthenticated }) => {
       setVerificationResponse(verifyData);
       setShowConfirmation(true);
     } catch (error) {
-      console.error('Error:', error);
+      console.error('Error:', error.message);
       alert('An error occurred. Please try again.');
     }
   };
