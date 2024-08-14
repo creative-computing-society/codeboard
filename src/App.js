@@ -6,21 +6,18 @@ import Daily from './Components/Daily';
 import Weekly from './Components/Weekly';
 import Monthly from './Components/Monthly';
 import Login from './Components/Login';
+import AuthVerify from './Components/AuthVerify';
 import UsernameEntry from './Components/UsernameEntry';
 import './App.css';
-import AuthVerify from './Components/AuthVerify';
 
 function App() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isNewUser, setIsNewUser] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   const handleLogin = () => {
-    const token=localStorage.getItem('token');
-    console.log(token);
-    if (token) {
+    if (localStorage.getItem('token')) {
       setIsAuthenticated(true);
-    }
-    else{
+    } else {
       setIsAuthenticated(false);
     }
   };
@@ -28,6 +25,8 @@ function App() {
   useEffect(() => {
     handleLogin();
   }, []);
+
+  console.log('Is Authenticated:', isAuthenticated);
 
   return (
     <Router>
@@ -43,14 +42,17 @@ function App() {
                 <Route path="/weekly" element={<Weekly />} />
                 <Route path="/monthly" element={<Monthly />} />
                 <Route path="*" element={<Navigate to="/profile" />} />
+                
+                <Route path="/authverify" element={<AuthVerify onVerify={handleLogin} setIsNewUser={setIsNewUser} setIsAuthenticated={setIsAuthenticated} />} />
+                {isNewUser && <Route path="/username" element={<UsernameEntry setIsAuthenticated={setIsAuthenticated} />} />}
               </Routes>
             </div>
           </>
         ) : (
           <Routes>
             <Route path="/login" element={<Login onLogin={handleLogin} />} />
-            <Route path="/authverify" element={<AuthVerify onVerify={handleLogin} setIsNewUser={setIsNewUser} />} />
-            {isNewUser && <Route path="/username" element={<UsernameEntry />} />}
+            <Route path="/authverify" element={<AuthVerify onVerify={handleLogin} setIsNewUser={setIsNewUser} setIsAuthenticated={setIsAuthenticated} />} />
+            {isNewUser && <Route path="/username" element={<UsernameEntry setIsAuthenticated={setIsAuthenticated} />} />}
             <Route path="*" element={<Navigate to="/login" />} />
           </Routes>
         )}

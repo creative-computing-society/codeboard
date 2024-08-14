@@ -2,14 +2,14 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 
 import SERVER_URL from "../config.js";
-const API_URL = SERVER_URL+'/api/leaderboard';
+const BASE_URL = SERVER_URL+'/api/leaderboard';
 const Monthly = () => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    axios.get(`${API_URL}/monthly/`)
+    axios.get(`${BASE_URL}/monthly/`)
       .then(response => {
         // Convert object to array of objects
         const dataArray = Object.keys(response.data).map(key => ({
@@ -30,14 +30,15 @@ const Monthly = () => {
 
   return (
     <div className="leaderboard-container">
+      <h2 className="leaderboard-title-heading">CCS Ranking</h2>
       <h1 className="leaderboard-title">Monthly Leaderboard</h1>
       <table className="leaderboard-table">
         <thead>
           <tr>
-            <th>Rank</th>
-            <th>Username</th>
-            <th></th>
-            <th>Questions Solved</th>
+          <th>Rank</th>
+          <th>Profile</th>
+          <th>Username</th>
+          <th>Questions Solved</th>
           </tr>
         </thead>
         <tbody>

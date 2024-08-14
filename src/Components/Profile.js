@@ -1,27 +1,28 @@
 import React, { useState, useEffect } from 'react';
 import SERVER_URL from "../config.js";
-const API_URL = SERVER_URL+'/api/leaderboard';
+const BASE_URL = SERVER_URL + 'api/leaderboard';
 
 const Profile = () => {
   const [profile, setProfile] = useState(null);
   const [questions, setQuestions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [rankPeriod, setRankPeriod] = useState('today');
 
   useEffect(() => {
     const fetchProfile = async () => {
       console.log('Fetching profile...');
       const token = localStorage.getItem('token');
-      console.log(token);
+      console.log('Token:', token);
       if (!token) {
         setError('Token is missing');
         setLoading(false);
-       window.location.href="/login";
+        window.location.href = "/login";
         return;
       }
 
       try {
-        const response = await fetch(`${API_URL}/user/profile/`, {
+        const response = await fetch(`${BASE_URL}/user/profile/`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -29,17 +30,22 @@ const Profile = () => {
           }
         });
 
+        if (response.status === 401) {
+          window.location.href = "/login";
+          localStorage.removeItem('token');
+          return;
+        }
+
         if (!response.ok) {
           throw new Error(`Error: ${response.status}`);
         }
 
         const data = await response.json();
-        console.log('Response received:', data);
+        console.log('Profile response received:', data);
         setProfile(data);
-        console.log('Profile data set:', data);
       } catch (err) {
         console.error('Error occurred:', err);
-        setError(err);
+        setError(err.message);
       } finally {
         setLoading(false);
         console.log('Loading state set to false');
@@ -55,7 +61,7 @@ const Profile = () => {
       }
 
       try {
-        const response = await fetch(`${API_URL}/questions/today/`, {
+        const response = await fetch(`${BASE_URL}/questions/${rankPeriod}/`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -70,25 +76,30 @@ const Profile = () => {
         const data = await response.json();
         console.log('Questions response received:', data);
         setQuestions(data);
-        console.log('Questions data set:', data);
       } catch (err) {
         console.error('Error occurred:', err);
-        setError(err);
+        setError(err.message);
       }
     };
 
     fetchProfile();
     fetchQuestions();
-  }, []);
+  }, [rankPeriod]); // Re-fetch questions whenever rankPeriod changes
+
+  const showRank = (period) => {
+    setRankPeriod(period);
+  };
 
   if (loading) {
     console.log('Loading...');
     return <div className="loading">Loading...</div>;
   }
+
   if (error) {
-    console.error('Error:', error.message);
-    return <div className="error">Error: {error.message}</div>;
+    console.error('Error:', error);
+    return <div className="error">Error: {error}</div>;
   }
+
   if (!profile) {
     console.log('No profile data available');
     return <div className="no-data">No profile data available</div>;
@@ -100,35 +111,42 @@ const Profile = () => {
   return (
     <div className="profile-container">
       <div className="detail-container">
-        <img src={profile.photo_url} alt="Profile" />
+        {profile.photo_url && <img src={profile.photo_url} alt="Profile" />}
         <h1>{profile.name}</h1>
-        <p>LeetCode Username: <span>{profile.username}</span></p>
-        <p>LeetCode Rank: <span>{profile.leetcode_rank}</span></p>
-        <p>Today's Rank: <span>{profile.daily_rank}</span></p>
-        <p>Weekly Rank: <span>{profile.weekly_rank}</span></p>
-        <p>Monthly Rank: <span>{profile.monthly_rank}</span></p>
+        <p>Username: <span>{profile.username}</span></p>
+        
+        {rankPeriod === 'today' && <p>Today's Rank: <span>{profile.daily_rank}</span></p>}
+        {rankPeriod === 'weekly' && <p>Weekly Rank: <span>{profile.weekly_rank}</span></p>}
+        {rankPeriod === 'monthly' && <p>Monthly Rank: <span>{profile.monthly_rank}</span></p>}
+        <div className="rank-slider">
+          <button className={`tab ${rankPeriod === 'today' ? 'active' : ''}`} onClick={() => showRank('today')}>Today's</button>
+          <button className={`tab ${rankPeriod === 'weekly' ? 'active' : ''}`} onClick={() => showRank('weekly')}>Weekly</button>
+          <button className={`tab ${rankPeriod === 'monthly' ? 'active' : ''}`} onClick={() => showRank('monthly')}>Monthly</button>
+        </div>
       </div>
 
       <div className="question-container">
-        <h2>Today's Questions</h2>
+        <h2>{rankPeriod === 'today' ? "Today's Questions" : `Questions (${rankPeriod})`}</h2>
         <table className="questions-table">
           <thead>
             <tr>
               <th>Question</th>
               <th>Difficulty</th>
               <th>Status</th>
-              <th>Link</th>
             </tr>
           </thead>
           <tbody>
-            {questions.map((question, index) => (
+            {questions.length > 0 ? questions.map((question, index) => (
               <tr key={index}>
-                <td>{question.title}</td>
+                <td><a href={question.leetcode_link} target="_blank" rel="noopener noreferrer">{question.title}</a></td>
                 <td>{question.difficulty}</td>
                 <td>{question.status}</td>
-                <td><a href={question.leetcode_link} target="_blank" rel="noopener noreferrer">View</a></td>
               </tr>
-            ))}
+            )) : (
+              <tr>
+                <td colSpan="3">No questions available</td>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>
