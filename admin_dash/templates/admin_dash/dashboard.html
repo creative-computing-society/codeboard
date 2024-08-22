@@ -1,0 +1,59 @@
+{% extends "admin_dash/base.html" %} 
+{% block title %}Questions{% endblock %} 
+{% block content %}
+<div class="c-app flex-row align-items-start parent">
+  <div class="container">
+    <div class="row">
+    </div>
+    <div class="row justify-content-center">
+      <div class="col-md-10">
+        <div class="text" style="color: white; font-size: 2rem; margin-top: 2rem;">
+          <div class="mb-4 font-mono text-xl">Add questions with IDs</div>
+        </div>
+        <div class="card-body">
+          <!-- Form for adding questions -->
+          <form method="POST" action="{%url 'admin_dash:add_ques_from_id'%}">
+            {% csrf_token %}
+            <div class="form-group">
+              <input type="text" class="form-control" id="question_ids" name="question_ids" placeholder="Enter question IDs separated by commas" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Add Questions</button>
+          </form>
+        </div>
+        <div class="text" style="color: white; font-size: 2rem; margin-top: 2rem;">
+          <div class="mb-4 font-mono text-xl">Select a question to change</div>
+        </div>
+        <div class="card-body">
+          <!-- Table displaying model entries -->
+          <table class="table table-dark table-striped">
+            <thead>
+              <tr>
+                <th style="text-wrap: nowrap;">LeetCode ID</th>
+                <th>Title</th>
+                <th>Title Slug</th>
+                <th>Date</th>
+                <th>Difficulty</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for question in questions %}
+              <tr>
+                <td>{{ question.leetcode_id }}</td>
+                <td>
+                  <a href="{% url 'admin_dash:edit_question' question.pk %}">
+                    {{ question.title }}
+                  </a>
+                </td>
+                <td>{{ question.titleSlug }}</td>
+                <td>{{ question.questionDate }}</td>
+                <td>{{ question.difficulty }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

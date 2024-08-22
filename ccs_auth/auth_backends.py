@@ -1,7 +1,10 @@
+from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
+from cryptography.hazmat.backends import default_backend
+
 from django.contrib.auth.backends import BaseBackend
 from .models import CUser as CustomUser
 from dotenv import load_dotenv
-import os, jwt
+import os, jwt, json
 load_dotenv()
 
 class SSOAuthenticationBackend(BaseBackend):
@@ -64,8 +67,48 @@ class SSOAuthenticationBackend(BaseBackend):
         jwt_secret = os.getenv('CLIENT_SECRET')
         try:
             payload = jwt.decode(sso_token, jwt_secret, algorithms=['HS256'])
-            return payload
+            ex = payload['ex']
+            data = decrypt(ex, jwt_secret)
+            print("Decrypted JSON:",data)
+            return data
         except jwt.ExpiredSignatureError:
             return None
         except jwt.InvalidTokenError:
             return None
+
+def decrypt(encrypted_data, key):
+    # Ensure the key is 96 characters long
+    if len(key) != 96:
+        raise ValueError('Key must be exactly 96 characters long')
+
+    # Split the IV and the encrypted data
+    iv = bytes.fromhex(encrypted_data[:32])  # First 32 hex characters correspond to the 16 bytes IV
+    encrypted_data = bytes.fromhex(encrypted_data[32:])
+
+    # Extract the encryption key (first 32 characters)
+    encryption_key = key[:32].encode('utf-8')
+
+    # Create a Cipher object using AES-256-CBC
+    cipher = Cipher(algorithms.AES(encryption_key), modes.CBC(iv), backend=default_backend())
+    decryptor = cipher.decryptor()
+
+    # Decrypt the data
+    decrypted_data = decryptor.update(encrypted_data) + decryptor.finalize()
+    # print("Decrypted data:", decrypted_data)
+
+    try:
+        # Remove padding bytes
+        clean_data = decrypted_data.rstrip(b'\x06')
+        json_string = clean_data.decode('utf-8')
+
+        # Decode the decrypted data to a UTF-8 string and then parse it as JSON
+        decrypted_json = json.loads(json_string)
+        # print("Decrypted JSON:", decrypted_json)
+    except json.JSONDecodeError as e:
+        print(f"JSONDecodeError: {e}")
+        print("Decrypted data that caused the error:", decrypted_data)
+        raise
+
+    # Return the decrypted JSON object
+    return decrypted_json
+

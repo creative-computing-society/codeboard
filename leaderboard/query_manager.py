@@ -44,6 +44,8 @@ query problemsetQuestionList($categorySlug: String, $limit: Int, $skip: Int, $fi
     questions: data {
       frontendQuestionId: questionFrontendId
       titleSlug
+      title
+      difficulty
     }
   }
 }

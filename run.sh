@@ -1,14 +1,18 @@
+#!/bin/bash
+
+# Exit immediately if a command exits with a non-zero status
+set -e
+
+# Collect static files
 python manage.py collectstatic --noinput
+
+# Apply database migrations
 python manage.py makemigrations
 python manage.py migrate
-# python manage.py collectstatic --noinput
-# service cron start
-# touch /var/log/cron.log
-# mv /workspace/conf/root /var/spool/cron/crontabs/root
-# chmod +x /var/spool/cron/crontabs/root
-# crontab /var/spool/cron/crontabs/root
-# echo ">>> Done!"
 
-# tail -f /var/log/cron.log
-# gunicorn -b 0.0.0.0:8000 core.wsgi:application
-python manage.py runserver 0.0.0.0:8000
+# Start Celery worker and beat as background processes
+celery -A app.celery worker --pool=solo -l info &
+celery -A app.celery beat -l info &
+
+# Start the Django development server
+exec python manage.py runserver 0.0.0.0:8000

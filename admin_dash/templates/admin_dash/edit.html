@@ -1,0 +1,116 @@
+{% extends 'admin_dash/base.html' %}
+
+{% block title %}Edit Question{% endblock %}
+
+{% block extra_css %}
+<style>
+  .parent {
+    background-color: #0d1015;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding-top: 20px;
+    overflow: hidden;
+  }
+  .form-control, .form-select {
+    background-color: #222;
+    color: white;
+    border: 1px solid #555;
+  }
+  label {
+    color: white;
+    font-weight: bold;
+    display: block;
+    text-align: left;
+    margin-bottom: 0.5rem;
+  }
+  .form-group {
+    margin-bottom: 1rem;
+  }
+  .form-row {
+    margin-bottom: 1rem;
+  }
+  .form-row > div {
+    flex: 1;
+  }
+  .form-label {
+    text-align: left;
+  }
+  .form-control, .form-select {
+    width: 80%;
+  }
+  .breadcrumb {
+    background-color: transparent;
+    padding: 0;
+    margin-bottom: 1rem;
+  }
+  .breadcrumb-item a {
+    color: white;
+  }
+  .breadcrumb-item.active {
+    color: white;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="c-app flex-row parent">
+  <div class="container">
+    {% if messages %}
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        {% for message in messages %}
+        {{ message }}
+        {% endfor %}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endif %}
+    <!-- Breadcrumb Navigation -->
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'admin_dash:admin_dashboard' %}">All Questions</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Edit Question</li>
+      </ol>
+    </nav>
+
+    <div class="row justify-content-center">
+      <div class="col-md-6">
+        <div class="text-center mb-4">
+          <h2 style="color: white;">Edit Question</h2>
+        </div>
+        <div class="card-body">
+          <form method="post" action="{% url 'admin_dash:edit_question' question.pk %}">
+            {% csrf_token %}
+            <div class="form-row">
+              <label for="leetcode_id" class="form-label">LeetCode ID</label>
+              <input type="number" class="form-control" id="leetcode_id" name="leetcode_id" value="{{ question.leetcode_id }}" required>
+            </div>
+            <div class="form-row">
+              <label for="title" class="form-label">Title</label>
+              <input type="text" class="form-control" id="title" name="title" value="{{ question.title }}" required>
+            </div>
+            <div class="form-row">
+              <label for="titleSlug" class="form-label">Title Slug</label>
+              <input type="text" class="form-control" id="titleSlug" name="titleSlug" value="{{ question.titleSlug }}" required>
+            </div>
+            <div class="form-row">
+              <label for="questionDate" class="form-label">Date</label>
+              <input type="datetime-local" class="form-control" id="questionDate" name="questionDate" value="{{ question.questionDate|date:'Y-m-d\\TH:i' }}" required>
+            </div>
+            <div class="form-row">
+              <label for="difficulty" class="form-label">Difficulty</label>
+              <select class="form-select" id="difficulty" name="difficulty" required>
+                <option value="Basic" {% if question.difficulty == 'Basic' %}selected{% endif %}>Basic</option>
+                <option value="Intermediate" {% if question.difficulty == 'Intermediate' %}selected{% endif %}>Intermediate</option>
+                <option value="Advanced" {% if question.difficulty == 'Advanced' %}selected{% endif %}>Advanced</option>
+              </select>
+            </div>
+            <div>
+              <button type="submit" class="btn btn-primary">Save</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
