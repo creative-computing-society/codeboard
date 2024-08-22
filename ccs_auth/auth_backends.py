@@ -1,6 +1,6 @@
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 from cryptography.hazmat.backends import default_backend
-
+from cryptography.hazmat.primitives import padding
 from django.contrib.auth.backends import BaseBackend
 from .models import CUser as CustomUser
 from dotenv import load_dotenv
@@ -98,7 +98,8 @@ def decrypt(encrypted_data, key):
 
     try:
         # Remove padding bytes
-        clean_data = decrypted_data.rstrip(b'\x06')
+        unpadder = padding.PKCS7(algorithms.AES.block_size).unpadder()
+        clean_data = unpadder.update(decrypted_data) + unpadder.finalize()
         json_string = clean_data.decode('utf-8')
 
         # Decode the decrypted data to a UTF-8 string and then parse it as JSON
