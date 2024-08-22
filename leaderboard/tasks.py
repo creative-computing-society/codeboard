@@ -1,9 +1,13 @@
+import json
 from celery import shared_task, group
+from django.core.cache import cache
 from django.utils import timezone
 from datetime import timedelta
 from .models import Leetcode, LeaderboardEntry, Question, Leaderboard
 from .query_manager import *
 import time
+
+CACHE_TIMEOUT = 60 * 60
 
 def get_latest_submissions(submissions):
     latest_submissions = {}
@@ -14,13 +18,12 @@ def get_latest_submissions(submissions):
             latest_submissions[question_id] = timestamp
     return latest_submissions
 
-def match_questions_to_solved(questions, solved_submissions: dict):
+def match_questions_to_solved(questions_dict, solved_submissions: dict):
     matched_ques: dict = {}
-    for question in questions:
-        question_id = int(question[0])
-        question_timestamp = int(question[2])
-        if question_id in solved_submissions.keys():
-            solved_timestamp = solved_submissions[question_id]
+    for question_id, solved_timestamp in solved_submissions.items():
+        question_data = questions_dict.get(question_id)
+        if question_data:
+            question_timestamp = int(question_data['questionDate'].timestamp())  # Assuming 'questionDate' exists
             if solved_timestamp > question_timestamp:
                 matched_ques[question_id] = solved_timestamp
     return matched_ques
@@ -85,12 +88,23 @@ def fetch_language_problem_count(username):
     return []
 
 def fetch_all_questions():
-    try:
-        query_vars = {"categorySlug": "all-code-essentials", "skip": 0, "limit": 5000, "filters": {}}
-        return send_query(ALL_QUESTION_LIST_QUERY, query_vars)['data']['problemsetQuestionList']['questions']
-    except Exception as e:
-        print(f"Error fetching all questions: {e}")
-    return []
+    cache_key = 'all_questions_dict'
+    questions_dict = cache.get(cache_key)
+
+    if not questions_dict:
+        try:
+            query_vars = {"categorySlug": "all-code-essentials", "skip": 0, "limit": 5000, "filters": {}}
+            questions_list = send_query(ALL_QUESTION_LIST_QUERY, query_vars)['data']['problemsetQuestionList']['questions']
+            questions_dict = {question['frontendQuestionId']: question for question in questions_list}
+            cache.set(cache_key, questions_dict, timeout=CACHE_TIMEOUT)
+            print(f"Fetched and cached {len(questions_dict)} questions.")
+        except Exception as e:
+            print(f"Error fetching all questions: {e}")
+            return {}
+    else:
+        print(f"Fetched {len(questions_dict)} questions from cache.")
+
+    return questions_dict
 
 def get_user_instance(id):
     try:
@@ -114,12 +128,11 @@ def update_user_instance(instance: Leetcode, user_data, matched_questions, lates
     except Exception as e:
         print(f"Error updating user instance: {e}")
 
-def process_submissions(submitted_questions, all_question_list):
+def process_submissions(submitted_questions, questions_dict):
     try:
-        titleSlug_to_id = {question['titleSlug']: question['frontendQuestionId'] for question in all_question_list}
         return [
-            [titleSlug_to_id[question['titleSlug']], question['titleSlug'], question['timestamp']]
-            for question in submitted_questions if question['titleSlug'] in titleSlug_to_id
+            [questions_dict[question['titleSlug']]['frontendQuestionId'], question['titleSlug'], question['timestamp']]
+            for question in submitted_questions if question['titleSlug'] in questions_dict
         ] # [leetcode_id, titleSlug, timestamp]
     except Exception as e:
         print(f"Error processing submissions: {e}")
@@ -241,9 +254,9 @@ def get_user_data(self, username, id, *args, **kwargs):
 
         submitted_questions = fetch_submitted_questions(username)
         language_problem_count = fetch_language_problem_count(username)
-        all_question_list = fetch_all_questions()
+        questions_dict  = fetch_all_questions()
 
-        submissions = process_submissions(submitted_questions, all_question_list)
+        submissions = process_submissions(submitted_questions, questions_dict)
         latest_solved = get_latest_submissions(submissions)
 
         user_instance = get_user_instance(id)

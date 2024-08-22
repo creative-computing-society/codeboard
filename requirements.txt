@@ -4,6 +4,7 @@ psycopg2-binary
 whitenoise
 djangorestframework
 requests
+cryptography
 celery
 redis
 django-celery-beat
