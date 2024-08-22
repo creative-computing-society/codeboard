@@ -6,7 +6,7 @@ from rest_framework import status
 from django.utils import timezone
 from .models import Leetcode, Question, Leaderboard
 from ccs_auth.models import CUser
-from .tasks import get_user_data, refresh_user_data, fetch_user_profile, populate_question_model
+from .tasks import *
 from .serializers import LeetCodeSerializer, QuestionSerializer
 
 def get_today_questions(username):
