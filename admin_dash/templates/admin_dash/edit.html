@@ -56,14 +56,14 @@
 {% block content %}
 <div class="c-app flex-row parent">
   <div class="container">
-    {% if messages %}
+    {% comment %} {% if messages %}
     <div class="alert alert-success alert-dismissible fade show" role="alert">
         {% for message in messages %}
         {{ message }}
         {% endfor %}
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
-    {% endif %}
+    {% endif %} {% endcomment %}
     <!-- Breadcrumb Navigation -->
     <nav aria-label="breadcrumb">
       <ol class="breadcrumb">
