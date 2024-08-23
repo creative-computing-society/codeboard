@@ -49,7 +49,6 @@ class SSOAuthenticationBackend(BaseBackend):
                     roll_no=roll_no,
                     branch=branch
                 )
-                print("authentication backend: ", user)
             return user
         return None
 
@@ -69,7 +68,6 @@ class SSOAuthenticationBackend(BaseBackend):
             payload = jwt.decode(sso_token, jwt_secret, algorithms=['HS256'])
             ex = payload['ex']
             data = decrypt(ex, jwt_secret)
-            print("Decrypted JSON:",data)
             return data
         except jwt.ExpiredSignatureError:
             return None

@@ -50,19 +50,17 @@ def edit_question(request,question_id,*args,**kwargs):
         return redirect('admin_dash:admin_login')
     question_obj = Question.objects.filter(pk=question_id).first()
     print(question_obj)
-    # print(Question.objects.all().values())
     if not question_obj:
         return redirect('admin_dash:admin_dashboard')
     if request.method == 'POST':
         title = request.POST.get('title')
         titleSlug = request.POST.get('titleSlug')
         difficulty = request.POST.get('difficulty')
+
         i_datetime = request.POST.get('questionDate')
         datetime_object = datetime.strptime(i_datetime, "%Y-%m-%dT%H:%M")
         datetime_object = datetime_object.replace(tzinfo=pytz.UTC)
 
-        print(datetime_object)
-        print(question_obj.questionDate)
         question_obj.title = title
         question_obj.titleSlug = titleSlug
         question_obj.difficulty = difficulty
@@ -80,8 +78,7 @@ def add_ques_from_id(request):
         if ques_ids == []:
             messages.info(request, 'Invalid input')
             return redirect('admin_dash:admin_dashboard')
-        # for ques in ques_ids:
-        #     Question.objects.create(leetcode_id=ques)
+        
         all_ques = True
         for ques in ques_ids:
             if not Question.objects.filter(pk=ques):
@@ -101,10 +98,6 @@ def delete_ques_with_ids(request):
         ques_ids = request.POST.get('selected_questions')  # Match the name of the hidden input
         if ques_ids:
             ques_ids_list = ques_ids.split(',')
-            print('Question IDs:', ques_ids_list)
-            # ques_ids_int = []
-            # for ques in ques_ids_list:
-            #     ques_ids_int.append(int[])
             for ques in ques_ids_list:
                 Question.objects.filter(pk=int(ques)).first().delete()
                 if not Question.objects.filter(pk = int(ques)):
