@@ -30,13 +30,12 @@ const Profile = () => {
           }
         });
 
-        if (response.status === 401) {
+        if (response.status === 401 || response.status === 404 || response.status === 400) {
           window.location.href = "/login";
           localStorage.removeItem('token');
           return;
         }
-
-        if (!response.ok) {
+        else if (!response.ok) {
           throw new Error(`Error: ${response.status}`);
         }
 
