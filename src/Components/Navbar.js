@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { FaCalendarDay, FaCalendarWeek, FaCalendarAlt } from 'react-icons/fa';
-import { MdAccountCircle } from 'react-icons/md';
+import { FaCalendarDay, FaCalendarWeek, FaCalendarAlt, FaSignOutAlt } from 'react-icons/fa';
+import { MdAccountCircle,MdExitToApp } from 'react-icons/md';
 import ccsLogo from '../assets/ccs_logo.png';
 import SERVER_URL from "../config.js";
 
@@ -78,9 +78,9 @@ export default function Navbar() {
         </li>
       </ul>
       <div className="logout-button-container">
-        
         <button onClick={handleLogout} className="logout-button">
-          Logout
+          <MdExitToApp className="logout-icon nav-icon" />
+          <span className="logout-text">Logout</span>
         </button>
       </div>
     </div>
