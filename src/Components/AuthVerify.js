@@ -9,21 +9,25 @@ const AuthVerify = ({ onVerify, setIsNewUser, setIsAuthenticated }) => {
   const location = useLocation();
 
   useEffect(() => {
-    const query = new URLSearchParams(location.search);
-    const jwtToken = query.get('token');
+    const verifyUser = async () => {
+      const query = new URLSearchParams(location.search);
+      const jwtToken = query.get('token');
 
-    if (jwtToken) {
-      console.log('JWT Token:', jwtToken);
+      if (jwtToken) {
+        console.log('JWT Token:', jwtToken);
 
-      const requestBody = { token: jwtToken };
+        const requestBody = { token: jwtToken };
 
-      fetch(`${API_URL}/login/`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(requestBody),
-      })
-        .then(response => response.json().then(data => ({ status: response.status, data })))
-        .then(({ status, data }) => {
+        try {
+          const response = await fetch(`${API_URL}/login/`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(requestBody),
+          });
+
+          const data = await response.json();
+          const status = response.status;
+
           console.log('Response Status:', status);
           console.log('Response Data:', data);
 
@@ -51,16 +55,18 @@ const AuthVerify = ({ onVerify, setIsNewUser, setIsAuthenticated }) => {
             navigate('/login');
             console.log('Navigated to /login1');
           }
-        })
-        .catch(error => {
+        } catch (error) {
           console.error('Error checking user:', error);
           navigate('/login');
           console.log('Navigated to /login2');
-        });
-    } else {
-      navigate('/login');
-      console.log('Navigated to /login3');
-    }
+        }
+      } else {
+        navigate('/login');
+        console.log('Navigated to /login3');
+      }
+    };
+
+    verifyUser();
   }, [navigate, location, onVerify, setIsNewUser, setIsAuthenticated]);
 
   return <div>Loading...</div>;

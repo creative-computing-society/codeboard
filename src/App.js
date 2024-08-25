@@ -14,7 +14,7 @@ function App() {
   const [isNewUser, setIsNewUser] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
     if (localStorage.getItem('token')) {
       setIsAuthenticated(true);
     } else {
