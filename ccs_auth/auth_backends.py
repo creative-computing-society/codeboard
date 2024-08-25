@@ -65,7 +65,7 @@ class SSOAuthenticationBackend(BaseBackend):
     def validate_sso_token(self, sso_token):
         jwt_secret = os.getenv('CLIENT_SECRET')
         try:
-            payload = jwt.decode(sso_token, jwt_secret, algorithms=['HS256'])
+            payload = jwt.decode(sso_token, jwt_secret, algorithms=['HS256'], leeway=10)
             ex = payload['ex']
             data = decrypt(ex, jwt_secret)
             return data

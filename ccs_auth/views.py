@@ -50,7 +50,7 @@ class RegisterLeetcode(APIView):
         acc = Leetcode.objects.create(username=leetcode_username, user=user)
         if not acc:
             return Response({'error': 'User registration failed'}, status=status.HTTP_400_BAD_REQUEST)
-        get_user_data.delay(leetcode_username, acc.pk)
+        get_user_data(leetcode_username, acc.pk)
         return Response({'message': 'User registered successfully'}, status=status.HTTP_201_CREATED)
 
 class VerifyLeetcode(APIView):

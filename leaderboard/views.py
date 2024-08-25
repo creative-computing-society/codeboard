@@ -21,9 +21,10 @@ class Profile(APIView):
     permission_classes = [IsAuthenticated]
     def get(self, request, *args, **kwargs):
         user = request.user
-        username = user.leetcode.username
-        if not username:
-            return Response({"error": "Username is required"}, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            username = user.leetcode.username
+        except:
+            return Response({"error": "Username is required"}, status=status.HTTP_404_NOT_FOUND)
         
         try:
             account = Leetcode.objects.get(username=username)
@@ -38,9 +39,10 @@ class GetQuestionsForTheDay(APIView):
     def get(self, request, *args, **kwargs):
         try:
             user = request.user
-            username = user.leetcode.username
-            if not username:
-                return Response({"error": "Username is required"}, status=status.HTTP_400_BAD_REQUEST)
+            try:
+                username = user.leetcode.username
+            except:
+                return Response({"error": "Username is required"}, status=status.HTTP_404_NOT_FOUND)
             questions_data = get_today_questions(username)
             return Response(questions_data, status=status.HTTP_200_OK)
         except Question.DoesNotExist:
