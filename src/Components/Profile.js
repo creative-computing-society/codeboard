@@ -30,13 +30,12 @@ const Profile = () => {
           }
         });
 
-        if (response.status === 401) {
+        if (response.status === 401 || response.status === 404 || response.status === 400) {
           window.location.href = "/login";
           localStorage.removeItem('token');
           return;
         }
-
-        if (!response.ok) {
+        else if (!response.ok) {
           throw new Error(`Error: ${response.status}`);
         }
 
@@ -61,7 +60,7 @@ const Profile = () => {
       }
 
       try {
-        const response = await fetch(`${BASE_URL}/questions/${rankPeriod}/`, {
+        const response = await fetch(`${BASE_URL}/questions/today/`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -84,7 +83,7 @@ const Profile = () => {
 
     fetchProfile();
     fetchQuestions();
-  }, [rankPeriod]); // Re-fetch questions whenever rankPeriod changes
+  }, []); // Fetch profile and questions only once on component mount
 
   const showRank = (period) => {
     setRankPeriod(period);
@@ -126,7 +125,7 @@ const Profile = () => {
       </div>
 
       <div className="question-container">
-        <h2>{rankPeriod === 'today' ? "Today's Questions" : `Questions (${rankPeriod})`}</h2>
+        <h2>Today's Questions</h2>
         <table className="questions-table">
           <thead>
             <tr>

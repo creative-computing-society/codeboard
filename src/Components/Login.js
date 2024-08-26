@@ -4,10 +4,9 @@ import '../Login.css';
 
 const Login = ({ onLogin }) => {
   // const clientId = process.env.REACT_APP_CLIENT_ID;
-  const clientId = '667465f49c13fa9047715311'; // Replace with your actual client ID
+  const clientId = '667465f49c13fa9047715311'; 
 
-  const callbackUrl = 'https://codeboard.ccstiet.com/authverify'; // Replace with your actual callback URL if needed
-  // const callbackUrl = 'http://localhost:3000/authverify';
+  const callbackUrl = 'https://codeboard.ccstiet.com/authverify';
   const handleLogin = () => {
     const authUrl = `https://auth.ccstiet.com/auth/google?clientid=${clientId}&callback=${callbackUrl}`;
     window.location.href = authUrl;

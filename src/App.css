@@ -1,3 +1,7 @@
+@import '@radix-ui/colors/black-alpha.css';
+@import '@radix-ui/colors/mauve.css';
+@import '@radix-ui/colors/violet.css';
+
 @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 
 :root {
@@ -78,12 +82,12 @@ body {
 }
 
 .NavBar .logout-button-container .logout-button:hover {
-  background-color: rgba(62, 216, 219, 1); /* Slightly darker on hover */
+  background-color: rgba(62, 216, 219, 0.866); 
 }
 
 .NavBar .logout-button-container .logout-button:focus {
   outline: none;
-  box-shadow: 0 0 0 3px rgba(62, 216, 219, 0.5);
+  box-shadow: 0 0 0 3px rgba(62, 216, 219, 0.866);
 }
 .NavBar li {
   padding-bottom: 0.3rem;
@@ -97,13 +101,12 @@ body {
   text-decoration: none;
   color: var(--NAV-COLOR);
   padding: 0.8rem;
-  border-bottom: 2px solid transparent;
+ 
   flex-grow: 1;
   font-size: 1.4rem;
 }
 
-.NavBar li a:hover,
-.NavBar li span:hover {
+.NavBar li a:hover {
   background-color: var(--LINK-HOVER-BGCOLOR);
   color: rgb(253, 254, 254);
   cursor: pointer;
@@ -119,7 +122,7 @@ body {
 .NavBar li:focus,
 .NavBar li a:focus,
 .NavBar li span:focus {
-  background-color: var(--LINK-FOCUS-BGCOLOR);
+  background-color: var(--LINK-HOVER-BGCOLOR);
   color: rgb(253, 254, 254);
   outline-offset: 4px;
   border-radius: 7px;
@@ -138,7 +141,7 @@ body {
   margin-left: auto; /* Center horizontally */
   margin-right: auto; /* Center horizontally */
 }
-@media (max-width: 1024px) {
+@media (max-width: 1235px) {
   .NavBar .logout-button-container .logout-button {
     font-size: 0.875rem; /* Reduce font size for smaller screens */
     padding: 0.2rem 0.5rem; /* Adjust padding for smaller screens */
@@ -411,6 +414,15 @@ body::-webkit-scrollbar-thumb:hover {
   text-align: left;
   border-top: 0.0625rem solid rgba(62, 216, 219, 0.866); /* 1px in rem */
 }
+.questions-table a {
+  color: white; /* Change link color to white */
+  text-decoration: none; /* Remove underline if desired */
+}
+
+.questions-table a:hover {
+  text-decoration: underline; /* Optional: Add underline on hover */
+  color: rgba(62, 216, 219, 0.866); /* Optional: Change color on hover */
+}
 .questions-table th,
 .leaderboard-table th {
   background-color: var(--NAV-BGCOLOR);
@@ -451,17 +463,24 @@ body::-webkit-scrollbar-thumb:hover {
 .leaderboard-table tr:last-child td:last-child {
   border-radius: 1rem;
 }
-/* .leaderboard img .badge{
-  width: auto; 
-  height: auto; 
-  border-radius: 0;
-  background-color: red;
+.leaderboard .badge {
+  width: auto;
+  height: 30px; /* Adjust this value as needed */
+  object-fit: contain;
+  margin-right: 10px;
 }
-*/
-/* .leaderboard-row td:last-child,
-.leaderboard-row th:last-child {
-  text-align: center;
-} */
+
+.leaderboard .badge {
+  width: auto;
+  height: 40px; /* Adjust as needed */
+  object-fit: contain;
+  margin-right: 10px;
+  vertical-align: middle;
+  border-radius: 0 !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
 /* Responsive Design for Leaderboard */
 @media (max-width: 768px) {
   .profile-container {
@@ -513,7 +532,7 @@ body::-webkit-scrollbar-thumb:hover {
 }
 
 /* Responsive Navbar for Smaller Screens */
-@media (max-width: 1024px) {
+@media (max-width: 1235px) {
   .NavBar {
     width: 100%;
     height: 7rem;
@@ -951,5 +970,186 @@ button:hover {
   .container {
     margin-top: 0;
     flex-direction: column;
+  }
+}
+
+
+/*  CONFIRMATION POPUP  */
+.AlertDialogOverlay {
+  background-color: rgba(0, 0, 0, 0.455);
+  position: fixed;
+  inset: 0;
+  animation: overlayShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.AlertDialogContent {
+  background-color: rgb(51, 55, 62);
+  font-family: "Poppins", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+  color: white;
+  border-radius: 6px;
+  box-shadow: hsl(206 22% 7% / 35%) 0px 10px 38px -10px, hsl(206 22% 7% / 20%) 0px 10px 20px -15px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 90vw;
+  max-width: 500px;
+  max-height: 85vh;
+  padding: 25px;
+  animation: contentShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
+  text-align: center;
+}
+
+.AlertDialogContent:focus {
+  outline: none;
+}
+
+.AlertDialogTitle {
+  margin: 0;
+  color: white;
+  font-size: 17px;
+  font-weight: 500;
+  font-family: "Poppins", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.AlertDialogDescription {
+  margin-top: 10px;
+  margin-bottom: 20px;
+  color: white;
+  font-size: 15px;
+  line-height: 1.5;
+  font-family: "Poppins", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.Button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  padding: 0 15px;
+  font-size: 15px;
+  line-height: 1;
+  font-weight: 500;
+  height: 35px;
+  font-family: "Poppins", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.Button.violet {
+  background-color: rgba(62, 216, 219, 0.866);
+  color: white;
+}
+
+.Button.violet:hover {
+  background-color: rgba(55, 191, 194, 0.866);
+}
+
+.Button.violet:focus {
+  box-shadow: 0 0 0 2px black;
+}
+
+.Button.mauve {
+  background-color: red;
+  color: white;
+}
+
+.Button.mauve:hover {
+  background-color: rgb(206, 5, 5);
+}
+
+.Button.mauve:focus {
+  box-shadow: 0 0 0 2px black;
+}
+
+.avatar-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 15px;
+}
+
+.avatar {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.button-container {
+  display: flex;
+  justify-content: center;
+  gap: 25px;
+  margin-top: 20px;
+}
+
+@keyframes overlayShow {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes contentShow {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -48%) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+
+/*LOGOUT*/
+
+
+/*logout btn*/
+/* Add this to your CSS file (e.g., App.css) */
+
+.NavBar .logout-button-container .logout-button {
+  display: flex;
+  align-items: center;
+  background-color: rgba(62, 216, 219, 0.866);
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 0.25rem;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.logout-icon {
+  font-size: 1.5rem;
+  margin-right: 0.5rem;
+}
+
+.logout-text {
+  display: inline;
+}
+
+@media (max-width: 1235px) {
+  .logout-text {
+    display: none;
+  }
+  .NavBar .logout-button-container .logout-button {
+    background-color: transparent;
+    margin-top: 0.7rem;
+  }
+  .logout-button {
+    padding: 0.5rem;
+    background-color: transparent;
+  }
+
+  .logout-icon {
+    font-size: 1.5rem;
   }
 }
