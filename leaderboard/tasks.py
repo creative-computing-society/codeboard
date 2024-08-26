@@ -8,8 +8,7 @@ def update_total_solved(recent_submissions, user_instance):
     total_solved_dict_in_db = user_instance.total_solved_dict
     for submission in recent_submissions:
         question_slug = submission['titleSlug']
-        if question_slug not in total_solved_dict_in_db:
-            total_solved_dict_in_db[question_slug] = submission['timestamp']
+        total_solved_dict_in_db[question_slug] = submission['timestamp']
     user_instance.total_solved_dict = total_solved_dict_in_db
     user_instance.total_solved = len(total_solved_dict_in_db)
     user_instance.save()
