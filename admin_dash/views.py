@@ -59,7 +59,7 @@ def edit_question(request,question_id,*args,**kwargs):
 
         i_datetime = request.POST.get('questionDate')
         datetime_object = datetime.strptime(i_datetime, "%Y-%m-%dT%H:%M")
-        datetime_object = datetime_object.replace(tzinfo=pytz.UTC)
+        datetime_object = datetime_object.replace(tzinfo=pytz.timezone('Asia/Kolkata'))
 
         question_obj.title = title
         question_obj.titleSlug = titleSlug
