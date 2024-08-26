@@ -9,11 +9,16 @@ class LeetCodeSerializer(serializers.ModelSerializer):
         fields = ['username', 'name','leetcode_rank', 'daily_rank','weekly_rank','monthly_rank', 'photo_url', 'submissions']
 
     def get_submissions(self, obj):
-        submission_dict = obj.submission_dict
-        # Change the values, which are time stamps to readable format
-        for key, value in submission_dict.items():
-            submission_dict[key] = timezone.datetime.fromtimestamp(value).strftime('%Y-%m-%d %H:%M:%S')
-        return submission_dict
+        from django.utils import timezone
+
+def format_submission_dict(obj):
+    # list of dictionaries
+    submission_dict = obj.submission_dict
+    # Iterate over each dictionary in the list
+    for item in submission_dict:
+        # Convert the timestamp to a readable format
+        item['timestamp'] = timezone.datetime.fromtimestamp(item['timestamp']).strftime('%Y-%m-%d %H:%M:%S')
+    return submission_dict
 
 
 class QuestionSerializer(serializers.ModelSerializer):
@@ -39,11 +44,11 @@ class QuestionSerializer(serializers.ModelSerializer):
         
         try:
             leetcode_acc_instance = Leetcode.objects.get(username=leetcode_acc_user)
-            matched_ques_dict = leetcode_acc_instance.matched_ques_dict
-            # cextract keys and put it in an integer array
-            matched_ques = [int(key) for key in matched_ques_dict.keys()]
+            matched_ques_dict:dict = leetcode_acc_instance.matched_ques_dict
+            # cextract keys and put it in an array
+            matched_ques = [key for key in matched_ques_dict.keys()]
 
-            if obj.leetcode_id in matched_ques:
+            if obj.titleSlug in matched_ques:
                 return "Solved"
             else:
                 return "Not Solved"

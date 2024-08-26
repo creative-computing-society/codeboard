@@ -13,7 +13,7 @@ MATCHED_USER_QUERY =  '''
   }
 '''
 
-QUESTIONS_SUBMITTED_QUERY = '''
+RECENT_QUESTIONS_SUBMITTED_QUERY = '''
   query recentAcSubmissions($username: String!, $limit: Int!) {
     recentAcSubmissionList(username: $username, limit: $limit) {
     titleSlug

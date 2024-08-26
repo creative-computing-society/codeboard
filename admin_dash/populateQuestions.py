@@ -1,7 +1,6 @@
 from django.utils import timezone
-from celery import shared_task
 from leaderboard.models import Question
-from leaderboard.tasks import fetch_all_questions
+from leaderboard.utility import fetch_all_questions
 
 def populate_question_model(frontendQuestionId):
     try:

@@ -4,7 +4,7 @@ from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth import authenticate, login, logout
 from leaderboard.models import Question
-from .tasks import populate_question_model
+from .populateQuestions import populate_question_model
 from datetime import datetime, timezone
 import pytz
 CUser = get_user_model()
@@ -96,6 +96,7 @@ def delete_ques_with_ids(request):
 
     try:
         ques_ids = request.POST.get('selected_questions')  # Match the name of the hidden input
+        print(ques_ids)
         if ques_ids:
             ques_ids_list = ques_ids.split(',')
             for ques in ques_ids_list:

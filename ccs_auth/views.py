@@ -8,7 +8,7 @@ from django.contrib.auth import authenticate, login, logout
 from dotenv import load_dotenv
 
 from leaderboard.models import Leetcode
-from leaderboard.tasks import get_user_data, fetch_user_profile
+from leaderboard.tasks import get_and_update_user_data, fetch_user_profile
 from .serializers import *
 from .models import *
 import pytz
@@ -50,7 +50,7 @@ class RegisterLeetcode(APIView):
         acc = Leetcode.objects.create(username=leetcode_username, user=user)
         if not acc:
             return Response({'error': 'User registration failed'}, status=status.HTTP_400_BAD_REQUEST)
-        get_user_data(leetcode_username, acc.pk)
+        get_and_update_user_data(leetcode_username, acc.pk)
         return Response({'message': 'User registered successfully'}, status=status.HTTP_201_CREATED)
 
 class VerifyLeetcode(APIView):

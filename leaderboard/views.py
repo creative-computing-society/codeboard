@@ -4,7 +4,6 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 from django.utils import timezone
 from .models import Leetcode, Question, Leaderboard
-from ccs_auth.models import CUser
 from .tasks import *
 from .serializers import LeetCodeSerializer, QuestionSerializer
 
