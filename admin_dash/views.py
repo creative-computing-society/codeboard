@@ -1,11 +1,12 @@
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponseBadRequest
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth import authenticate, login, logout
 from leaderboard.models import Question
-from .tasks import populate_question_model
-
+from .populateQuestions import populate_question_model
+from datetime import datetime, timezone
+import pytz
 CUser = get_user_model()
 
 def admin_login(request):
@@ -49,16 +50,21 @@ def edit_question(request,question_id,*args,**kwargs):
         return redirect('admin_dash:admin_login')
     question_obj = Question.objects.filter(pk=question_id).first()
     print(question_obj)
-    print(Question.objects.all().values())
     if not question_obj:
         return redirect('admin_dash:admin_dashboard')
     if request.method == 'POST':
         title = request.POST.get('title')
         titleSlug = request.POST.get('titleSlug')
         difficulty = request.POST.get('difficulty')
+
+        i_datetime = request.POST.get('questionDate')
+        datetime_object = datetime.strptime(i_datetime, "%Y-%m-%dT%H:%M")
+        datetime_object = datetime_object.replace(tzinfo=pytz.timezone('Asia/Kolkata'))
+
         question_obj.title = title
         question_obj.titleSlug = titleSlug
         question_obj.difficulty = difficulty
+        question_obj.questionDate = datetime_object
         question_obj.save()
         messages.info(request, 'Question updated successfully')
         return render(request, 'admin_dash/edit.html', {'question': question_obj})
@@ -72,8 +78,7 @@ def add_ques_from_id(request):
         if ques_ids == []:
             messages.info(request, 'Invalid input')
             return redirect('admin_dash:admin_dashboard')
-        # for ques in ques_ids:
-        #     Question.objects.create(leetcode_id=ques)
+        
         all_ques = True
         for ques in ques_ids:
             if not Question.objects.filter(pk=ques):
@@ -83,6 +88,23 @@ def add_ques_from_id(request):
         else:
             print("not all were successfull")
 
+    return redirect('admin_dash:admin_dashboard')
+
+def delete_ques_with_ids(request):
+    if not request.user.is_authenticated:
+        return redirect('admin_dash:admin_login')
+
+    try:
+        ques_ids = request.POST.get('selected_questions')  # Match the name of the hidden input
+        print(ques_ids)
+        if ques_ids:
+            ques_ids_list = ques_ids.split(',')
+            for ques in ques_ids_list:
+                Question.objects.filter(pk=int(ques)).first().delete()
+                if not Question.objects.filter(pk = int(ques)):
+                    print(ques, "th question just got deleted")     
+    except:
+        pass
     return redirect('admin_dash:admin_dashboard')
 
 def validate_ques_ids(ques_ids):
