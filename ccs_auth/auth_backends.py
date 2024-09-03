@@ -78,6 +78,28 @@ class SSOAuthenticationBackend(BaseBackend):
         return None
 
 
+    def get_user(self, user_id):
+        try:
+            return CustomUser.objects.get(id=user_id)
+        except:
+            pass
+        try:
+            return CustomUser.objects.get(email=user_id)
+        except CustomUser.DoesNotExist:
+            return None
+
+    def validate_sso_token(self, sso_token):
+        jwt_secret = os.getenv('CLIENT_SECRET')
+        try:
+            payload = jwt.decode(sso_token, jwt_secret, algorithms=['HS256'], leeway=10)
+            ex = payload['ex']
+            data = decrypt(ex, jwt_secret)
+            return data
+        except jwt.ExpiredSignatureError:
+            return None
+        except jwt.InvalidTokenError:
+            return None
+
 def decrypt(encrypted_data, key):
     # Ensure the key is 96 characters long
     if len(key) != 96:
