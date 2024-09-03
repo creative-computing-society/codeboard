@@ -19,20 +19,24 @@ class SSOAuthenticationBackend(BaseBackend):
                 # Check and update user information if different
                 name_parts = user_info.get('name', '').split(' ')
                 has_changes = False
-                if len(name_parts >=2):
-                    if user.first_name != user_info.get('name', '').split(' ')[0]:
-                        user.first_name = user_info.get('name', '').split(' ')[0]
-                        has_changes = True
-                    if user.last_name != user_info.get('name', '').split(' ')[1]:
-                        user.last_name = user_info.get('name', '').split(' ')[1]
-                        has_changes = True
+
+                if len(name_parts) >= 2:
+                    first_name = name_parts[0]
+                    last_name = ' '.join(name_parts[1:])
                 elif len(name_parts) == 1:
-                    if user.first_name != user_info.get('name', '').split(' ')[0]:
-                        user.first_name = user_info.get('name', '').split(' ')[0]
-                        has_changes = True
-                    if user.last_name != '':
-                        user.last_name = ''
-                        has_changes = True
+                    first_name = name_parts[0]
+                    last_name = ''
+                else:
+                    first_name = ''
+                    last_name = ''
+
+                if user.first_name != first_name:
+                    user.first_name = first_name
+                    has_changes = True
+                if user.last_name != last_name:
+                    user.last_name = last_name
+                    has_changes = True
+
                 if 'rollNo' in user_info and user.roll_no != user_info['rollNo']:
                     user.roll_no = user_info['rollNo']
                     has_changes = True
@@ -42,14 +46,26 @@ class SSOAuthenticationBackend(BaseBackend):
                 if has_changes:
                     user.save()
             except CustomUser.DoesNotExist:
-                first_name, last_name = user_info['name'].split(' ')
+                # Safely handle the name split here as well
+                name_parts = user_info.get('name', '').split(' ')
+                if len(name_parts) >= 2:
+                    first_name = name_parts[0]
+                    last_name = ' '.join(name_parts[1:])
+                elif len(name_parts) == 1:
+                    first_name = name_parts[0]
+                    last_name = ''
+                else:
+                    first_name = ''
+                    last_name = ''
+
                 print("authentication backend: ", user_info)
                 try:
-                    roll_no=user_info['rollNo']
-                    branch=user_info['branch']
+                    roll_no = user_info.get('rollNo', '')
+                    branch = user_info.get('branch', '')
                 except:
                     roll_no = ''
                     branch = ''
+
                 user = CustomUser.objects.create(
                     id=user_info['_id'],
                     email=user_info['email'],
@@ -61,27 +77,6 @@ class SSOAuthenticationBackend(BaseBackend):
             return user
         return None
 
-    def get_user(self, user_id):
-        try:
-            return CustomUser.objects.get(id=user_id)
-        except:
-            pass
-        try:
-            return CustomUser.objects.get(email=user_id)
-        except CustomUser.DoesNotExist:
-            return None
-
-    def validate_sso_token(self, sso_token):
-        jwt_secret = os.getenv('CLIENT_SECRET')
-        try:
-            payload = jwt.decode(sso_token, jwt_secret, algorithms=['HS256'], leeway=10)
-            ex = payload['ex']
-            data = decrypt(ex, jwt_secret)
-            return data
-        except jwt.ExpiredSignatureError:
-            return None
-        except jwt.InvalidTokenError:
-            return None
 
 def decrypt(encrypted_data, key):
     # Ensure the key is 96 characters long
