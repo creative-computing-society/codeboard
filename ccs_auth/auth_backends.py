@@ -17,13 +17,22 @@ class SSOAuthenticationBackend(BaseBackend):
             try:
                 user = CustomUser.objects.get(pk=user_info['email'])
                 # Check and update user information if different
+                name_parts = user_info.get('name', '').split(' ')
                 has_changes = False
-                if user.first_name != user_info.get('name', '').split(' ')[0]:
-                    user.first_name = user_info.get('name', '').split(' ')[0]
-                    has_changes = True
-                if user.last_name != user_info.get('name', '').split(' ')[1]:
-                    user.last_name = user_info.get('name', '').split(' ')[1]
-                    has_changes = True
+                if len(name_parts >=2):
+                    if user.first_name != user_info.get('name', '').split(' ')[0]:
+                        user.first_name = user_info.get('name', '').split(' ')[0]
+                        has_changes = True
+                    if user.last_name != user_info.get('name', '').split(' ')[1]:
+                        user.last_name = user_info.get('name', '').split(' ')[1]
+                        has_changes = True
+                elif len(name_parts) == 1:
+                    if user.first_name != user_info.get('name', '').split(' ')[0]:
+                        user.first_name = user_info.get('name', '').split(' ')[0]
+                        has_changes = True
+                    if user.last_name != '':
+                        user.last_name = ''
+                        has_changes = True
                 if 'rollNo' in user_info and user.roll_no != user_info['rollNo']:
                     user.roll_no = user_info['rollNo']
                     has_changes = True
