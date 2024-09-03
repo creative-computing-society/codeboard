@@ -87,11 +87,11 @@ const UsernameEntry = ({ setIsAuthenticated }) => {
       }
 
       const registerData = await registerResponse.json();
-      console.log('Registration successful. Redirecting to profile...');
+      // console.log('Registration successful. Redirecting to profile...');
 
       await localStorage.setItem('token', token);
       const storedToken = localStorage.getItem('token');
-      console.log('Stored token:', storedToken);
+      // console.log('Stored token:', storedToken);
 
       setIsAuthenticated(true);
       navigate('/profile');

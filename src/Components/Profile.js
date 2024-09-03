@@ -11,9 +11,9 @@ const Profile = () => {
 
   useEffect(() => {
     const fetchProfile = async () => {
-      console.log('Fetching profile...');
+      // console.log('Fetching profile...');
       const token = localStorage.getItem('token');
-      console.log('Token:', token);
+      // console.log('Token:', token);
       if (!token) {
         setError('Token is missing');
         setLoading(false);
@@ -40,19 +40,19 @@ const Profile = () => {
         }
 
         const data = await response.json();
-        console.log('Profile response received:', data);
+        // console.log('Profile response received:', data);
         setProfile(data);
       } catch (err) {
         console.error('Error occurred:', err);
         setError(err.message);
       } finally {
         setLoading(false);
-        console.log('Loading state set to false');
+        // console.log('Loading state set to false');
       }
     };
 
     const fetchQuestions = async () => {
-      console.log('Fetching questions...');
+      // console.log('Fetching questions...');
       const token = localStorage.getItem('token');
       if (!token) {
         setError('Token is missing');
@@ -73,7 +73,7 @@ const Profile = () => {
         }
 
         const data = await response.json();
-        console.log('Questions response received:', data);
+        // console.log('Questions response received:', data);
         setQuestions(data);
       } catch (err) {
         console.error('Error occurred:', err);
@@ -90,7 +90,7 @@ const Profile = () => {
   };
 
   if (loading) {
-    console.log('Loading...');
+    // console.log('Loading...');
     return <div className="loading">Loading...</div>;
   }
 
@@ -100,12 +100,12 @@ const Profile = () => {
   }
 
   if (!profile) {
-    console.log('No profile data available');
+    // console.log('No profile data available');
     return <div className="no-data">No profile data available</div>;
   }
 
-  console.log('Rendering profile:', profile);
-  console.log('Rendering questions:', questions);
+  /* console.log('Rendering profile:', profile);
+  console.log('Rendering questions:', questions); */
 
   return (
     <div className="profile-container">

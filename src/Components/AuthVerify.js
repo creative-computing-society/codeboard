@@ -14,7 +14,7 @@ const AuthVerify = ({ onVerify, setIsNewUser, setIsAuthenticated }) => {
       const jwtToken = query.get('token');
 
       if (jwtToken) {
-        console.log('JWT Token:', jwtToken);
+        // console.log('JWT Token:', jwtToken);
 
         const requestBody = { token: jwtToken };
 
@@ -28,8 +28,8 @@ const AuthVerify = ({ onVerify, setIsNewUser, setIsAuthenticated }) => {
           const data = await response.json();
           const status = response.status;
 
-          console.log('Response Status:', status);
-          console.log('Response Data:', data);
+          /* console.log('Response Status:', status);
+          console.log('Response Data:', data); */
 
           if (data.leetcode === false) {
             setIsNewUser(true);
@@ -42,27 +42,27 @@ const AuthVerify = ({ onVerify, setIsNewUser, setIsAuthenticated }) => {
             };
             setIsAuthenticated(true); // Set isAuthenticated to true
             navigate('/username', { state: { jwtToken, userData, token: data.token } });
-            console.log('Navigated to /username');
+            // console.log('Navigated to /username');
           } else if (status === 200 && data.token) {
             localStorage.setItem('token', data.token);
-            console.log('Token stored in localStorage:', localStorage.getItem('token'));
+            // console.log('Token stored in localStorage:', localStorage.getItem('token'));
             onVerify();
             setIsAuthenticated(true); // Set isAuthenticated to true
             navigate('/profile');
-            console.log('Navigated to /profile');
+            // console.log('Navigated to /profile');
           } else {
             console.error(`Unexpected response: ${JSON.stringify(data)}`);
             navigate('/login');
-            console.log('Navigated to /login1');
+            // console.log('Navigated to /login1');
           }
         } catch (error) {
           console.error('Error checking user:', error);
           navigate('/login');
-          console.log('Navigated to /login2');
+          // console.log('Navigated to /login2');
         }
       } else {
         navigate('/login');
-        console.log('Navigated to /login3');
+        // console.log('Navigated to /login3');
       }
     };
 
