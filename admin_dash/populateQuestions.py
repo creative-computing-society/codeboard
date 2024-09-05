@@ -14,13 +14,23 @@ def populate_question_model(frontendQuestionId):
         
         if question_data:
             # Fetch or create the Question model instance
+            l_difficulty = question_data['difficulty'],
+            difficulty = ''
+            if(l_difficulty == "Easy"):
+                difficulty = "Basic"
+            elif(l_difficulty == "Medium"):
+                difficulty = "Intermidiate"
+            elif(l_difficulty == "Hard"):
+                difficulty = "Advanced"
+            
             obj, created = Question.objects.update_or_create(
                 leetcode_id=int(question_data['frontendQuestionId']),
+                
                 defaults={
                     'title': question_data['title'],
                     'titleSlug': question_data['titleSlug'],
-                    'difficulty': question_data['difficulty'],
-                    'questionDate': timezone.now(),  # You might want to use the actual date of the question here
+                    'difficulty': difficulty,
+                    'questionDate': timezone.now(),
                 }
             )
             
