@@ -14,7 +14,7 @@ export default function Navbar() {
     const token = localStorage.getItem('token');
 
     try {
-      console.log('Stored Token:', token);
+      // console.log('Stored Token:', token);
 
       const response = await fetch(API_URL + '/logout/', {
         method: 'GET',
@@ -29,7 +29,7 @@ export default function Navbar() {
       }
 
       const data = await response.json();
-      console.log('Logout Response:', data);
+      // console.log('Logout Response:', data);
 
       if (data.message.toLowerCase() === 'logged out successfully') {
         localStorage.removeItem('token');

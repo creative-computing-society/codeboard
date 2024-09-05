@@ -26,7 +26,7 @@ function App() {
     handleLogin();
   }, []);
 
-  console.log('Is Authenticated:', isAuthenticated);
+  // console.log('Is Authenticated:', isAuthenticated);
 
   return (
     <Router>

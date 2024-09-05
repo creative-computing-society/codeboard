@@ -625,7 +625,7 @@ body::-webkit-scrollbar-thumb:hover {
 
 /*  UsernameEntry styles *****************************************/
 body.username-entry-body {
-  background-color: #000000; /* Black background for the body */
+  background-color: black; /* Black background for the body */
   color: var(--text-color); /* White text color */
   display: flex;
   justify-content: center;
@@ -722,9 +722,17 @@ body.username-entry-body {
   flex: 1; /* Take up remaining space */
 
 }
-
+@media (max-width: 1024px) {
+  .outer-container{
+    width: 90%;
+  }
+}
 /* Adjustments for smaller screens */
 @media (max-width: 768px) {
+  .outer-container{
+    width: 82%;
+    margin-top: 20rem;
+  }
   .left {
     flex-direction: column;
     align-items: center;
