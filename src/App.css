@@ -406,13 +406,18 @@ body::-webkit-scrollbar-thumb:hover {
   overflow: hidden; /* Ensure the border-radius applies to the entire table */
   
 }
+
 .questions-table th,
 .questions-table td,
 .leaderboard-table th,
 .leaderboard-table td {
   padding: 0.9375rem; /* 15px in rem */
-  text-align: left;
+  text-align: centre;
   border-top: 0.0625rem solid rgba(62, 216, 219, 0.866); /* 1px in rem */
+}
+.questions-table th:first-child,
+.questions-table td:first-child{
+  text-align: left;
 }
 .questions-table a {
   color: white; /* Change link color to white */
