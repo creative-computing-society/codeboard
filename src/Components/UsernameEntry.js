@@ -106,6 +106,7 @@ const UsernameEntry = ({ setIsAuthenticated }) => {
   };
 
   return (
+    <div className="username-entry-outer-container">
     <div className="outer-container">
       <div className="container">
         {/* Left side content */}
@@ -215,6 +216,7 @@ const UsernameEntry = ({ setIsAuthenticated }) => {
           onCancel={handleCancel}
         />
       )}
+    </div>
     </div>
   );
 };
