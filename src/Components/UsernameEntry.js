@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import SERVER_URL from "../config.js";
 import ccsLogoBulb from '../assets/ccs-bulb.png';
 import Confirmation from './Confirmation';
+import './UsernameForm.css';
 
 const API_URL = SERVER_URL + 'api/auth';
 

@@ -4,6 +4,7 @@ import { FaCalendarDay, FaCalendarWeek, FaCalendarAlt, FaSignOutAlt } from 'reac
 import { MdAccountCircle,MdExitToApp } from 'react-icons/md';
 import ccsLogo from '../assets/ccs_logo.png';
 import SERVER_URL from "../config.js";
+import './Navbar.css';
 
 const API_URL = `${SERVER_URL}api/auth`;
 

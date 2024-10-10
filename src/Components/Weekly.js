@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import defaultImage from '../assets/default_file.svg';
 import SERVER_URL from "../config.js";
+import './Leaderboard.css';
 
 const BASE_URL = SERVER_URL + 'api/leaderboard';
 
