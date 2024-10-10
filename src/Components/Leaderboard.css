@@ -1,0 +1,94 @@
+/* LEADERBOARD ****************/
+/* LEADERBOARD ****************/
+.leaderboard-container {
+  background-color: var(--NAV-BGCOLOR);
+  border-radius: 1rem;
+  padding: 2rem;
+  margin: 1rem 0;
+}
+
+.leaderboard-title-heading,
+.leaderboard-title {
+  color: white;
+  text-align: left;
+  margin-bottom: 1rem;
+  font-family: "Poppins", sans-serif;
+  font-weight: 400;
+}
+
+.leaderboard-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: var(--NAV-BGCOLOR);
+  color: var(--CONTENT-COLOR);
+  border: 2px solid rgba(62, 216, 219, 0.866);
+  border-radius: 1rem;
+  overflow: hidden;
+}
+
+.leaderboard-table th,
+.leaderboard-table td {
+  padding: 0.9375rem;
+  text-align: center;
+  border-top: 0.0625rem solid rgba(62, 216, 219, 0.866);
+}
+
+.leaderboard-table th {
+  background-color: var(--NAV-BGCOLOR);
+  color: white;
+}
+
+.leaderboard-table tr:last-child td {
+  border-bottom: none;
+}
+
+.leaderboard-row img {
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  object-fit: cover;
+  margin: 0 auto;
+  display: block;
+}
+
+/* Responsive Design for Leaderboard */
+@media (max-width: 768px) {
+  .leaderboard-container {
+    padding: 1rem;
+  }
+
+  .leaderboard-title-heading,
+  .leaderboard-title {
+    font-size: 0.875rem;
+    text-align: center !important;
+  }
+
+  .leaderboard-table th,
+  .leaderboard-table td {
+    padding: 0.5rem;
+    font-size: 0.75rem;
+  }
+
+  .leaderboard-row img {
+    width: 2rem;
+    height: 2rem;
+  }
+
+  .leaderboard-table {
+    width: 100%;
+    table-layout: fixed;
+  }
+
+  .leaderboard-table th,
+  .leaderboard-table td {
+    white-space: normal;
+    word-wrap: break-word;
+  }
+}
+
+@media (max-width: 425px) {
+  .leaderboard-table th:last-child,
+  .leaderboard-table td:last-child {
+    display: none;
+  }
+}

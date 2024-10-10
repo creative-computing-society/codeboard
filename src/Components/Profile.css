@@ -1,0 +1,235 @@
+/* Profile ****************/
+.profile-container {
+    display: flex;
+    justify-content: space-between; /* Space between containers */
+    background-color: #282c34;
+    color: var(--CONTENT-COLOR);
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    /* Adjusted width to fit both containers */
+    margin: 0 auto;
+    margin-top: 50px; /* Add margin-top for centering */
+    position: relative; /* Ensure it's centered vertically */
+  }
+  
+  .detail-container {
+    flex: 1; /* Flex to adjust with the container */
+    text-align: center;
+    padding-right: 1rem; /* Padding to add space between containers */
+  }
+  
+  .detail-container img {
+    border-radius: 50%;
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    margin-bottom: 20px;
+    border: 3px solid var(--CONTENT-H2-COLOR); /* Add border */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Add shadow */
+  }
+  
+  .detail-container h1 {
+    font-size: 2.5em; /* Increase font size */
+    color: white; /* Change name color to white */
+    margin-bottom: 10px;
+  }
+  
+  .detail-container p {
+    font-size: 1.2em;
+    color: var(--CONTENT-COLOR);
+    margin: 5px 0;
+  }
+  
+  .detail-container p span {
+    font-weight: bold;
+    color: white; /* Ensure high contrast */
+    font-family: "Poppins", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+  }
+  
+  /* Loading and Error Styles */
+  .loading,
+  .error {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    font-size: 1.5em;
+    color: rgb(33, 35, 42);
+  }
+  
+  /* Rank Slider ****************/
+  .rank-slider button {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    font: inherit;
+    outline: inherit;
+  }
+  .rank-slider {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+  }
+  
+  .rank-slider .tab {
+    text-decoration: none; /* Remove default underline */
+    color: var(--CONTENT-COLOR);
+    padding: 10px 20px;
+    margin: 0 5px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: text-decoration-color 0.3s; /* Add transition for underline color */
+  }
+  
+  .rank-slider .tab.active {
+    text-decoration: underline; /* Underline when active */
+    text-decoration-color: rgba(62, 216, 219, 0.866); /* Active underline color */
+    text-underline-offset: 2px; /* Optional: adjust underline position */
+  }
+  
+  /* Responsive Design for Rank Slider */
+  @media (max-width: 768px) {
+    .rank-slider .tab {
+      padding: 5px 10px;
+      font-size: 0.875rem;
+    }
+  }
+  
+  /* Adding responsive design */
+  @media (max-width: 768px) {
+    .profile-container {
+      padding: 1rem;
+      margin-top: 2rem;
+    }
+  
+    .profile-container h1 {
+      font-size: 1.5em;
+    }
+  
+    .profile-container p {
+      font-size: 1em;
+    }
+  }
+  
+  .question-container {
+    flex: 2; /* Flex to adjust with the container */
+  }
+  
+  .question-container h2 {
+    color: white !important; /* Change heading color to white */
+    text-align: center;
+    margin-bottom: 0.5rem;
+    font-family: "Poppins", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+  }
+  
+  /* LEADERBOARD ****************/
+  .questions-table,
+  .leaderboard-table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: var(--NAV-BGCOLOR);
+    color: var(--CONTENT-COLOR);
+    border: 2px solid rgba(62, 216, 219, 0.866);
+    border-radius: 1rem;
+    overflow: hidden; /* Ensure the border-radius applies to the entire table */
+  }
+  
+  .questions-table th,
+  .questions-table td,
+  .leaderboard-table th,
+  .leaderboard-table td {
+    padding: 0.9375rem; /* 15px in rem */
+    text-align: left;
+    border-top: 0.0625rem solid rgba(62, 216, 219, 0.866); /* 1px in rem */
+  }
+  
+  .questions-table a {
+    color: white; /* Change link color to white */
+    text-decoration: none; /* Remove underline if desired */
+  }
+  
+  .questions-table a:hover {
+    text-decoration: underline; /* Optional: Add underline on hover */
+    color: rgba(62, 216, 219, 0.866); /* Optional: Change color on hover */
+  }
+  
+  .questions-table th,
+  .leaderboard-table th {
+    background-color: var(--NAV-BGCOLOR);
+    color: white;
+    text-align: center;
+  }
+  
+  /* Responsive Design for Leaderboard */
+  @media (max-width: 768px) {
+    .profile-container {
+      padding: 1rem; /* Equal padding on all sides */
+      margin: 0;
+    }
+  
+    .content {
+      padding: 0.5rem; /* Equal padding on all sides */
+      margin: 0; /* Remove any extra margin */
+    }
+    .question-container,
+    .leaderboard-container {
+      padding: 1rem; /* Adjust padding for smaller screens */
+      margin: 0.5rem; /* Adjust margin for smaller screens */
+    }
+    .question-container h2,
+    .leaderboard-title-heading,
+    .leaderboard-title {
+      font-size: 0.875rem; /* Adjust font size for smaller screens */
+      text-align: center !important; /* Center-align text for smaller screens */
+    }
+    .questions-table th,
+    .questions-table td,
+    .leaderboard-table th,
+    .leaderboard-table td {
+      padding: 0.5rem; /* Reduce padding for smaller screens */
+      font-size: 0.75rem; /* Reduce font size for smaller screens */
+      text-align: center;
+    }
+  
+    .leaderboard-row img {
+      width: 2rem; /* Reduce image size for smaller screens */
+      height: 2rem; /* Reduce image size for smaller screens */
+    }
+    .questions-table,
+    .leaderboard-table {
+      width: 100%; /* Ensure the table width fits within the container */
+      table-layout: fixed; /* Ensure consistent table cell widths */
+    }
+    .questions-table th,
+    .questions-table td,
+    .leaderboard-table th,
+    .leaderboard-table td {
+      white-space: normal; /* Allow text to wrap within cells */
+      word-wrap: break-word; /* Ensure long words are wrapped */
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .profile-container {
+      flex-direction: column;
+      align-items: center;
+    }
+  
+    .detail-container {
+      padding-right: 0;
+      margin-bottom: 1rem; /* Add space between the containers */
+    }
+  
+    .question-container {
+      width: 100%; /* Ensure the question container takes full width */
+    }
+  }
+  

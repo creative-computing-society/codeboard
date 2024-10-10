@@ -42,7 +42,9 @@ body.login-body {
   max-width: 90%;
   height: auto;
 }
-
+.logo-section p {
+  color: white;
+}
 .form-section {
   flex: 1;
   padding: 2.5rem; /* 40px => 2.5rem */

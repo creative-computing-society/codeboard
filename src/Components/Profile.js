@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import SERVER_URL from "../config.js";
+import './Profile.css';
+
 const BASE_URL = SERVER_URL + 'api/leaderboard';
 
 const Profile = () => {
