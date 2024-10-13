@@ -12,9 +12,7 @@ class LeetCodeSerializer(serializers.ModelSerializer):
         from django.utils import timezone
 
 def format_submission_dict(obj):
-    # list of dictionaries
     submission_dict = obj.submission_dict
-    # Iterate over each dictionary in the list
     for item in submission_dict:
         # Convert the timestamp to a readable format
         item['timestamp'] = timezone.datetime.fromtimestamp(item['timestamp']).strftime('%Y-%m-%d %H:%M:%S')

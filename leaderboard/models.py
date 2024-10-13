@@ -28,7 +28,6 @@ class Leetcode(models.Model):
         return self.username
 
 class Question(models.Model):
-    # question_key = models.AutoField(primary_key=True)
     leetcode_id = models.IntegerField(null=False, blank=False, default=0, primary_key=True, unique=True)
     title = models.CharField(max_length=100, default="")
     titleSlug = models.CharField(max_length=100, default="")

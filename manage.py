@@ -2,12 +2,6 @@
 """Django's command-line utility for administrative tasks."""
 import os
 import sys
-# from subprocess import Popen
-
-# def start_celery():
-#     Popen(['celery', '-A', 'app.celery', 'worker','--pool=solo', '-l', 'info'])
-#     Popen(['celery', '-A', 'app.celery', 'beat', '-l', 'info'])
-#     # Popen(['celery', '-A', 'app.celery', 'worker', '-Q', 'question_queue', '-l', 'info', '--pool=solo', '-n', 'question_worker@%h'])
 
 def main():
     """Run administrative tasks."""

@@ -58,7 +58,6 @@ def get_and_update_user_data(self, username, id, *args, **kwargs):
 
         user_instance.save()
 
-        # Update total solved questions
         update_total_solved(recent_submissions, user_instance)
 
         # Get given questions from db
@@ -83,10 +82,8 @@ def refresh_user_data(self):
         if total_users == 0:
             logger.info("No users found to refresh")
             return
-
-        # Determine the number of workers (this could be dynamic, based on the server configuration)
     
-        page_size = max(1, total_users // WORKER_COUNT)  # Calculate page size to balance the load
+        page_size = max(1, total_users // WORKER_COUNT)
         
         paginator = Paginator(users, page_size)
         
@@ -106,6 +103,4 @@ def refresh_user_data(self):
         logger.info(f"Data refresh initiated for {total_users} users across {WORKER_COUNT} workers, with {page_size} users per page.")
     except Exception as e:
         logger.error(f"Error refreshing user data: {e}")
-        raise self.retry(exc=e) 
-
-# Note: Ensure that the calculate_leaderboards task is properly defined in manage_leaderboard.py
+        raise self.retry(exc=e)
