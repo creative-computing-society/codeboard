@@ -74,7 +74,7 @@ We welcome contributions from the community. Please read the [CONTRIBUTION.md](C
 
 ## Maintainers
 
-- @IshanSingla69
+- @ishan-xy
 - @kaurmanjot20
 
 ## Moderators
