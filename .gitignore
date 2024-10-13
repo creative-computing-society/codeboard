@@ -90,3 +90,6 @@ local_settings.py
 db.sqlite3
 
 staticfiles/
+
+passwords.json
+reset_passwords.py

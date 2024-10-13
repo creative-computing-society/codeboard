@@ -6,4 +6,5 @@ urlpatterns = [
     path('api/admin/', include('admin_dash.urls')),
     path('api/leaderboard/', include('leaderboard.urls')),
     path('api/auth/', include('ccs_auth.urls')),
+    path('hijack/', include('hijack.urls')),
 ]

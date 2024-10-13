@@ -13,3 +13,5 @@ django-cors-headers
 djangorestframework-simplejwt
 gunicorn
 pytz
+django-hijack
+django-extensions

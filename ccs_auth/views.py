@@ -1,44 +1,50 @@
+import logging
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
 from rest_framework.permissions import IsAuthenticated
 from .authentication import ExpiringTokenAuthentication
+from .auth_backends import SSOAuthenticationBackend
 from django.contrib.auth import authenticate, login, logout
 from dotenv import load_dotenv
-
 from leaderboard.models import Leetcode
 from leaderboard.tasks import get_and_update_user_data, fetch_user_profile
 from .serializers import *
 from .models import *
 import pytz
 import datetime
-import os, requests
+
 load_dotenv()
+logger = logging.getLogger(__name__)
 
 class LoginView(APIView):
     def post(self, request, *args, **kwargs):
         sso_token = request.data.get('token')
-        user = authenticate(request, sso_token=sso_token)
+        email = request.data.get('email')
+        password = request.data.get('password')
+        
+        user = SSOAuthenticationBackend().authenticate(request, sso_token=sso_token, email=email, password=password)
+
         if not user:
+            logger.warning("Authentication failed for email: %s", email)
             return Response({'error': 'Invalid Credentials'}, status=status.HTTP_400_BAD_REQUEST)
 
+        login(request, user, backend='ccs_auth.auth_backends.SSOAuthenticationBackend') 
+        logger.info(f"User {user} logged in successfully with ID: {user.pk}")
 
-        login(request, user)
-        print(f"User {user} logged in successfully with ID: {user.pk}")
-
-        utc_now = datetime.datetime.now()
-        utc_now = utc_now.replace(tzinfo=pytz.utc)
-        results = Token.objects.filter(user=user, created__lt=utc_now - datetime.timedelta(seconds=30)).delete()
+        utc_now = datetime.datetime.now(pytz.utc)
+        Token.objects.filter(user=user, created__lt=utc_now - datetime.timedelta(seconds=30)).delete()
         token, _ = Token.objects.get_or_create(user=user)
         serializer = CUserSerializer(instance=user)
-    # If the user has a leetcode account, return leetcode true with response
+
         try:
             leetcode = Leetcode.objects.get(user=user)
             return Response({'token': token.key, 'user': serializer.data, 'leetcode': True}, status=status.HTTP_200_OK)
         except Leetcode.DoesNotExist:
+            logger.info(f"User {user.pk} does not have a Leetcode account linked.")
             return Response({'token': token.key, 'user': serializer.data, 'leetcode': False}, status=status.HTTP_200_OK)
-        
+
 
 class RegisterLeetcode(APIView):
     permission_classes = [IsAuthenticated]
@@ -46,12 +52,17 @@ class RegisterLeetcode(APIView):
         leetcode_username = request.data.get('leetcode_username')
         user = request.user
         if not leetcode_username:
+            logger.warning("Leetcode username is required for user: %s", user.pk)
             return Response({'error': 'Leetcode username is required'}, status=status.HTTP_400_BAD_REQUEST)
+
         acc = Leetcode.objects.create(username=leetcode_username, user=user)
-        if not acc:
+        if acc:
+            get_and_update_user_data(leetcode_username, acc.pk)
+            logger.info(f"Leetcode account created for user {user.pk} with username {leetcode_username}.")
+            return Response({'message': 'User registered successfully'}, status=status.HTTP_201_CREATED)
+        else:
+            logger.error(f"Failed to create Leetcode account for user: {user.pk}")
             return Response({'error': 'User registration failed'}, status=status.HTTP_400_BAD_REQUEST)
-        get_and_update_user_data(leetcode_username, acc.pk)
-        return Response({'message': 'User registered successfully'}, status=status.HTTP_201_CREATED)
 
 class VerifyLeetcode(APIView):
     permission_classes = [IsAuthenticated]
@@ -59,22 +70,31 @@ class VerifyLeetcode(APIView):
         user = request.user
         username = request.data.get('leetcode_username')
         if not username:
+            logger.warning("Leetcode username is required for verification by user: %s", user.pk)
             return Response({'error': 'Leetcode username is required'}, status=status.HTTP_400_BAD_REQUEST)
+        
         try:
-            a = Leetcode.objects.get(username=username)
+            Leetcode.objects.get(username=username)
+            logger.warning(f"Leetcode username {username} is already registered.")
             return Response({'error': 'User already registered on codeboard'}, status=status.HTTP_400_BAD_REQUEST)
         except Leetcode.DoesNotExist:
             pass
 
         user_data = fetch_user_profile(username)
         if user_data:
+            logger.info(f"Leetcode user profile found for username {username}.")
             return Response(user_data, status=status.HTTP_200_OK)
+        logger.warning(f"Leetcode user profile not found for username {username}.")
         return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
-        
-    
+
 class LogoutView(APIView):
     permission_classes = [IsAuthenticated]
     def get(self, request, *args, **kwargs):
-        token =Token.objects.get(user=request.user)
-        token.delete()
-        return Response({'message': 'Logged out successfully'}, status=status.HTTP_200_OK)
+        try:
+            token = Token.objects.get(user=request.user)
+            token.delete()
+            logger.info(f"User {request.user.pk} logged out successfully.")
+            return Response({'message': 'Logged out successfully'}, status=status.HTTP_200_OK)
+        except Token.DoesNotExist:
+            logger.warning(f"Token for user {request.user.pk} does not exist during logout attempt.")
+            return Response({'error': 'Logout failed: Token not found'}, status=status.HTTP_400_BAD_REQUEST)

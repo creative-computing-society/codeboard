@@ -31,7 +31,7 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['*', 'api.codeboard.ccstiet.com', '127.0.0.1', 'localhost', 'api.knowishan.fun']
 CSRF_TRUSTED_ORIGINS = ['https://api.codeboard.ccstiet.com', 'https://api.knowishan.fun']
 
 # Application definition
@@ -51,6 +51,9 @@ INSTALLED_APPS = [
     'admin_dash',
     'django_celery_results',
     'django_celery_beat',
+    'hijack',
+    'hijack.contrib.admin',
+    'django_extensions'
 ]
 
 CORS_ORIGIN_ALLOW_ALL = True
@@ -65,6 +68,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'hijack.middleware.HijackUserMiddleware',
 ]
 X_FRAME_OPTIONS = 'SAMEORIGIN'
 ROOT_URLCONF = 'app.urls'
@@ -173,6 +177,8 @@ accept_content = ['application/json']
 task_serializer = 'json'
 result_serializer = 'json'
 timezone = 'Asia/Kolkata'
+CELERY_WORKER_CONCURRENCY = 4
+
 
 # Celery-Beat settings
 CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
@@ -194,3 +200,4 @@ AUTHENTICATION_BACKENDS = [
 AUTH_USER_MODEL = 'ccs_auth.CUser'
 
 TOKEN_EXPIRY = 30
+HIJACK_ALLOW_STAFF = True  # Allow staff members to hijack users
