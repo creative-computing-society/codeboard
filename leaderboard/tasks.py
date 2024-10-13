@@ -82,22 +82,21 @@ def refresh_user_data(self):
         if total_users == 0:
             logger.info("No users found to refresh")
             return
-    
-        page_size = max(1, total_users // WORKER_COUNT)
-        
+
+        # Adjust page size calculation to ensure all users are processed
+        page_size = (total_users // WORKER_COUNT) + (total_users % WORKER_COUNT > 0)
         paginator = Paginator(users, page_size)
+
+        user_data_tasks = []
         
-        # Process each page concurrently
-        def process_page(page_number):
+        for page_number in paginator.page_range:
             page = paginator.page(page_number)
-            user_data_tasks = [get_and_update_user_data.s(user.username, user.id) for user in page]
-            return group(user_data_tasks)
-        
-        # Create a chord with a group of tasks for each page
-        task_chain = chord(
-            (process_page(page) for page in paginator.page_range),
-            calculate_leaderboards.s()
-        )
+            logger.info(f"Processing page {page_number} with users: {[user.username for user in page]}")  # Logging user details
+            
+            # Create tasks for each user in the page
+            user_data_tasks.extend(get_and_update_user_data.s(user.username, user.id) for user in page)
+
+        task_chain = chord(user_data_tasks, calculate_leaderboards.s())
         task_chain.apply_async()
 
         logger.info(f"Data refresh initiated for {total_users} users across {WORKER_COUNT} workers, with {page_size} users per page.")
