@@ -68,11 +68,14 @@ Ensure you have the following installed:
     ```bash
     python manage.py migrate
     ```
-
-6. **Start the backend services:**
+6. **Collect Static**
+   ```bash
+   python manage.py collectstatic
+   ```
+7. **Start the backend services:**
    Use Docker to start Redis, Celery, and the Django server:
     ```bash
-    docker-compose up --build
+    docker compose up --build
     ```
    The server runs on port 4881 by default. You can change this in `docker-compose.yml` if necessary.
 
