@@ -1,148 +1,143 @@
 from celery import shared_task
-from leaderboard.models import Leetcode, LeaderboardEntry, Leaderboard, Question
+from django.db import transaction
 from django.utils import timezone
 from datetime import timedelta
-import time
+import pytz
+from django.core.paginator import Paginator
+from django.db.models import F
+from leaderboard.models import Leetcode, LeaderboardEntry, Leaderboard, Question
+import logging
+
+logger = logging.getLogger('celery')
+
+TIMEZONE = pytz.timezone('Asia/Kolkata')
+
+def safe_timestamp_to_datetime(timestamp):
+    try:
+        return timezone.datetime.fromtimestamp(int(timestamp), TIMEZONE)
+    except (ValueError, TypeError):
+        return None
 
 def cal_solved_intervals(questions, solved_dict: dict):
-    current_time = timezone.now()
-    one_day_interval = current_time - timedelta(days=1)
-    one_week_interval = current_time - timedelta(weeks=1)
-    one_month_interval = current_time - timedelta(days=30)  # Approximation for a month
-
-    solved_within_one_day = {}
-    solved_within_one_week = {}
-    solved_within_one_month = {}
+    intervals = {
+        'day': timedelta(days=1),
+        'week': timedelta(weeks=1),
+        'month': timedelta(days=30)
+    }
+    solved_within = {interval: {} for interval in intervals}
 
     for question in questions:
-        ques_titleslug = question[1]
-        question_timestamp = int(question[2])
+        ques_id, ques_titleslug, question_timestamp = question
+        question_datetime = safe_timestamp_to_datetime(question_timestamp)
+        if not question_datetime:
+            continue
+
         if str(ques_titleslug) in solved_dict:
-            ques_solved_timestamp = int(solved_dict[ques_titleslug])
-            if ques_solved_timestamp < question_timestamp:
-                # print(f"Question: {question_id} - Solved before creation")
-                continue  # Skip if question was solved before it was created
+            ques_solved_timestamp = safe_timestamp_to_datetime(solved_dict[ques_titleslug])
+            if not ques_solved_timestamp or ques_solved_timestamp < question_datetime:
+                continue
 
-            if ques_solved_timestamp >= one_day_interval.timestamp():
-                solved_within_one_day[ques_titleslug] = ques_solved_timestamp
-                # print(f"Question: {question_id} - Solved within one day")
-            
-            if ques_solved_timestamp >= one_week_interval.timestamp():
-                solved_within_one_week[ques_titleslug] = ques_solved_timestamp
-                # print(f"Question: {question_id} - Solved within one week")
+            time_difference = ques_solved_timestamp - question_datetime
 
-            if ques_solved_timestamp >= one_month_interval.timestamp():
-                solved_within_one_month[ques_titleslug] = ques_solved_timestamp
-                # print(f"Question: {question_id} - Solved within one month")
-        else:
-            # print(f"Question: {question_id} - Not solved")
-            pass
+            for interval, duration in intervals.items():
+                if time_difference <= duration:
+                    solved_within[interval][ques_titleslug] = ques_solved_timestamp
 
-    return solved_within_one_day, solved_within_one_week, solved_within_one_month
+    return [solved_within[interval] for interval in ['day', 'week', 'month']]
 
-
+@transaction.atomic
 def generate_leaderboards_entries():
     try:
-        questions = Question.objects.all()
-        ques_given = [
-            [question.leetcode_id, question.titleSlug, question.questionDate.timestamp()]
-            for question in questions
-        ]
+        questions = list(Question.objects.values_list('leetcode_id', 'titleSlug', 'questionDate'))
+        ques_given = [[q[0], q[1], q[2].timestamp()] for q in questions]
+        
         user_instances = Leetcode.objects.all()
         for user_instance in user_instances:
-            username = user_instance.username
             solved_dict = user_instance.total_solved_dict
-            solved_within_one_day, solved_within_one_week, solved_within_one_month = cal_solved_intervals(ques_given, solved_dict)
-            # print(f"user: {username} - Solved_dict: {solved_dict}")
-            daily_entry, _ = LeaderboardEntry.objects.get_or_create(user=user_instance, interval='day')
-            weekly_entry, _ = LeaderboardEntry.objects.get_or_create(user=user_instance, interval='week')
-            monthly_entry, _ = LeaderboardEntry.objects.get_or_create(user=user_instance, interval='month')
-
-            daily_entry.questions_solved = len(solved_within_one_day)
-            weekly_entry.questions_solved = len(solved_within_one_week)
-            monthly_entry.questions_solved = len(solved_within_one_month)
-
-            daily_entry.earliest_solved_timestamp = max(solved_within_one_day.values(), default=0)
-            weekly_entry.earliest_solved_timestamp = max(solved_within_one_week.values(), default=0)
-            monthly_entry.earliest_solved_timestamp = max(solved_within_one_month.values(), default=0)
-
-            daily_entry.save()
-            weekly_entry.save()
-            monthly_entry.save()
-        print("Leaderboard entries generated successfully")
+            solved_intervals = cal_solved_intervals(ques_given, solved_dict)
+            
+            for interval, solved in zip(['day', 'week', 'month'], solved_intervals):
+                entry, _ = LeaderboardEntry.objects.update_or_create(
+                    user=user_instance,
+                    interval=interval,
+                    defaults={
+                        'questions_solved': len(solved),
+                        'earliest_solved_timestamp': max(solved.values(), default=timezone.now()).timestamp()
+                    }
+                )
+        
+        logger.info("Leaderboard entries generated successfully")
     except Exception as e:
-        print(f"Error generating leaderboard entries: {e}")
+        logger.error(f"Error generating leaderboard entries: {e}")
+        raise
 
-def update_rank(user_list, rank_dict, rank_type):
+def update_rank(user_list, rank_dict, interval):
     try:
-        for idx, user in enumerate(user_list):
-            user_obj = Leetcode.objects.get(username=user[0])
-            '''This code is commented out because it is not necessary to skip users with 0 questions solved.'''
-            # if user[1] == 0:
-            #     continue
-            rank_dict[idx+1] =  {
-                "username": user[0],
-                "photo_url": user_obj.photo_url,
-                "ques_solv": user[1],
-                "last_solv": user[2]
-            }
-
+        for idx, user in enumerate(user_list, start=1):
             try:
                 user_obj = Leetcode.objects.get(username=user[0])
-                if hasattr(user_obj, rank_type):  # Check if the attribute exists
-                    setattr(user_obj, rank_type, idx+1)
-                    user_obj.save()
-                else:
-                    print(f"Attribute {rank_type} does not exist on leetcode_acc objects.")
+                rank_dict[idx] = {
+                    "username": user[0],
+                    "photo_url": user_obj.photo_url,
+                    "ques_solv": user[1],
+                    "last_solv": user[2],
+                    "rank": idx
+                }
+                
+                # Update rank in Leetcode model
+                if interval == 'day':
+                    user_obj.daily_rank = idx
+                elif interval == 'week':
+                    user_obj.weekly_rank = idx
+                elif interval == 'month':
+                    user_obj.monthly_rank = idx
+                # user_obj.save(update_fields=[f'{interval}ly_rank'])
+                user_obj.save()
+                
             except Leetcode.DoesNotExist:
-                print(f"User {user[0]} does not exist.")
+                logger.warning(f"User {user[0]} does not exist.")
     except Exception as e:
-        print(f"Error updating rank: {e}")
+        logger.error(f"Error updating rank: {e}")
 
 @shared_task(bind=True)
 def calculate_leaderboards(self, *args, **kwargs):
     try:
         generate_leaderboards_entries()
-        one_day, one_week, one_month = {}, {}, {}
-        daily, weekly, monthly = [], [], []
-
-        users = Leetcode.objects.all()
-        for user in users:
-            daily_entry = LeaderboardEntry.objects.get(user=user, interval='day')
-            weekly_entry = LeaderboardEntry.objects.get(user=user, interval='week')
-            monthly_entry = LeaderboardEntry.objects.get(user=user, interval='month')
-            daily.append([user.username, daily_entry.questions_solved, daily_entry.earliest_solved_timestamp])
-            weekly.append([user.username, weekly_entry.questions_solved, weekly_entry.earliest_solved_timestamp])
-            monthly.append([user.username, monthly_entry.questions_solved, monthly_entry.earliest_solved_timestamp])
+        leaderboards = {'daily': {}, 'weekly': {}, 'monthly': {}}
         
-        daily.sort(key=lambda x: (-x[1], x[2]))
-        weekly.sort(key=lambda x: (-x[1], x[2]))
-        monthly.sort(key=lambda x: (-x[1], x[2]))
-        # convert timestamp to human readable format
-        for user in daily:
-            user[2] = timezone.datetime.fromtimestamp(user[2]).strftime('%Y-%m-%d %H:%M:%S')
-        for user in weekly:
-            user[2] = timezone.datetime.fromtimestamp(user[2]).strftime('%Y-%m-%d %H:%M:%S')
-        for user in monthly:
-            user[2] = timezone.datetime.fromtimestamp(user[2]).strftime('%Y-%m-%d %H:%M:%S')
-
-        update_rank(daily, one_day, 'daily_rank')
-        update_rank(weekly, one_week, 'weekly_rank')
-        update_rank(monthly, one_month, 'monthly_rank')
+        for interval in ['day', 'week', 'month']:
+            entries = LeaderboardEntry.objects.filter(interval=interval).select_related('user').order_by(
+                F('questions_solved').desc(),
+                F('earliest_solved_timestamp').asc()
+            )
+            
+            user_list = [
+                [entry.user.username, entry.questions_solved, 
+                 timezone.datetime.fromtimestamp(entry.earliest_solved_timestamp, TIMEZONE).strftime('%Y-%m-%d %H:%M:%S')]
+                for entry in entries
+            ]
+            
+            leaderboard_key = f"{interval}ly" if interval != 'day' else 'daily'
+            update_rank(user_list, leaderboards[leaderboard_key], interval)
         
-        # create or update leaderboard (total 3)
-        Leaderboard.objects.update_or_create(
-            leaderboard_type='daily', defaults={'leaderboard_data': one_day}
-        )
-        Leaderboard.objects.update_or_create(
-            leaderboard_type='weekly', defaults={'leaderboard_data': one_week}
-        )
-        Leaderboard.objects.update_or_create(
-            leaderboard_type='monthly', defaults={'leaderboard_data': one_month}
-        )
-
-        # print("Leaderboards calculated successfully")
-        return one_day, one_week, one_month
+        for leaderboard_type, data in leaderboards.items():
+            Leaderboard.objects.update_or_create(
+                leaderboard_type=leaderboard_type,
+                defaults={'leaderboard_data': data}
+            )
+        
+        logger.info("Leaderboards calculated successfully")
+        return leaderboards
     except Exception as e:
-        print(f"Error calculating leaderboards: {e}")
+        logger.error(f"Error calculating leaderboards: {e}")
         return {}
+
+def get_paginated_leaderboard(leaderboard_type, page=1, per_page=20):
+    try:
+        leaderboard = Leaderboard.objects.get(leaderboard_type=leaderboard_type)
+        data = list(leaderboard.leaderboard_data.items())
+        paginator = Paginator(data, per_page)
+        return paginator.page(page)
+    except Exception as e:
+        logger.error(f"Error retrieving paginated leaderboard: {e}")
+        return []

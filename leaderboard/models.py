@@ -28,12 +28,11 @@ class Leetcode(models.Model):
         return self.username
 
 class Question(models.Model):
-    # question_key = models.AutoField(primary_key=True)
     leetcode_id = models.IntegerField(null=False, blank=False, default=0, primary_key=True, unique=True)
     title = models.CharField(max_length=100, default="")
     titleSlug = models.CharField(max_length=100, default="")
     questionDate = models.DateTimeField(blank=False,default=datetime.datetime.now)
-    difficulty = models.CharField(max_length=20, null=False, blank=False, choices=[('Basic', 'Basic'), ('Intermidiate', 'Intermidiate'), ('Advanced', 'Advanced')], default='Basic')
+    difficulty = models.CharField(max_length=20, null=False, blank=False, default='Basic')
     def __str__(self):
         return self.title
     

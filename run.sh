@@ -10,9 +10,13 @@ python manage.py collectstatic --noinput
 python manage.py makemigrations
 python manage.py migrate
 
+mkdir -p /logs
+
 # Start Celery worker and beat as background processes
-celery -A app.celery worker --pool=solo -l info &
+celery -A app.celery worker --pool=prefork -l info &
 celery -A app.celery beat -l info &
+celery -A app.celery purge -f
+
 
 # Start the Django development server
-exec python manage.py runserver 0.0.0.0:8000
+exec gunicorn --bind 0.0.0.0:8000 app.wsgi

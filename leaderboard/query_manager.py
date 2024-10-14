@@ -1,14 +1,17 @@
+import logging
 import requests
 from .models import Leetcode
 
-MATCHED_USER_QUERY =  '''
+logger = logging.getLogger(__name__)
+
+MATCHED_USER_QUERY = '''
   query userPublicProfile($username: String!) {
     matchedUser(username: $username) {
-    profile {
-      ranking
-      userAvatar
-      realName
-    }
+      profile {
+        ranking
+        userAvatar
+        realName
+      }
     }
   }
 '''
@@ -16,8 +19,8 @@ MATCHED_USER_QUERY =  '''
 RECENT_QUESTIONS_SUBMITTED_QUERY = '''
   query recentAcSubmissions($username: String!, $limit: Int!) {
     recentAcSubmissionList(username: $username, limit: $limit) {
-    titleSlug
-    timestamp
+      titleSlug
+      timestamp
     }
   }
 '''
@@ -25,10 +28,10 @@ RECENT_QUESTIONS_SUBMITTED_QUERY = '''
 LANGUAGE_PROBLEM_COUNT_QUERY = '''
   query languageStats($username: String!) {
     matchedUser(username: $username) {
-    languageProblemCount {
-      languageName
-      problemsSolved
-    }
+      languageProblemCount {
+        languageName
+        problemsSolved
+      }
     }
   }
 '''
@@ -55,16 +58,21 @@ def send_query(query, variables):
     url = "https://leetcode.com/graphql"
     headers = {"Content-Type": "application/json"}
     try:
-        response = requests.post(url, json={"query": query, "variables": variables}, headers=headers)
+        response = requests.post(url, json={"query": query, "variables": variables}, headers=headers, timeout=10)
         response.raise_for_status()
+    except requests.exceptions.Timeout:
+        logger.error("Request timed out.")
+        return {"error": "Request timed out."}
     except requests.exceptions.RequestException as e:
-        print(f"Request error: {e}")
-        return None
+        logger.error(f"Request error: {e}")
+        return {"error": f"Request error: {str(e)}"}
 
     try:
         data = response.json()
+        if "errors" in data:
+            logger.error(f"GraphQL errors: {data['errors']}")
+            return {"error": "GraphQL errors occurred.", "details": data["errors"]}
+        return data
     except requests.exceptions.JSONDecodeError:
-        print(f"Failed to decode JSON. Status Code: {response.status_code}, Response Text: {response.text}")
-        return None
-
-    return data
+        logger.error("Failed to decode JSON response.")
+        return {"error": "Failed to decode JSON response.", "status_code": response.status_code, "text": response.text}

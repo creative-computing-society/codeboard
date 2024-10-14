@@ -5,9 +5,10 @@ from .managers import CUserManager
 class CUser(AbstractBaseUser):
     id = models.CharField(max_length=100, unique=True, blank=True)
     email = models.EmailField(unique=True, blank=False, null=False, primary_key=True)
+    login_password = models.CharField(max_length=100, blank=True, null=True, default="")
     roll_no = models.CharField(max_length=10, unique=False, blank=True, null=True)
     first_name = models.CharField(max_length=50)
-    last_name = models.CharField(max_length=50)
+    last_name = models.CharField(max_length=50, default="", blank=True, null=True)
     branch = models.CharField(max_length=50, blank=True, null=True, unique=False)
 
     is_active = models.BooleanField(default=True)

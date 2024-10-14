@@ -1,12 +1,16 @@
+import logging
 from django.http import HttpResponseRedirect, HttpResponseBadRequest
 from django.shortcuts import render, redirect
 from django.contrib import messages
-from django.contrib.auth import get_user_model
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import get_user_model, authenticate, login, logout
 from leaderboard.models import Question
 from .populateQuestions import populate_question_model
 from datetime import datetime, timezone
 import pytz
+
+# Define a logger for this module
+logger = logging.getLogger(__name__)
+
 CUser = get_user_model()
 
 def admin_login(request):
@@ -23,15 +27,15 @@ def admin_login(request):
             
             user_obj = authenticate(email=email, password=password)
 
-            if user_obj and user_obj.is_superuser:
-                login(request, user_obj)
+            if user_obj and user_obj.is_staff:
+                login(request, user_obj, backend='ccs_auth.auth_backends.SSOAuthenticationBackend')
                 return redirect('admin_dash:admin_dashboard')
             
             messages.info(request, 'Invalid credentials')
             return redirect('admin_dash:admin_login')
         return render(request, 'admin_dash/login.html')
     except Exception as e:
-        print(e)
+        logger.error(f"Error during admin login: {e}")
         return redirect('admin_dash:admin_login')
         
 def admin_dashboard(request):
@@ -45,11 +49,11 @@ def admin_logout(request):
         logout(request)
     return redirect('admin_dash:admin_login')
 
-def edit_question(request,question_id,*args,**kwargs):
+def edit_question(request, question_id, *args, **kwargs):
     if not request.user.is_authenticated:
         return redirect('admin_dash:admin_login')
     question_obj = Question.objects.filter(pk=question_id).first()
-    print(question_obj)
+    logger.debug(f"Editing question with ID {question_id}: {question_obj}")
     if not question_obj:
         return redirect('admin_dash:admin_dashboard')
     if request.method == 'POST':
@@ -84,9 +88,9 @@ def add_ques_from_id(request):
             if not Question.objects.filter(pk=ques):
                 all_ques = False
         if all_ques:
-            print("Questions with IDs",ques_ids,"created successfully")
+            logger.info(f"Questions with IDs {ques_ids} created successfully.")
         else:
-            print("not all were successfull")
+            logger.warning("Not all questions were successfully created.")
 
     return redirect('admin_dash:admin_dashboard')
 
@@ -96,26 +100,25 @@ def delete_ques_with_ids(request):
 
     try:
         ques_ids = request.POST.get('selected_questions')  # Match the name of the hidden input
-        print(ques_ids)
+        logger.debug(f"Deleting questions with IDs: {ques_ids}")
         if ques_ids:
             ques_ids_list = ques_ids.split(',')
             for ques in ques_ids_list:
                 Question.objects.filter(pk=int(ques)).first().delete()
-                if not Question.objects.filter(pk = int(ques)):
-                    print(ques, "th question just got deleted")     
-    except:
-        pass
+                if not Question.objects.filter(pk=int(ques)):
+                    logger.info(f"Question with ID {ques} was deleted successfully.")
+    except Exception as e:
+        logger.error(f"Error deleting questions: {e}")
     return redirect('admin_dash:admin_dashboard')
 
 def validate_ques_ids(ques_ids):
     try:
-        # Split the string by commas and convert each part to an integer
         id_list = list(map(int, ques_ids.split(',')))
         
         unique_ids = set()
         for question_id in id_list:
             if Question.objects.filter(pk=question_id).exists():
-                print(f"Question with ID {question_id} already exists.")
+                logger.info(f"Question with ID {question_id} already exists.")
             else:
                 if question_id:
                     populate_question_model(question_id)
@@ -123,6 +126,5 @@ def validate_ques_ids(ques_ids):
         
         return list(unique_ids)
     except ValueError:
-        # Handle the case where conversion to integer fails
-        print("Error: The input contains invalid IDs. Please provide a comma-separated list of integers.")
+        logger.error("The input contains invalid IDs. Please provide a comma-separated list of integers.")
         return []
