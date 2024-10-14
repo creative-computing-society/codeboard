@@ -80,7 +80,7 @@ Ensure you have the following installed:
 
 1. **Clone the frontend repository:**
     ```bash
-    git clone -b dev-frontend https://github.com/creative-computing-society/codeboard-frontend.git
+    git clone -b dev-frontend https://github.com/creative-computing-society/codeboard-frontend.git codeboard-frontend
     ```
 
 2. **Install frontend dependencies:**
