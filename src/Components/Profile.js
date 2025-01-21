@@ -62,7 +62,7 @@ const Profile = () => {
       }
 
       try {
-        const response = await fetch(`${BASE_URL}/questions/today/`, {
+        const response = await fetch(`${BASE_URL}/questions/all/`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
