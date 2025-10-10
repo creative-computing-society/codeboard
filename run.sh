@@ -10,4 +10,4 @@
 
 # tail -f /var/log/cron.log
 # gunicorn -b 0.0.0.0:8000 core.wsgi:application --timeout=300
-python manage.py runserver 0.0.0.0:8000
+gunicorn -b 0.0.0.0:8000 app.asgi:application -k uvicorn.workers.UvicornWorker -w 6 --timeout=300 # Since we are running ASGI, gunicorn needs uvicorn workers for async processing

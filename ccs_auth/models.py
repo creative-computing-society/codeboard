@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser
+
 from .managers import CUserManager
+
 
 class CUser(AbstractBaseUser):
     id = models.CharField(max_length=100, unique=True, blank=True)
@@ -16,13 +18,13 @@ class CUser(AbstractBaseUser):
 
     objects = CUserManager()
 
-    USERNAME_FIELD = 'email'
+    USERNAME_FIELD = "email"
 
     def __str__(self):
         return self.email
-    
+
     def has_perm(self, perm, obj=None):
         return self.is_admin
-    
+
     def has_module_perms(self, app_label):
         return True

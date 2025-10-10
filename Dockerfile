@@ -1,5 +1,5 @@
 # For more information, please refer to https://aka.ms/vscode-docker-python
-FROM python:3.12.3
+FROM python:3.13
 
 # Keeps Python from generating .pyc files in the container
 ENV PYTHONDONTWRITEBYTECODE=1
@@ -10,6 +10,7 @@ ENV PYTHONUNBUFFERED=1
 # Install pip requirements
 COPY requirements.txt .
 
+RUN python -m pip install --upgrade pip
 RUN python -m pip install -r requirements.txt
 
 WORKDIR /app
@@ -21,4 +22,5 @@ COPY . /app
 USER root
 
 # During debugging, this entry point will be overridden. For more information, please refer to https://aka.ms/vscode-docker-python-debug
-CMD ["sh", "run.sh"]
+CMD ["gunicorn","-b","0.0.0.0:8000","app.asgi:application","-k","uvicorn.workers.UvicornWorker","-w","6","--timeout=300"] 
+# Since we are running ASGI, gunicorn needs uvicorn workers for async processing

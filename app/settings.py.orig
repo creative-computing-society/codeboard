@@ -29,7 +29,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True  # We were running DEBUG=True in prod?!
+DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
 
@@ -50,7 +50,6 @@ INSTALLED_APPS = [
     "leaderboard",
     "django_celery_results",
     "django_celery_beat",
-    "adrf",
 ]
 
 CORS_ORIGIN_ALLOW_ALL = True
@@ -99,10 +98,6 @@ DATABASES = {
         "PASSWORD": os.getenv("DB_PASS"),
         "HOST": os.getenv("DB_HOST"),
         "PORT": os.getenv("DB_PORT"),
-        "OPTIONS": {
-            "sslmode": os.getenv("DB_SSL"),
-            "channel_binding": os.getenv("DB_CHANNEL_BINDING"),
-        },
     }
 }
 
@@ -148,11 +143,11 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # Celery settings
 
-CELERY_broker_url = "redis://127.0.0.1:6379"
-result_backend = "django-db"
-accept_content = ["application/json"]
+CELERY_BROKER_URL = "redis://127.0.0.1:6379"
+CELERY_RESULT_BACKEND = "django-db"
+CELERY_ACCEPT_CONTENT = ["application/json"]
 task_serializer = "json"
-result_serializer = "json"
+CELERY_RESULT_SERIALIZER = "json"
 timezone = "Asia/Kolkata"
 
 # Celery-Beat settings
