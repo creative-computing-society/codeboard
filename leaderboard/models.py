@@ -25,7 +25,7 @@ class Leetcode(models.Model):
     user = models.OneToOneField(CUser, on_delete=models.CASCADE, default=None)
     id = models.AutoField(primary_key=True)
     username = models.CharField(
-        max_length=100, null=False, blank=False, unique=True, default="", db_index=True
+        max_length=100, null=False, blank=False, unique=True, default=""
     )
     name = models.CharField(max_length=100, null=True, blank=True, default="Scraping..")
     leetcode_rank = models.CharField(
@@ -53,14 +53,10 @@ class Leetcode(models.Model):
 
 class Question(models.Model):
     question_key = models.AutoField(primary_key=True)
-    leetcode_id = models.IntegerField(null=False, blank=False, default=0, db_index=True)
+    leetcode_id = models.IntegerField(null=False, blank=False, default=0)
     title = models.CharField(max_length=100, null=False, blank=False, default="")
-    titleSlug = models.CharField(
-        max_length=100, null=False, blank=False, default="", db_index=True
-    )
-    questionDate = models.DateTimeField(
-        blank=False, default=timezone.now, db_index=True
-    )
+    titleSlug = models.CharField(max_length=100, null=False, blank=False, default="")
+    questionDate = models.DateTimeField(blank=False, default=timezone.now)
     difficulty = models.CharField(
         max_length=20,
         null=False,
@@ -76,7 +72,7 @@ class Question(models.Model):
 class LeaderboardEntry(models.Model):
     user = models.ForeignKey(Leetcode, on_delete=models.CASCADE, db_index=True)
     interval = models.CharField(
-        max_length=10, choices=Interval.choices, db_index=True
+        max_length=10, choices=Interval.choices
     )  # 'day', 'week', 'month'
     questions_solved = models.IntegerField(null=False, default=0)
     earliest_solved_timestamp = models.BigIntegerField(null=False, default=0)

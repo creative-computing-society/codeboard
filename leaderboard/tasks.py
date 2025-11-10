@@ -84,6 +84,7 @@ async def _calculate_leaderboards():
         daily.sort(key=lambda x: (-x[1], x[2]))
         weekly.sort(key=lambda x: (-x[1], x[2]))
         monthly.sort(key=lambda x: (-x[1], x[2]))
+
         # convert timestamp to human readable format
         for user in daily:
             user[2] = timezone.datetime.fromtimestamp(user[2]).strftime(

@@ -7,7 +7,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
     dependencies = [
@@ -48,7 +47,7 @@ class Migration(migrations.Migration):
                 ("title", models.CharField(default="", max_length=100)),
                 (
                     "titleSlug",
-                    models.CharField(db_index=True, default="", max_length=100),
+                    models.CharField(default="", max_length=100),
                 ),
                 (
                     "questionDate",
@@ -76,9 +75,7 @@ class Migration(migrations.Migration):
                 ("id", models.AutoField(primary_key=True, serialize=False)),
                 (
                     "username",
-                    models.CharField(
-                        db_index=True, default="", max_length=100, unique=True
-                    ),
+                    models.CharField(default="", max_length=100, unique=True),
                 ),
                 (
                     "name",
