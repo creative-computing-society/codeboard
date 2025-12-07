@@ -194,8 +194,11 @@ REST_FRAMEWORK = {
 
 AUTHENTICATION_BACKENDS = [
     'ccs_auth.auth_backends.SSOAuthenticationBackend',
+    'ccs_auth.auth_backends.GoogleAuthenticationBackend',
     'django.contrib.auth.backends.ModelBackend',  # Default backend
 ]
+
+GOOGLE_CLIENT_ID = os.getenv('GOOGLE_CLIENT_ID')
 
 AUTH_USER_MODEL = 'ccs_auth.CUser'
 

@@ -11,7 +11,12 @@ django-celery-beat
 django-celery-results
 django-cors-headers
 djangorestframework-simplejwt
+<<<<<<< Updated upstream
 gunicorn
 pytz
 django-hijack
 django-extensions
+=======
+google-auth
+gunicorn
+>>>>>>> Stashed changes
