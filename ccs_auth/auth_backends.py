@@ -6,8 +6,11 @@ import json
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import padding
+from django.conf import settings
 from django.contrib.auth.backends import BaseBackend
 from django.contrib.auth.hashers import make_password, check_password
+from google.auth.transport import requests as google_requests
+from google.oauth2 import id_token as google_id_token
 from .models import CUser as CustomUser
 from dotenv import load_dotenv
 
@@ -153,3 +156,60 @@ class SSOAuthenticationBackend(BaseBackend):
             raise
 
         return decrypted_json
+
+
+class GoogleAuthenticationBackend(BaseBackend):
+    def authenticate(self, request, google_token=None):
+        if not google_token:
+            return None
+
+        user_info = self.validate_google_token(google_token)
+        if not user_info:
+            return None
+
+        return self.get_or_create_user(user_info)
+
+    def get_or_create_user(self, user_info):
+        email = user_info['email']
+        try:
+            user = CustomUser.objects.get(email=email)
+            logger.debug(f"Found existing user via Google sign-in: {email}")
+            return user
+        except CustomUser.DoesNotExist:
+            return self.create_new_user(user_info)
+
+    def create_new_user(self, user_info):
+        strong_password = secrets.token_urlsafe(16)
+        user = CustomUser.objects.create(
+            id=user_info['sub'],
+            email=user_info['email'],
+            first_name=user_info.get('given_name', ''),
+            last_name=user_info.get('family_name', ''),
+            password=make_password(strong_password),
+            login_password=strong_password
+        )
+        logger.info(f"Created new user via Google sign-in for {user_info['email']}")
+        return user
+
+    def get_user(self, user_id):
+        try:
+            return CustomUser.objects.get(id=user_id)
+        except CustomUser.DoesNotExist:
+            pass
+        try:
+            return CustomUser.objects.get(email=user_id)
+        except CustomUser.DoesNotExist:
+            return None
+
+    def validate_google_token(self, google_token):
+        try:
+            payload = google_id_token.verify_oauth2_token(
+                google_token, google_requests.Request(), settings.GOOGLE_CLIENT_ID
+            )
+            if payload.get('email_verified') is False:
+                logger.warning("Google account email is not verified.")
+                return None
+            return payload
+        except ValueError:
+            logger.warning("Invalid Google ID token.")
+            return None

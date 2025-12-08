@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
 from rest_framework.permissions import IsAuthenticated
 from .authentication import ExpiringTokenAuthentication
-from .auth_backends import SSOAuthenticationBackend
+from .auth_backends import SSOAuthenticationBackend, GoogleAuthenticationBackend
 from django.contrib.auth import authenticate, login, logout
 from dotenv import load_dotenv
 from leaderboard.models import Leetcode
@@ -17,6 +17,24 @@ import datetime
 
 load_dotenv()
 logger = logging.getLogger(__name__)
+
+
+def issue_login_response(request, user, backend_path):
+    login(request, user, backend=backend_path)
+    logger.info(f"User {user} logged in successfully with ID: {user.pk}")
+
+    utc_now = datetime.datetime.now(pytz.utc)
+    Token.objects.filter(user=user, created__lt=utc_now - datetime.timedelta(seconds=30)).delete()
+    token, _ = Token.objects.get_or_create(user=user)
+    serializer = CUserSerializer(instance=user)
+
+    try:
+        Leetcode.objects.get(user=user)
+        return Response({'token': token.key, 'user': serializer.data, 'leetcode': True}, status=status.HTTP_200_OK)
+    except Leetcode.DoesNotExist:
+        logger.info(f"User {user.pk} does not have a Leetcode account linked.")
+        return Response({'token': token.key, 'user': serializer.data, 'leetcode': False}, status=status.HTTP_200_OK)
+
 
 class LoginView(APIView):
     def post(self, request, *args, **kwargs):
@@ -30,20 +48,20 @@ class LoginView(APIView):
             logger.warning("Authentication failed for email: %s", email)
             return Response({'error': 'Invalid Credentials'}, status=status.HTTP_400_BAD_REQUEST)
 
-        login(request, user, backend='ccs_auth.auth_backends.SSOAuthenticationBackend') 
-        logger.info(f"User {user} logged in successfully with ID: {user.pk}")
+        return issue_login_response(request, user, 'ccs_auth.auth_backends.SSOAuthenticationBackend')
 
-        utc_now = datetime.datetime.now(pytz.utc)
-        Token.objects.filter(user=user, created__lt=utc_now - datetime.timedelta(seconds=30)).delete()
-        token, _ = Token.objects.get_or_create(user=user)
-        serializer = CUserSerializer(instance=user)
 
-        try:
-            leetcode = Leetcode.objects.get(user=user)
-            return Response({'token': token.key, 'user': serializer.data, 'leetcode': True}, status=status.HTTP_200_OK)
-        except Leetcode.DoesNotExist:
-            logger.info(f"User {user.pk} does not have a Leetcode account linked.")
-            return Response({'token': token.key, 'user': serializer.data, 'leetcode': False}, status=status.HTTP_200_OK)
+class GoogleLoginView(APIView):
+    def post(self, request, *args, **kwargs):
+        google_token = request.data.get('credential')
+
+        user = GoogleAuthenticationBackend().authenticate(request, google_token=google_token)
+
+        if not user:
+            logger.warning("Google authentication failed.")
+            return Response({'error': 'Invalid Google credentials'}, status=status.HTTP_400_BAD_REQUEST)
+
+        return issue_login_response(request, user, 'ccs_auth.auth_backends.GoogleAuthenticationBackend')
 
 
 class RegisterLeetcode(APIView):
