@@ -1,29 +1,32 @@
-# Use an official Python runtime as a parent image
-FROM python:3.12.3
+FROM python:3.13-slim
 
-# Keeps Python from generating .pyc files in the container
+# Prevent .pyc files + enable unbuffered logs
 ENV PYTHONDONTWRITEBYTECODE=1
-
-# Turns off buffering for easier container logging
 ENV PYTHONUNBUFFERED=1
+ENV POETRY_HOME="/opt/poetry"
+ENV PATH="$POETRY_HOME/bin:$PATH"
 
-# Set the working directory in the container
+# Install system deps (build tools, curl, psycopg2, etc.)
+RUN apt-get update && apt-get install -y --no-install-recommends \
+  curl build-essential gcc libpq-dev \
+  && rm -rf /var/lib/apt/lists/*
+
+# Install Poetry
+RUN curl -sSL https://install.python-poetry.org | python3 -
+
+# Configure Poetry (no virtualenvs inside the container — correct for Docker)
+RUN poetry config virtualenvs.in-project false
+RUN poetry config virtualenvs.create false
+
+# Copy only the poetry files first (trying poetry out + good caching)
 WORKDIR /app
+COPY pyproject.toml poetry.lock* /app/
 
-# Copy the requirements file first for better caching
-COPY requirements.txt /app/
+# Install dependencies
+RUN poetry install --no-root --no-interaction --no-ansi
 
-# Install any needed packages specified in requirements.txt
-RUN python -m pip install --no-cache-dir -r requirements.txt
+# Copy application code
+COPY . /app
 
-# Copy the rest of the application code to the container
-COPY . /app/
-
-# Creates a non-root user with an explicit UID and adds permission to access the /app folder
-# RUN adduser --disabled-password --gecos "" appuser && chown -R appuser /app
-
-# Switch to non-root user
-# USER appuser
-
-# Define the command to run the application
-CMD ["sh", "run.sh"]
+# Gunicorn + Uvicorn workers for ASGI Django
+CMD ["gunicorn", "-b", "0.0.0.0:8000", "app.asgi:application", "-k", "uvicorn.workers.UvicornWorker", "-w", "6", "--timeout=300"]
