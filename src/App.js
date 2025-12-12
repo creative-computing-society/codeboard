@@ -51,7 +51,7 @@ function App() {
           </>
         ) : (
           <Routes>
-            <Route path="/login" element={<Login onLogin={handleLogin} />} />
+            <Route path="/login" element={<Login onLogin={handleLogin} setIsNewUser={setIsNewUser} setIsAuthenticated={setIsAuthenticated} />} />
             <Route path="/authverify" element={<AuthVerify onVerify={handleLogin} setIsNewUser={setIsNewUser} setIsAuthenticated={setIsAuthenticated} />} />
             {isNewUser && <Route path="/username" element={<UsernameEntry setIsAuthenticated={setIsAuthenticated} />} />}
             <Route path="*" element={<Navigate to="/login" />} />

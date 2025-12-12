@@ -83,6 +83,13 @@ body.login-body {
   background-color: #2b8e42;
 }
 
+.google-login-wrapper {
+  margin-top: 0.625rem; /* 10px => 0.625rem */
+  width: 70%;
+  display: flex;
+  justify-content: center;
+}
+
 /* Media Queries for responsiveness */
 @media (max-width: 768px) { 
   .login-container {
