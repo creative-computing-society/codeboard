@@ -1,0 +1,118 @@
+import logging
+from rest_framework import status
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.authtoken.models import Token
+from rest_framework.permissions import IsAuthenticated
+from .authentication import ExpiringTokenAuthentication
+from .auth_backends import SSOAuthenticationBackend, GoogleAuthenticationBackend
+from django.contrib.auth import authenticate, login, logout
+from dotenv import load_dotenv
+from leaderboard.models import Leetcode
+from leaderboard.tasks import get_and_update_user_data, fetch_user_profile
+from .serializers import *
+from .models import *
+import pytz
+import datetime
+
+load_dotenv()
+logger = logging.getLogger(__name__)
+
+
+def issue_login_response(request, user, backend_path):
+    login(request, user, backend=backend_path)
+    logger.info(f"User {user} logged in successfully with ID: {user.pk}")
+
+    utc_now = datetime.datetime.now(pytz.utc)
+    Token.objects.filter(user=user, created__lt=utc_now - datetime.timedelta(seconds=30)).delete()
+    token, _ = Token.objects.get_or_create(user=user)
+    serializer = CUserSerializer(instance=user)
+
+    try:
+        Leetcode.objects.get(user=user)
+        return Response({'token': token.key, 'user': serializer.data, 'leetcode': True}, status=status.HTTP_200_OK)
+    except Leetcode.DoesNotExist:
+        logger.info(f"User {user.pk} does not have a Leetcode account linked.")
+        return Response({'token': token.key, 'user': serializer.data, 'leetcode': False}, status=status.HTTP_200_OK)
+
+
+class LoginView(APIView):
+    def post(self, request, *args, **kwargs):
+        sso_token = request.data.get('token')
+        email = request.data.get('email')
+        password = request.data.get('password')
+        
+        user = SSOAuthenticationBackend().authenticate(request, sso_token=sso_token, email=email, password=password)
+
+        if not user:
+            logger.warning("Authentication failed for email: %s", email)
+            return Response({'error': 'Invalid Credentials'}, status=status.HTTP_400_BAD_REQUEST)
+
+        return issue_login_response(request, user, 'ccs_auth.auth_backends.SSOAuthenticationBackend')
+
+
+class GoogleLoginView(APIView):
+    def post(self, request, *args, **kwargs):
+        google_token = request.data.get('credential')
+
+        user = GoogleAuthenticationBackend().authenticate(request, google_token=google_token)
+
+        if not user:
+            logger.warning("Google authentication failed.")
+            return Response({'error': 'Invalid Google credentials'}, status=status.HTTP_400_BAD_REQUEST)
+
+        return issue_login_response(request, user, 'ccs_auth.auth_backends.GoogleAuthenticationBackend')
+
+
+class RegisterLeetcode(APIView):
+    permission_classes = [IsAuthenticated]
+    def post(self, request, *args, **kwargs):
+        leetcode_username = request.data.get('leetcode_username')
+        user = request.user
+        if not leetcode_username:
+            logger.warning("Leetcode username is required for user: %s", user.pk)
+            return Response({'error': 'Leetcode username is required'}, status=status.HTTP_400_BAD_REQUEST)
+
+        acc = Leetcode.objects.create(username=leetcode_username, user=user)
+        if acc:
+            get_and_update_user_data(leetcode_username, acc.pk)
+            logger.info(f"Leetcode account created for user {user.pk} with username {leetcode_username}.")
+            return Response({'message': 'User registered successfully'}, status=status.HTTP_201_CREATED)
+        else:
+            logger.error(f"Failed to create Leetcode account for user: {user.pk}")
+            return Response({'error': 'User registration failed'}, status=status.HTTP_400_BAD_REQUEST)
+
+class VerifyLeetcode(APIView):
+    permission_classes = [IsAuthenticated]
+    def post(self, request, *args, **kwargs):
+        user = request.user
+        username = request.data.get('leetcode_username')
+        if not username:
+            logger.warning("Leetcode username is required for verification by user: %s", user.pk)
+            return Response({'error': 'Leetcode username is required'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        try:
+            Leetcode.objects.get(username=username)
+            logger.warning(f"Leetcode username {username} is already registered.")
+            return Response({'error': 'User already registered on codeboard'}, status=status.HTTP_400_BAD_REQUEST)
+        except Leetcode.DoesNotExist:
+            pass
+
+        user_data = fetch_user_profile(username)
+        if user_data:
+            logger.info(f"Leetcode user profile found for username {username}.")
+            return Response(user_data, status=status.HTTP_200_OK)
+        logger.warning(f"Leetcode user profile not found for username {username}.")
+        return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
+
+class LogoutView(APIView):
+    permission_classes = [IsAuthenticated]
+    def get(self, request, *args, **kwargs):
+        try:
+            token = Token.objects.get(user=request.user)
+            token.delete()
+            logger.info(f"User {request.user.pk} logged out successfully.")
+            return Response({'message': 'Logged out successfully'}, status=status.HTTP_200_OK)
+        except Token.DoesNotExist:
+            logger.warning(f"Token for user {request.user.pk} does not exist during logout attempt.")
+            return Response({'error': 'Logout failed: Token not found'}, status=status.HTTP_400_BAD_REQUEST)

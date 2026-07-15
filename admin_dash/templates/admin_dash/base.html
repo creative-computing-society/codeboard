@@ -1,0 +1,109 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <link
+      href="https://cdn.jsdelivr.net/npm/@coreui/coreui@5.0.2/dist/css/coreui.min.css"
+      rel="stylesheet"
+      integrity="sha384-39e9UaGkm/+yp6spIsVfzcs3j7ac7G2cg0hzmDvtG11pT1d7YMnOC26w4wMPhzsL"
+      crossorigin="anonymous"
+    />
+
+    <title>{% block title %}Admin Dashboard{% endblock %}</title>
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            background-color: #0d1015;
+
+          }
+      ::-webkit-scrollbar {
+        width: 0px;
+      }
+      .parent{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 0;
+      }
+      .form-control{
+        background-color: #D4EDEB;
+        color: black;
+        border: none;
+      }
+      .form-control::placeholder{
+        color: black;
+      }
+      .form-control:focus{
+        background-color: #D4EDEB;
+        color: black;
+        border: none;
+      }
+      .btn-login{
+        background-color: green;
+        color: white;
+        height: 5vh;
+        border: none;
+        border-radius: 5px;
+      }
+      .btn-login:hover{
+        background-color: #004A00;
+        color: white;
+      }
+      .btn-logout {
+        background-color: red;
+        color: white;
+        height: 5vh;
+        border: none;
+        border-radius: 5px;
+      }
+      .btn-logout:hover {
+        background-color: #4a0000;
+        color: white;
+      }
+      .navbar-custom {
+        background-color: #2C313B;
+      }
+      
+      .navbar-custom .navbar-brand {
+        color: white;
+      }
+      
+      .navbar-custom .navbar-brand img {
+        filter: brightness(0) invert(1); /* Optional: Adjust logo color if needed */
+      }
+      
+    </style>
+    {% block extra_css %}{% endblock %}
+  </head>
+  <body>
+    <nav class="navbar navbar-custom">
+        <div class="container-fluid">
+          <a class="navbar-brand" href="#">
+            <img src="{% static 'img/ccs-bulb.png' %}" alt="Logo" width="34" height="40" class="d-inline-block align-text-top">
+            <span></span>
+          </a>
+          {%if user.is_authenticated %}
+          <form action="{% url 'admin_dash:admin_logout' %}" class="d-inline">
+            <button type="submit" class="btn btn-logout">Logout</button>
+          </form>
+        {% endif %}
+        </div>
+    </nav>
+      
+    {% block content %}
+
+    {% endblock %}
+    <script
+      src="https://cdn.jsdelivr.net/npm/@coreui/coreui@5.0.2/dist/js/coreui.bundle.min.js"
+      integrity="sha384-/lLdeDXcg75fFKvNaXc6K+P80Jk8U+1mKJUYqkLSxqr18HIUvJYVN42+m23Zbw4b"
+      crossorigin="anonymous"
+    ></script>
+    {% block extra_js %}{% endblock %}
+  </body>
+</html>

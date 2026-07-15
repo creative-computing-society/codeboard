@@ -1,0 +1,49 @@
+{% extends "admin_dash/base.html" %}
+{% block title %}Admin Login{% endblock %}
+{% block extra_css %}
+<style>
+  .parent {
+    background-color: #0d1015;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding-top: 15%;
+    overflow: hidden;
+  }
+</style>
+{% endblock %}
+{% block content %}
+<div class="c-app flex-row parent align-items-center ">
+  <div class="container">
+        <div class="row justify-content-center">
+          <div class="col-md-4">
+            <div class="text-center" style="color: white;">
+              <h3 class="mb-4 font-mono font-bold text-xl">Admin Dashboard</h3>
+            </div>
+            <div class="card-body">
+              <form action="" method="POST">
+                {% csrf_token %}
+                <div class="row mb-3 justify-content-center">
+                  <div class="col-8">
+                    <input type="email" class="form-control" placeholder="Email Address" name="email"/>
+                  </div>
+                </div>
+                <div class="row mb-4 justify-content-center">
+                  <div class="col-8">
+                    <input type="password" class="form-control" placeholder="Password" name="password"/>
+                  </div>
+                </div>
+                <div class="row justify-content-center">
+                  <div class="d-grid gap-2 col-8 mx-auto">
+                    <button type="submit" class="btn px-4 btn-login">
+                      Login
+                    </button>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+{% endblock %}
